@@ -1,0 +1,14 @@
+.rgba-vertical-picker > .rgba-picker {
+    display: block;
+    margin: 1px;
+    height: auto
+}
+
+.rgba-vertical-picker > .rgba-picker > .sliders {
+    margin: 0px;
+    height: 150px;
+}
+
+.rgba-vertical-picker > .rgba-picker > .close-btn {
+    display: none;
+}

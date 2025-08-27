@@ -1,0 +1,3 @@
+openssl genrsa 2048 > key.pem
+openssl req -new -x509 -config config.txt -nodes -sha256 -days 365 -key key.pem -out cert.cer
+openssl pkcs12 -export -in cert.cer -inkey key.pem -out cert.pfx

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>setup.snk</AssemblyOriginatorKeyFile>
+    <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>
+    <ApplicationIcon />
+    <StartupObject />
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\config\config.csproj" />
+    <ProjectReference Include="..\log\log.csproj" />
+  </ItemGroup>
+
+</Project>

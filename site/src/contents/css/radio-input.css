@@ -1,0 +1,4 @@
+.radio-input {
+    box-shadow: none !important;
+    filter: grayscale(1); 
+}

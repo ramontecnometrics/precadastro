@@ -1,0 +1,6 @@
+.div-acoes-do-formulario {
+    @media only screen and (max-width: 600px) {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}

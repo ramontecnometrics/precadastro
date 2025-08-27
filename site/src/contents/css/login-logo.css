@@ -1,0 +1,26 @@
+.login-logo {   
+   margin: auto;
+   margin-top: 60px;
+   margin-bottom: 30px;
+   height: 110px;
+}
+
+.div-login-logo {
+   text-align: center;
+   width: 100%;
+   min-height: 150px;
+   overflow: hidden;  
+   border-radius: 10px;
+}
+
+.login-logo-cloud {   
+   position: absolute;
+   top: 60px;
+   left: 80px;
+   font-size: 150px;
+   z-index: -1;
+}
+
+.login-logo  {   
+   width: 100%;
+}

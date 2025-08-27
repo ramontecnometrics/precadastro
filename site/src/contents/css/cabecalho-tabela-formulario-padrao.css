@@ -1,0 +1,33 @@
+.cabecalho-tabela-formulario-padrao {
+    height: fit-content;
+    max-height: fit-content;
+}
+
+.div-cabecalho-tabela-formulario-padrao {
+    overflow-y: scroll;
+    padding-left: 0px;
+    margin-right: 0px;
+    height: fit-content;
+    max-height: fit-content;
+    min-height: 30px;
+}
+
+.cabecalho-tabela-formulario-padrao .codigo {
+    min-width: 60px;
+    max-width: 60px;
+}
+
+.cabecalho-tabela-formulario-padrao .acoes {
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+}
+
+.cabecalho-tabela-formulario-padrao tr {
+    height: 30px;
+    min-height: 30px;
+}
+
+.cabecalho-tabela-formulario-padrao tr td {
+    padding-top: 5px;
+}

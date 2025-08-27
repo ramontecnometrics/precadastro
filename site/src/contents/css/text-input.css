@@ -1,0 +1,15 @@
+.text-input {
+    box-shadow: none !important; 
+}
+
+.text-input:focus {
+    box-shadow: none !important; 
+}
+
+textarea {
+    box-shadow: none !important; 
+}
+
+textarea:focus {
+    box-shadow: none !important; 
+}

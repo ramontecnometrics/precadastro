@@ -1,0 +1,17 @@
+.logo-menu-inferior {
+   margin: auto;
+   width: 180px;
+}
+
+.div-logo-menu-inferior {
+   text-align: center;
+   width: 100%;
+   min-height: 100px;
+   overflow: hidden;
+   border-radius: 10px;
+}
+
+.logo-cloud-menu-inferior {
+   font-size: 100px;
+   color: white;
+}

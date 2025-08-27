@@ -1,0 +1,23 @@
+[req]
+default_bits = 2048
+default_md = sha256
+encrypt_key = yes
+prompt = no
+distinguished_name = client_distinguished_name
+req_extensions = req_cert_extensions
+
+[ client_distinguished_name ]
+countryName = BR
+organizationName = DESENVOLVIMENTO TECNOMETRICS
+stateOrProvinceName = MG
+localityName = BELO HORIZONTE
+organizationalUnitName = TESTE
+commonName = localhost
+
+[ req_cert_extensions ]
+authorityKeyIdentifier=keyid,issuer
+basicConstraints = critical,CA:FALSE
+extendedKeyUsage=serverAuth
+keyUsage = critical, digitalSignature, keyEncipherment
+subjectAltName = DNS:localhost, IP:127.0.0.1
+subjectKeyIdentifier=hash
