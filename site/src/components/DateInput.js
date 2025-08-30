@@ -19,7 +19,7 @@ export default function DateInput(props) {
       }
       return { 
          date: date, 
-         dataDigitada: moment(date).format("dd/mm/yyyy"), 
+         dataDigitada: moment(date).format("DD/MM/YYYY"), 
          mostrarCalendario: false 
       };
    });
@@ -37,9 +37,9 @@ export default function DateInput(props) {
          setState(prev => ({ ...prev, dataDigitada: null }));
       } else {
          if (inputRef.current) {
-            inputRef.current.value = moment(date).format("dd/mm/yyyy");
+            inputRef.current.value = moment(date).format("DD/MM/YYYY");
          }
-         setState(prev => ({ ...prev, dataDigitada: moment(date).format("dd/mm/yyyy") }));
+         setState(prev => ({ ...prev, dataDigitada: moment(date).format("DD/MM/YYYY") }));
       }
       
       if (props.onChange) {
@@ -69,14 +69,14 @@ export default function DateInput(props) {
          d = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
 
          var d2 = moment(d);
-         if (d2.isValid() && dataString === d2.format(replaceAll(replaceAll("dd/mm/yyyy", '-', ''), '/', ''))) {
+         if (d2.isValid() && dataString === d2.format(replaceAll(replaceAll("DD/MM/YYYY", '-', ''), '/', ''))) {
             if (props.onChange) {
                props.onChange(d2.toDate());
             }
-            inputRef.current.value = d2.format("dd/mm/yyyy");
+            inputRef.current.value = d2.format("DD/MM/YYYY");
          } else {
             showError(`${state.dataDigitada} não é uma data válida`);
-            inputRef.current.value = moment(state.date ? state.date : new Date()).format("dd/mm/yyyy");
+            inputRef.current.value = moment(state.date ? state.date : new Date()).format("DD/MM/YYYY");
          }
       } else {
          setState(prev => ({ ...prev, date: null, dataDigitada: null }));
@@ -113,7 +113,7 @@ export default function DateInput(props) {
                type='text'
                className={'date-input' + (props.className ? ' ' + props.className : '')}
                ref={inputRef}
-               defaultValue={props.defaultValue ? moment(state.date).format("dd/mm/yyyy") : null}
+               defaultValue={props.defaultValue ? moment(state.date).format("DD/MM/YYYY") : null}
                style={{ ...props.style, ...inputBackgroundColor }}
                onChange={handleInputChange}
                readOnly={props.readOnly}
@@ -171,7 +171,7 @@ export default function DateInput(props) {
                      prev2Label={null}
                      next2Label={null}
                      showFixedNumberOfWeeks={false}
-                     calendarType={'US'}
+                     calendarType={'gregory'}
                   />
                )}
 

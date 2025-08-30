@@ -28,6 +28,7 @@ namespace config.NHibernate.Map
 create or replace view usuarioadministradorfast as 
 select usuario.id,
        usuario.thumbprint,      
+       usuario.searchable,
        usuario.email,
        usuario.nomedeusuario,
        usuario.id as iddousuario,

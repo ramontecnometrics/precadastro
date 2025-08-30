@@ -17,7 +17,7 @@ namespace config.NHibernate.Map
             Map(p => p.DataDeCadastro).Not.Nullable();
             Map(p => p.Searchable).Length(500).Index("");
 
-            Map(p => p.Sexo).CustomType<IntToTipoType<Sexo>>().Not.Nullable()
+            Map(p => p.Sexo).CustomType<IntToTipoType<Sexo>>()
                 .Check(EnumExtensions.GetDatabaseCheckConstraint<Pessoa, Sexo>(p => p.Sexo));
             HasMany(p => p.Enderecos)
                 .Cascade.All()

@@ -36,7 +36,7 @@ namespace api
             }
             else
             {
-                operation = RestrictOperations.Where(restrictOperation => IsMatch(restrictOperation.Value, 
+                operation = RestrictOperations.Where(restrictOperation => IsMatch(restrictOperation.Value,
                     httpUrl, httpMethod)).FirstOrDefault();
                 if (operation.Key > 0)
                 {
@@ -79,20 +79,10 @@ namespace api
                         openOperations.Add(0006, new KeyValuePair<string, string>("/publickey", "GET"));
                         openOperations.Add(0007, new KeyValuePair<string, string>("/login/recoverpassword", "POST"));
                         openOperations.Add(0008, new KeyValuePair<string, string>("/login/resetpassword", "POST"));
-                        openOperations.Add(0009, new KeyValuePair<string, string>("/cidade", "GET"));
                         openOperations.Add(0010, new KeyValuePair<string, string>("/parametrodosistema/urlpublica", "GET"));
-                        openOperations.Add(0011, new KeyValuePair<string, string>("/receiver/moko/status", "GET"));
-                        openOperations.Add(0012, new KeyValuePair<string, string>("/receiver/moko", "POST"));
-                        openOperations.Add(0013, new KeyValuePair<string, string>("/receiver/ab;/receiver/ab2", "POST"));
-                        openOperations.Add(0014, new KeyValuePair<string, string>("/maintenance*", "GET"));
-                        openOperations.Add(0015, new KeyValuePair<string, string>("/H1*", "GET"));
-                        openOperations.Add(0016, new KeyValuePair<string, string>("/receiver/mikrotik*", "POST"));
-                        openOperations.Add(0018, new KeyValuePair<string, string>("/ack", "GET"));
-                        openOperations.Add(0019, new KeyValuePair<string, string>("/ack", "POST"));
+                        openOperations.Add(0011, new KeyValuePair<string, string>("/lead/precadastro", "POST"));
+                        openOperations.Add(0012, new KeyValuePair<string, string>("/lead/identificar", "GET"));
                         openOperations.Add(0020, new KeyValuePair<string, string>("/", "HEAD"));
-                        openOperations.Add(0021, new KeyValuePair<string, string>("/receiver/mobile", "POST"));
-                        openOperations.Add(0022, new KeyValuePair<string, string>("/receiver/status", "GET"));
-                        openOperations.Add(0023, new KeyValuePair<string, string>("/MKGW01BWPRO*", "GET"));
                     }
                 }
                 return openOperations;
@@ -117,6 +107,7 @@ namespace api
                         restrictOperations.Add(90005, new KeyValuePair<string, string>("/login/termosdeuso", "GET"));
                         restrictOperations.Add(90006, new KeyValuePair<string, string>("/cidade", "GET"));
                         restrictOperations.Add(90007, new KeyValuePair<string, string>("/pais", "GET"));
+                        restrictOperations.Add(90008, new KeyValuePair<string, string>("/profissao", "GET"));
 
                         // 
 
@@ -139,10 +130,15 @@ namespace api
                         restrictOperations.Add(1043, new KeyValuePair<string, string>("/parametrodosistema", "PUT"));
                         restrictOperations.Add(1044, new KeyValuePair<string, string>("/parametrodosistema", "DELETE"));
 
-                        restrictOperations.Add(1051, new KeyValuePair<string, string>("/lead", "GET"));
+                        restrictOperations.Add(1051, new KeyValuePair<string, string>("/lead;/lead/fast", "GET"));
                         restrictOperations.Add(1052, new KeyValuePair<string, string>("/lead", "POST"));
                         restrictOperations.Add(1053, new KeyValuePair<string, string>("/lead", "PUT"));
                         restrictOperations.Add(1054, new KeyValuePair<string, string>("/lead", "DELETE"));
+
+                        restrictOperations.Add(1061, new KeyValuePair<string, string>("/formulario;/formulario/fast", "GET"));
+                        restrictOperations.Add(1062, new KeyValuePair<string, string>("/formulario", "POST"));
+                        restrictOperations.Add(1063, new KeyValuePair<string, string>("/formulario", "PUT"));
+                        restrictOperations.Add(1064, new KeyValuePair<string, string>("/formulario", "DELETE"));
 
                         restrictOperations.Add(1381, new KeyValuePair<string, string>("/termodeuso", "GET"));
                         restrictOperations.Add(1382, new KeyValuePair<string, string>("/termodeuso", "POST"));

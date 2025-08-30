@@ -50,13 +50,13 @@ export default function PasswordInput(props) {
                {/* Toggle mostrar/esconder senha */}
                {!props.readOnly && (
                   <div
-                     style={{ marginLeft: 5, borderLeft: '1px solid lightgray' }}
+                     style={{ marginLeft: props.appendIcon ? 5 : 0, borderLeft: props.appendIcon ?  '1px solid lightgray' : null}}
                      onClick={() => setShowPassword((prev) => !prev)}
                   >
                      <IconButton
                         style={{
                            fontSize: 20,
-                           marginLeft: 5,
+                           marginLeft: props.appendIcon ? 5 : 0,
                            paddingTop: 3,
                            color: corDoIcone,
                         }}

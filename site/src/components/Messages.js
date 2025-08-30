@@ -18,14 +18,17 @@ const customStyles = {
       padding: 0,
       maxHeight: '400px',
       height: 'fit-content',
+      zIndex: 2001, // 👈 garante que o conteúdo fique no topo
    },
    overlay: {
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      zIndex: 2000, // 👈 overlay acima dos modais normais (1050 no bootstrap)
    },
 };
+
 
 // ========= Função auxiliar para abrir modais =========
 function openModal(Component, props) {

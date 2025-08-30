@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using framework.Validators;
 using System;
-using System.Text;
-using framework.Extensions;
 
 namespace model
 {
@@ -31,40 +29,43 @@ namespace model
 
         [Descricao("Feminino")]
         Feminino = 2,
+
+        [Descricao("Outros")]
+        Outros = 3,
     }
 
     public abstract class Pessoa : ISearchableEntity
     {
-        public virtual long Id { get; set; }
-        public virtual string Thumbprint { get; set; }
+        public long Id { get; set; }
+        public string Thumbprint { get; set; }
 
-        public virtual string Searchable { get; set; }
+        public string Searchable { get; set; }
         [RequiredValidation("Informe a data de cadastro.")]
-        public virtual DateTime DataDeCadastro { get; set; }        
-        public virtual EncryptedText Apelido { get; set; }
-        public virtual EncryptedText Cpf { get; set; }
-        public virtual EncryptedText Cnpj { get; set; }
-        public virtual EncryptedText DocumentoDeIdentidade { get; set; }
-        public virtual string OrgaoExpedidorDoDocumentoDeIdentidade { get; set; }
-        public virtual IList<EnderecoDePessoa> Enderecos { get; set; }
-        public virtual IList<TelefoneDePessoa> Telefones { get; set; }
-        public virtual EncryptedText Email { get; set; }
-        public virtual Tipo<Sexo> Sexo { get; set; }
-        public virtual Tipo<TipoDePessoa> TipoDePessoa { get; set; }
-        public virtual Arquivo Foto { get; set; }
-        public virtual DateTime? DataDeNascimento { get; set; } 
-        public virtual Pais Pais { get; set; }
+        public DateTime DataDeCadastro { get; set; }
+        public EncryptedText Apelido { get; set; }
+        public EncryptedText Cpf { get; set; }
+        public EncryptedText Cnpj { get; set; }
+        public EncryptedText DocumentoDeIdentidade { get; set; }
+        public string OrgaoExpedidorDoDocumentoDeIdentidade { get; set; }
+        public IList<EnderecoDePessoa> Enderecos { get; set; }
+        public IList<TelefoneDePessoa> Telefones { get; set; }
+        public EncryptedText Email { get; set; }
+        public Tipo<Sexo> Sexo { get; set; }
+        public Tipo<TipoDePessoa> TipoDePessoa { get; set; }
+        public Arquivo Foto { get; set; }
+        public DateTime? DataDeNascimento { get; set; }
+        public Pais Pais { get; set; }
 
         [RequiredValidation("Informe o nome da pessoa.", "Nome", GroupValidationType.AtLeastOneValid)]
-        public virtual EncryptedText NomeCompleto { get; set; }
+        public EncryptedText NomeCompleto { get; set; }
 
         [RequiredValidation("Informe a razão social.", "Nome", GroupValidationType.AtLeastOneValid)]
-        public virtual EncryptedText RazaoSocial { get; set; }
+        public EncryptedText RazaoSocial { get; set; }
 
-        public virtual EncryptedText NomeFantasia { get; set; }
+        public EncryptedText NomeFantasia { get; set; }
 
-        public virtual string IdadePorExtenso { get { return DataDeNascimento.ToIdadePorExtenso(); } }
-        public virtual int Idade { get { return DataDeNascimento.ToIdade(); } }
+        public string IdadePorExtenso { get { return DataDeNascimento.ToIdadePorExtenso(); } }
+        public int Idade { get { return DataDeNascimento.ToIdade(); } }
 
         public abstract Genero GeneroDaEntidade { get; }
         public abstract string NomeDaEntidade { get; }
@@ -117,7 +118,7 @@ namespace model
                 DateTime DataAtual = DateTime.Now;
                 if (DataNascimento > DataAtual)
                 {
-                    var exception = new Exception("A data de nascimento não pode ser superior a data atual.");                    
+                    var exception = new Exception("A data de nascimento não pode ser superior a data atual.");
                     throw exception;
                 }
                 int Anos = new DateTime(DateTime.Now.Subtract(DataNascimento).Ticks).Year - 1;

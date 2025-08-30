@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import Form from '../components/forms/Form';
-import CidadeController from './CidadeController';
+import ProfissaoController from './ProfissaoController';
 
-export default function CidadeView(props) {
+export default function ProfissaoView(props) {
    const [state, setState] = useState({});
 
-   const controller = useMemo(() => new CidadeController(), []);
+   // memoiza o controller para não recriar em cada render
+   const controller = useMemo(() => new ProfissaoController(), [state]);
 
    const getFormState = () => state;
    const setFormState = (newState, callback) => {
@@ -18,8 +19,8 @@ export default function CidadeView(props) {
 
    return (
       <Form
-         titulo={'Cidades'}
-         url={'/cidade'}
+         titulo={'Profissões'}
+         url={'/profissao'}
          ordenacaoPadrao={'Id'}
          permissoes={[1111, null, null, null]}
          getFiltro={controller.getFiltro}

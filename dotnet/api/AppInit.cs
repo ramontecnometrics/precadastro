@@ -49,14 +49,17 @@ namespace api
         {
             var config = services.GetRequiredService<IConfiguration>();
 
-            bool rebuildSearchable = config.GetValue<string>("RebuildSearchable") == "True";
+            var rebuildSearchable = config.GetValue<string>("RebuildSearchable") == "True";
+            var rebuildSearchableEntityes = config.GetValue<string>("RebuildSearchableOfEntities");
+
+            var rebuildSearchableEntityesArray = (rebuildSearchableEntityes == null ? "" : rebuildSearchableEntityes).Split(",");
 
             if (rebuildSearchable)
             {
                 Console.WriteLine("Atualizando a propriedade \"Searchable\"...");
                 try
                 {
-                    SearchableUpdater.Update(services);
+                    SearchableUpdater.Update(services, rebuildSearchableEntityesArray);
                     Console.WriteLine("Atualizado com sucesso!");
                 }
                 catch (Exception e)
@@ -71,13 +74,19 @@ namespace api
 
     public class SearchableUpdater
     {
-        public static void Update(IServiceProvider provider)
+        public static void Update(IServiceProvider provider, string[] rebuildSearchableEntityes)
         {            
             using var scope = provider.CreateScope();
             var sp = scope.ServiceProvider;
 
             foreach (var entityType in TypeScanner.GetImplementations<ISearchableEntity>())
             {
+                if (rebuildSearchableEntityes != null &&                    
+                    !rebuildSearchableEntityes.Contains(entityType.Name))
+                {
+                    continue;
+                }
+
                 var repoType = typeof(Repository<>).MakeGenericType(entityType);
                 var repo = sp.GetService(repoType) ?? Activator.CreateInstance(repoType);
                 var getAll = repoType.GetMethod("GetAll", BindingFlags.Instance | BindingFlags.Public);

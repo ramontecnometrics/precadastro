@@ -80,7 +80,7 @@ export default function Select(props) {
    };
 
    const showModal = () => {
-      setState(prev => ({ ...prev, inserindo: true }));
+      setState((prev) => ({ ...prev, inserindo: true }));
    };
 
    const onSelect = (item) => {
@@ -112,15 +112,15 @@ export default function Select(props) {
             if (props.getDescription && inputRef.current) {
                inputRef.current.value = props.getDescription(item);
             }
-            setState(prev => ({ ...prev, oneItemSelected: item }));
+            setState((prev) => ({ ...prev, oneItemSelected: item }));
          }
 
-         setState(prev => ({ ...prev, inserindo: false }));
+         setState((prev) => ({ ...prev, inserindo: false }));
       }
    };
 
    const aoCancelar = () => {
-      setState(prev => ({ ...prev, inserindo: false }));
+      setState((prev) => ({ ...prev, inserindo: false }));
    };
 
    const getSearchText = () => {
@@ -130,7 +130,7 @@ export default function Select(props) {
    const clear = () => {
       let f = () => {
          inputRef.current.value = null;
-         setState(prev => ({
+         setState((prev) => ({
             ...prev,
             oneItemSelected: null,
             searchText: null,
@@ -155,20 +155,19 @@ export default function Select(props) {
 
                waitingDataRef.current = true;
 
-               api
-                  .getAll(props.getFilterUrl(text))
+               api.getAll(props.getFilterUrl(text))
                   .then((result) => {
                      if (props.filter) {
                         result = props.filter(result.items);
                      }
-                     setState(prev => ({ ...prev, previewOptions: result.items }));
+                     setState((prev) => ({ ...prev, previewOptions: result.items }));
                   })
                   .finally(() => {
                      waitingDataRef.current = false;
                   });
             }
          } else {
-            setState(prev => ({ ...prev, previewOptions: null }));
+            setState((prev) => ({ ...prev, previewOptions: null }));
          }
       }
    };
@@ -267,8 +266,7 @@ export default function Select(props) {
                         onChange={(e) => {
                            let options = props.options.filter((i) => {
                               let value = props.getKeyValue ? props.getKeyValue(i) : null;
-                              return (value || (value === 0 && props.acceptZero)) &&
-                                 value.toString() === e.target.value
+                              return (value || (value === 0 && props.acceptZero)) && value.toString() === e.target.value
                                  ? true
                                  : false;
                            });
@@ -288,10 +286,7 @@ export default function Select(props) {
                            ),
                            getOptions(props.options).map((item, index) => {
                               return (
-                                 <option
-                                    key={index}
-                                    value={props.getKeyValue ? props.getKeyValue(item) : null}
-                                 >
+                                 <option key={index} value={props.getKeyValue ? props.getKeyValue(item) : null}>
                                     {props.getDescription ? props.getDescription(item) : null}
                                  </option>
                               );
@@ -304,7 +299,7 @@ export default function Select(props) {
                      <form
                         onSubmit={(event) => {
                            event.preventDefault();
-                           setState(prev => ({ ...prev, inserindo: true }));
+                           setState((prev) => ({ ...prev, inserindo: true }));
                         }}
                         action='/'
                         name={'formSearchText_' + name2}
@@ -319,7 +314,7 @@ export default function Select(props) {
                            id={name}
                            defaultValue={defaultDescription}
                            onChange={(e) => {
-                              setState(prev => ({ ...prev, searchText: e.target.value }));
+                              setState((prev) => ({ ...prev, searchText: e.target.value }));
                               changedRef.current = true;
                               clearTimeout(changeTimerRef.current);
                               changeTimerRef.current = setTimeout(() => {
@@ -339,16 +334,12 @@ export default function Select(props) {
                               borderColor: '#ced4da',
                               fontSize: props.fontSize ? props.fontSize : null,
                            }}
-                           readOnly={
-                              props.readOnly || state.oneItemSelected || props.disableTextEdit
-                                 ? true
-                                 : false
-                           }
+                           readOnly={props.readOnly || state.oneItemSelected || props.disableTextEdit ? true : false}
                            placeholder={props.placeholder}
                            onInput={inputToUpper}
                            onBlur={() => {
                               setTimeout(() => {
-                                 setState(prev => ({ ...prev, previewOptions: null }));
+                                 setState((prev) => ({ ...prev, previewOptions: null }));
                               }, 1500);
                            }}
                            onKeyUp={(e) => {
@@ -366,10 +357,7 @@ export default function Select(props) {
                   {props.formularioPadrao && !props.readOnly && (
                      <div className='hide-when-readonly' style={{ cursor: 'pointer' }}>
                         {!state.oneItemSelected && (
-                           <InputGroup.Text
-                              style={{ maxWidth: 48 }}
-                              onClick={showModal}
-                           >
+                           <InputGroup.Text style={{ maxWidth: 48 }} onClick={showModal}>
                               <div style={{ height: 24, width: 30, display: 'table-cell' }}>
                                  <IconButton
                                     style={{
@@ -421,7 +409,7 @@ export default function Select(props) {
                               }}
                               onClick={() => {
                                  aoSelecionar(item);
-                                 setState(prev => ({ ...prev, previewOptions: null }));
+                                 setState((prev) => ({ ...prev, previewOptions: null }));
                               }}
                               onKeyUp={(e) => {
                                  if (e.keyCode === 40) {
@@ -432,7 +420,7 @@ export default function Select(props) {
                                  }
                                  if (e.keyCode === 13) {
                                     aoSelecionar(item);
-                                    setState(prev => ({ ...prev, previewOptions: null }));
+                                    setState((prev) => ({ ...prev, previewOptions: null }));
                                     let component = document.getElementById(name);
                                     if (component) {
                                        component.focus();
@@ -440,7 +428,7 @@ export default function Select(props) {
                                  }
                                  if (e.keyCode === 27) {
                                     aoSelecionar(null);
-                                    setState(prev => ({ ...prev, previewOptions: null }));
+                                    setState((prev) => ({ ...prev, previewOptions: null }));
                                     let component = document.getElementById(name);
                                     if (component) {
                                        component.focus();
@@ -459,13 +447,13 @@ export default function Select(props) {
          {state.inserindo && (
             <Modal
                show={state.inserindo}
-               scrollable={true}
                size={'lg'}
                onHide={() => {}}
                onKeyDown={(e) => {
-                  if (e.keyCode === 27) setState(prev => ({ ...prev, inserindo: false }));
+                  if (e.keyCode === 27) setState((prev) => ({ ...prev, inserindo: false }));
                }}
-               dialogClassName='h-100'
+               aria-labelledby='contained-modal-title-vcenter'
+               centered               
             >
                <Modal.Body
                   style={{
@@ -474,7 +462,10 @@ export default function Select(props) {
                      position: 'relative',
                      fontSize: 13,
                      padding: '0 0 0 0',
-                     maxHeight: '100%',
+                     maxHeight: 500,
+                     height: 500,
+                     borderTopLeftRadius: 18,
+                     borderTopRightRadius: 18,
                   }}
                >
                   {props.formularioPadrao({ aoSelecionar, aoCancelar, getSearchText })}

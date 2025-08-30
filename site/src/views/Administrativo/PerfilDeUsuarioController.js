@@ -54,7 +54,7 @@ export default function PerfilDeUsuarioController() {
    };
 
    const aposInserir = (formState, setFormState) => {
-      inserirTodas(formState, setFormState);
+      return inserirTodas(formState, setFormState);
    };
 
    const inserirTodas = (formState, setFormState) => {

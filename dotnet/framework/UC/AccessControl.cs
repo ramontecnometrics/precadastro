@@ -332,10 +332,10 @@ namespace framework
                     throw new Exception($"Token expirado em {expDateTime.ToString("yyyy/MM/dd HH:mm:ss")} GMT");
                 }
 
-                if (expDateTime > now.AddDays(1))
+                /*if (expDateTime > now.AddDays(1))
                 {
                     throw new Exception($"A data de validade do token não pode ultrapassar 24h. Gere um novo token com uma nova data de expiração no campo \"exp\" até {now.AddDays(1).ToString("yyyy/MM/dd HH:mm:ss")} GMT");
-                }
+                }*/
 
                 if (now < nbfDateTime)
                 {

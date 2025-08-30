@@ -1,15 +1,15 @@
 ﻿using api.Dtos;
 using data;
 using framework;
-using Microsoft.AspNetCore.Mvc;
 using model;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Components;
 
 namespace api.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
+    [Route("cidade/[action]")]
+    [Route("cidade")]
     public class CidadeController :
                 EntityController<
                     Cidade,
@@ -42,7 +42,7 @@ namespace api.Controllers
             }
             if (!string.IsNullOrEmpty(getParams.Searchable))
             {
-                result = result.Where(i => i.Searchable.Contains(getParams.Searchable));
+                result = result.Where(i => i.Searchable.Contains(SearchableHelper.Build(getParams.Searchable, Cidade.SearchableScope)));
             }
             return result;            
         }

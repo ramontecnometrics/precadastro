@@ -1,15 +1,19 @@
 class SessionManager {
    getLogin() {
-      let result = JSON.parse(sessionStorage.getItem('usuario'));
+      let result = JSON.parse(localStorage.getItem('usuario'));
       return result;
    }
 
    setLogin(usuario) {      
-      sessionStorage.setItem('usuario', JSON.stringify(usuario));
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+   }
+
+   logoff() {
+      localStorage.removeItem('usuario');
    }
 
    isAuthenticated() {
-      let usuario = JSON.parse(sessionStorage.getItem('usuario'));
+      let usuario = JSON.parse(localStorage.getItem('usuario'));
       return usuario && usuario.token && window.location.pathname !== '/login';
    }
 
@@ -18,9 +22,9 @@ class SessionManager {
       return result;
    }
 
-   isUsuarioTecnometrics() {
+   isUsuarioAdministrador() {
       let result = false;
-      let usuario = JSON.parse(sessionStorage.getItem('usuario'));
+      let usuario = JSON.parse(localStorage.getItem('usuario'));
       if (usuario && usuario.token && window.location.pathname !== '/adm/login') {
          result = usuario.tipoDeAcesso === 'ADM';
       }
@@ -29,7 +33,7 @@ class SessionManager {
   
    aceitouTermosDeUso() {
       let result = false;
-      let usuario = JSON.parse(sessionStorage.getItem('usuario'));
+      let usuario = JSON.parse(localStorage.getItem('usuario'));
       if (usuario && usuario.token && window.location.pathname !== '/login') {
          result = usuario.aceitouTermosDeUso;
       }

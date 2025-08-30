@@ -25,18 +25,14 @@ namespace model
         [RequiredValidation("Informe o nome da profissão.")]
         public virtual string Nome { get; set; }
         public virtual Tipo<SituacaoDeProfissao> Situacao { get; set; }
-        public virtual string Searchable { get; set; }
 
+        public virtual string Searchable { get; set; }
+        public static string SearchableScope = "Profissao";
         public virtual string GetSearchableText()
         {
             var result = new StringBuilder();
             result.Append(Nome);            
-            return SearchableHelper.Build(result.ToString(), "Profissao");
-        }
-
-        public Profissao()
-        {
-            this.Situacao = 0;
-        }
+            return SearchableHelper.Build(result.ToString(), SearchableScope);
+        }         
     }
 }

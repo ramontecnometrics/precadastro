@@ -1,5 +1,5 @@
 import { faIdCard } from '@fortawesome/free-regular-svg-icons';
-import { faBars, faCogs, faHome, faInfoCircle, faListAlt, faTools } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCogs, faFile, faHome, faInfoCircle, faListAlt, faTools, faUser } from '@fortawesome/free-solid-svg-icons';
 import sessionManager from './SessionManager';
 
 class Menus {
@@ -14,14 +14,14 @@ class Menus {
 
    getMenusParaAceiteDeTermosDeUso = () => {
       let result = [
-         { key: 10, label: 'Início', icon: faHome, fontWeight: 500, route: '/', enabled: true },
+         { key: 10, label: 'Início', icon: faHome, fontWeight: 500, route: '/adm', enabled: true },
          {
             key: 30,
             label: 'Sobre',
             icon: faInfoCircle,
             fontWeight: 500,
             enabled: true,
-            route: '/about',
+            route: '/adm/about',
          },
       ];
       return result;
@@ -29,7 +29,7 @@ class Menus {
 
    getMenusAdministrador = () => {
       let result = [
-         { key: 10, label: 'Início', icon: faHome, fontWeight: 500, route: '/', enabled: true },
+         { key: 10, label: 'Início', icon: faHome, fontWeight: 500, route: '/adm', enabled: true },
          {
             key: 20,
             label: 'Cadastro',
@@ -42,20 +42,35 @@ class Menus {
                   key: 1011,
                   label: 'Perfil de Usuário',
                   icon: faListAlt,
-                  route: '/1011',
+                  route: '/adm/1011',
                   enabled: this.temAcessoARotina(1011),
                },
-                               {
-                   key: 1021,
-                   label: 'Usuários',
-                   icon: faIdCard,
-                   route: '/1021',
-                   enabled: this.temAcessoARotina(1021),
-                },
+               {
+                  key: 1021,
+                  label: 'Usuários',
+                  icon: faIdCard,
+                  route: '/adm/1021',
+                  enabled: this.temAcessoARotina(1021),
+               },
+               {
+                  key: 1061,
+                  label: 'Formulários',
+                  icon: faFile,
+                  route: '/adm/1061',
+                  enabled: this.temAcessoARotina(1061),
+               },
             ],
          },
          {
-            key: 25,
+            key: 15,
+            label: 'Leads',
+            icon: faUser,
+            fontWeight: 500,
+            route: '/adm/1051',
+            enabled: this.temAcessoARotina(1051),
+         },
+         {
+            key: 20,
             label: 'Configurações',
             icon: faCogs,
             fontWeight: 500,
@@ -65,14 +80,14 @@ class Menus {
                   key: 1041,
                   label: 'Parâmetros do Sistema',
                   icon: faCogs,
-                  route: '/1041',
+                  route: '/adm/1041',
                   enabled: this.temAcessoARotina(1041),
                },
                {
                   key: 1031,
                   label: 'Rotinas do Sistema',
                   icon: faListAlt,
-                  route: '/1031',
+                  route: '/adm/1031',
                   enabled: this.temAcessoARotina(1031),
                },
 
@@ -80,13 +95,13 @@ class Menus {
                   key: 1381,
                   label: 'Termo',
                   icon: faListAlt,
-                  route: '/1381',
+                  route: '/adm/1381',
                   enabled: this.temAcessoARotina(1381),
                },
             ],
          },
          {
-            key: 26,
+            key: 25,
             label: 'Manutenção',
             icon: faTools,
             fontWeight: 500,
@@ -96,14 +111,14 @@ class Menus {
                   key: 9001,
                   label: 'Logs',
                   icon: faBars,
-                  route: '/9001',
+                  route: '/adm/9001',
                   enabled: this.temAcessoARotina(9001),
                },
                {
                   key: 1501,
                   label: 'Auditoria',
                   icon: faBars,
-                  route: '/1501',
+                  route: '/adm/1501',
                   enabled: this.temAcessoARotina(1501),
                },
             ],
@@ -114,7 +129,7 @@ class Menus {
             icon: faInfoCircle,
             fontWeight: 500,
             enabled: true,
-            route: '/about',
+            route: '/adm/about',
          },
       ];
       return result;

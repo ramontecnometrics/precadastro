@@ -1,6 +1,7 @@
 import React from 'react';
-import { Routes, Route, Navigate, HashRouter } from 'react-router-dom';
+import { Routes, Route, Navigate, BrowserRouter as HashRouter } from 'react-router-dom';
 import PreCadastroView from './views/PreCadastroView';
+import AvaliacaoClinicaView from './views/AvaliacaoClinicaView';
 import sessionManager from './SessionManager';
 import MainLayout from './components/MainLayout';
 import TermosDeUsoView from './views/TermosDeUsoView';
@@ -17,7 +18,7 @@ function App() {
 
    let result = null;
 
-   if (sessionManager.isAuthenticated()) {
+   if (sessionManager.isAuthenticated()) {   
       if (!sessionManager.aceitouTermosDeUso()) {
          result = (
             <HashRouter>
@@ -37,12 +38,28 @@ function App() {
                </MainLayout>
             </HashRouter>
          );
-      } else if (sessionManager.isUsuarioTecnometrics()) {
-         result = (
-            <LayoutAdministrador
-               mostrarDadosDaConta={true}
-            />
-         );
+      } else if (sessionManager.isUsuarioAdministrador()) {
+
+         console.log(window.location.pathname);
+
+         if (window.location.pathname === '/') {
+            result = (
+               <PreCadastroView />
+            );
+         } else 
+         if (window.location.pathname === '/avaliacaoclinica') {
+            result = (
+               <AvaliacaoClinicaView />
+            );
+         } else {               
+            result = (
+               <LayoutAdministrador
+                  mostrarDadosDaConta={true}
+               />
+            );
+         }
+
+         
       }
    } else {
       result = (

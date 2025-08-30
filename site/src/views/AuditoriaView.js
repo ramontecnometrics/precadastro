@@ -25,7 +25,7 @@ export default function AuditoriaView(props) {
 
    const formRef = useRef(null);
 
-   const isTecnometrics = sessionManager.isUsuarioTecnometrics();
+   const isTecnometrics = sessionManager.isUsuarioAdministrador();
 
    // cria controller apenas uma vez
    const controller = useMemo(

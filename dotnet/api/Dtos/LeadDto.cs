@@ -20,9 +20,13 @@ namespace api.Dtos
 		public string AlertaDeSaude { get; set; }
 		public DateTime DataDeCadastro { get; set; }
 		public TelefoneDePessoaDto Telefone { get; set; }
-		public EnderecoDePessoaDto Endereco { get; set; }
+		public TelefoneDePessoaDto Celular { get; set; }
+        public EnderecoDePessoaDto Endereco { get; set; }
 		public ProfissaoDto Profissao { get; set; }
 		public ArquivoDto Foto { get; set; }
+        public Tipo<Sexo> Sexo { get; set; }
+        public DateTime? DataDeNascimento { get; set; }
+        public string DocumentoDeIdentidade { get; set; }
 
         public static LeadDto Build(Lead item)
 		{
@@ -39,13 +43,18 @@ namespace api.Dtos
 					Situacao = item.Situacao,
 					EstadoCivil = item.EstadoCivil,
 					Cnh = item.Cnh?.GetPlainText(),
-					Observacao = item.Observacao,
+					DocumentoDeIdentidade = item.DocumentoDeIdentidade?.GetPlainText(),
+                    Observacao = item.Observacao,
 					AlertaDeSaude = item.AlertaDeSaude,
 					DataDeCadastro = item.DataDeCadastro,
-					Telefone = TelefoneDePessoaDto.Build(item.Telefone),
-					Endereco = EnderecoDePessoaDto.Build(item.Endereco),
+                    DataDeNascimento = item.DataDeNascimento,
+                    Telefone = TelefoneDePessoaDto.Build(item.Telefone),
+					Celular = TelefoneDePessoaDto.Build(item.Celular),
+                    Endereco = EnderecoDePessoaDto.Build(item.Endereco),
 					Profissao = ProfissaoDto.Build(item.Profissao),
-					Foto = ArquivoDto.Build(item.Foto)
+					Foto = ArquivoDto.Build(item.Foto),
+					Sexo = item.Sexo,
+					
 				};
 			}
 			return result;
@@ -55,12 +64,15 @@ namespace api.Dtos
 	public class LeadFastDto
 	{
 		public long Id { get; set; } 
-		public string Nome { get; set; }
+		public string NomeCompleto { get; set; }
 		public string Cpf { get; set; }
 		public string Email { get; set; } 
 		public string Telefone { get; set; }
+        public DateTime DataDeCadastro { get; set; }
+        public string Celular { get; set; }
+        public Tipo<SituacaoDeLead> Situacao { get; set; }
 
-		public static LeadFastDto Build(LeadFast item)
+        public static LeadFastDto Build(LeadFast item)
 		{
 			var result = default(LeadFastDto);
 			if (item != null)
@@ -68,10 +80,13 @@ namespace api.Dtos
 				result = new LeadFastDto()
 				{
 					Id = item.Id,
-					Nome = item.Nome?.GetPlainText(),
+					NomeCompleto = item.NomeCompleto?.GetPlainText(),
 					Cpf = item.Cpf?.GetPlainText(),
 					Email = item.Email?.GetPlainText(),
-					Telefone = item.Telefone?.GetPlainText()
+					Telefone = item.Telefone?.NumeroComDDD,
+					Celular = item.Celular?.NumeroComDDD,
+                    DataDeCadastro = item.DataDeCadastro,
+					Situacao = item.Situacao,
 				};
 			}
 			return result;

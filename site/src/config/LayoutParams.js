@@ -2,10 +2,10 @@ import logo from './../contents/img/logo.svg';
 
 export const LayoutParams = {
    colors: {
-      corDoTemaPrincipal: '#122937',
-      corDoTemaPrincipalOff: '#1C3343',
-      corDoTemaPrincipalOff2: '#47525aff',
-      corSecundaria: '#b6c7cf',
+      corDoTemaPrincipal: '#080e2a',
+      corDoTemaPrincipalOff: '#151b37',
+      corDoTemaPrincipalOff2: '#151b37',
+      corSecundaria: '#d4af37',
       corDoTextoPadrao: '#b6c7cf',
       corDoTextoEmDestaque: '#ced9de',
       fundoCinza: 'rgb(222, 226, 230)',

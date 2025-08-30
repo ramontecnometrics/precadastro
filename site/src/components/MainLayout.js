@@ -138,9 +138,9 @@ function AccountMenu({ login }) {
                   </div>
                </Popover.Header>
                <Popover.Body style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
-                  <MenuLink to='/account' icon={faUser} text='Meus dados' />
-                  <MenuLink to='/about' icon={faInfoCircle} text='Sobre' />
-                  <MenuLink to='/logoff' icon={faSignOutAlt} text='Sair' />
+                  <MenuLink to='/adm/account' icon={faUser} text='Meus dados' />
+                  <MenuLink to='/adm/about' icon={faInfoCircle} text='Sobre' />
+                  <MenuLink to='/adm/logoff' icon={faSignOutAlt} text='Sair' />
                </Popover.Body>
             </Popover>
          }
@@ -241,7 +241,7 @@ function SideMenuGroup({ icon, label, subMenu, level, route }) {
 function MenuLink({ to, icon, text, isSubItem, fontWeight }) {
    return (
       <Link to={to} $isSubItem={isSubItem}>
-         <div style={{ display: 'inline-flex' }}>
+         <div style={{ display: 'inline-flex', padding: '6px 6px 6px 6px' }}>
             <div className='menu-icon'>
                <IconButton icon={icon} />
             </div>

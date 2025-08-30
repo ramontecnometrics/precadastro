@@ -47,5 +47,8 @@ namespace framework
         AlterouLead = 20,
         [Descricao("Excluiu lead")]
         ExcluiuLead = 21,
+        FormularioInsert = 22,
+        FormularioUpdate = 23,
+        FormularioDelete = 24,
     }
 }

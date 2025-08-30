@@ -207,7 +207,7 @@ namespace model.Repositories
             {
                 var aceitouTermosDeUso = GetAll().Where(i => i.Id == idDoUsuario && i.AceitouTermosDeUso).Count() > 0;
 
-                if (aceitouTermosDeUso)
+                // if (aceitouTermosDeUso)
                 {
 
                     var ativo = PerfilDoUsuarioRepository.GetAll()

@@ -57,7 +57,7 @@ class Api {
             const el = document.getElementById('loading');
             if (el) el.className = 'loadingDiv';
          }
-      }, 2000);
+      }, 5000);
    };
 
    finishLoading = () => {
@@ -199,7 +199,7 @@ class Api {
       }
 
       if (mensagem === 'Network Error') {
-         mensagem = "Servidor indisponível";
+         mensagem = "Servidor indisponível.";
       }
       return mensagem;
    };

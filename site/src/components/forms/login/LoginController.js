@@ -82,7 +82,7 @@ export default function LoginController() {
 
             result.token = decryptedToken;
             sessionManager.setLogin(result);
-            window.location = './';
+            window.location = './adm';
             resolve();
 
          } catch (e) {

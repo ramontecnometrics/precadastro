@@ -8,7 +8,7 @@ export default function CepInput(props) {
             className={'form-control cep-input' + (props.className ? ' ' + props.className : '')}
             format='#####-###'
             defaultValue={props.defaultValue}
-            onValueChange={props.onChange}
+            onValueChange={(values) => props.onChange(values.formattedValue, values.floatValue)}
             onBlur={props.onBlur}
             style={props.style}
             name={props.name}

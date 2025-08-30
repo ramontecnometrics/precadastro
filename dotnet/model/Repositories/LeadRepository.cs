@@ -1,6 +1,4 @@
 using data;
-using framework;
-using System.Linq;
 
 namespace model.Repositories
 {
@@ -10,23 +8,10 @@ namespace model.Repositories
         {
         }
 
-        public virtual IQueryable<Lead> GetAll()
+        public override void Delete(Lead entity)
         {
-            return UnitOfWork.GetAll();
-        }
-
-        public virtual Lead Get(long id, bool useCache = true)
-        {
-            if (useCache)
-            {
-                return base.Get(id);
-            }
-            return UnitOfWork.Get(id);
-        }
-
-        public virtual void Delete(Lead entity)
-        {
-            UnitOfWork.Delete(entity);
+            entity.Situacao = SituacaoDeLead.Excluido;
+            Update(entity);
         }
     }
 }

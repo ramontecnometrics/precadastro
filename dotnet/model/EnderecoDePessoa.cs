@@ -14,17 +14,4 @@ namespace model
         public virtual Endereco Endereco { get; set; }
         public virtual Tipo<TipoDeEndereco> Tipo { get; set; }
     }
-
-    internal class EnderecoDePessoaEqualityComparer : IEqualityComparer<EnderecoDePessoa>
-    {
-        public bool Equals(EnderecoDePessoa x, EnderecoDePessoa y)
-        {
-            return (x.Id == y.Id);
-        }
-
-        public int GetHashCode(EnderecoDePessoa obj)
-        {
-            return obj.Id.GetHashCode();
-        }
-    }
 }

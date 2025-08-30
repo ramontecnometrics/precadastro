@@ -1,7 +1,7 @@
 import React from "react";
 
-export const FlexRow = ({ children, width, style }) => {
-   const defaultStyle = { display: "flex", flexDirection: "row", width: width ? width : "100%" };
+export const FlexRow = ({ children, width, style, gap }) => {
+   const defaultStyle = { display: "flex", flexDirection: "row", width: width ? width : "100%", gap: gap ? gap : 0 };
 
    return <div style={{ ...defaultStyle, ...style }}>{children}</div>;
 };

@@ -192,7 +192,7 @@ export default function UsuarioAdministradorView(props) {
                         titulo='Perfis de usuário'
                         exibirTitulos={false}
                         itens={itemSelecionado.perfis || []}
-                        novo={() => setFormState((prev) => ({ ...prev, perfilSelecionado: null }))}
+                        novo={() => setFormState((prev) => ({ ...prev, perfilSelecionado: {} }))}
                         cancelar={() => setFormState((prev) => ({ ...prev, perfilSelecionado: null }))}
                         inserir={() => {
                            return new Promise((resolve, reject) => {

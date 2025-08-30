@@ -16,7 +16,7 @@ namespace config.NHibernate.Map
             Map(p => p.TemWhatsApp);
             Map(p => p.Tipo).CustomType<IntToTipoType<TipoDeTelefone>>().Not.Nullable()
                 .Check(EnumExtensions.GetDatabaseCheckConstraint<TelefoneDePessoa, TipoDeTelefone>(p => p.Tipo));
-            References(p => p.Pessoa).Not.Nullable();
+            References(p => p.Pessoa);
         }
     }
 }

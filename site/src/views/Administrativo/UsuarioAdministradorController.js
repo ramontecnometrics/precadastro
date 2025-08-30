@@ -7,9 +7,6 @@ export default function UsuarioAdministradorController() {
    const itemVazio = {
       situacao: { id: 1 },
       perfis: [],
-      nome: 'Ramon Pacheco',
-      email: 'ramon@tecnometrics.com.br',
-      nomeDeUsuario: 'Ramon'
    };
 
    const getTitulosDaTabela = () => {

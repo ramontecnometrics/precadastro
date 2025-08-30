@@ -47,7 +47,7 @@ namespace api.Controllers
                 }
                 if (!string.IsNullOrEmpty(getParams.Searchable))
                 {
-                    result = result.Where(i => i.Searchable.Contains(getParams.Searchable));
+                    result = result.Where(i => i.Searchable.Contains(SearchableHelper.Build(getParams.Searchable, Pais.SearchableScope)));
                 }
             }
             return result;
@@ -76,7 +76,7 @@ namespace api.Controllers
         public string Searchable { get; set; }
         public string Codigo { get; set; }
     }
-    
+
     public class PaisPostParams : IPostParams
     {
 

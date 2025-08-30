@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as HashRouter, Route, Routes } from 'react-router-dom';
 import LogoffView from '../../components/forms/login/LogoffView';
 import NotFoundView from '../NotFoundView';
 import ErrorView from '../ErrorView';
@@ -17,26 +17,30 @@ import AuditoriaView from '../AuditoriaView';
 import menus from '../../Menus';
 import LoginView from '../../components/forms/login/LoginView';
 import LogView from '../LogView';
+import LeadView from './LeadView';
+import FormularioView from './FormularioView';
 
 export default function LayoutAdministrador({ mostrarDadosDaConta }) {
    return (
       <HashRouter>
          <MainLayout menuItems={menus.getMenusAdministrador()} mostrarDadosDaConta={mostrarDadosDaConta}>
             <Routes>
-               <Route path='/' element={<HomeView />} />
-               <Route path='/login' element={<LoginView />} />
-               <Route path='/logoff' element={<LogoffView />} />
-               <Route path='/error' element={<ErrorView />} />
-               <Route path='/about' element={<AboutView />} />
-               <Route path='/1011' element={<PerfilDeUsuarioView />} />
-               <Route path='/1021' element={<UsuarioAdministradorView />} />
-               <Route path='/1031' element={<RotinaDoSistemaView />} />
-               <Route path='/1041' element={<ParametroDoSistemaView />} />
-               <Route path='/1111' element={<CidadeView />} />
-               <Route path='/1381' element={<TermoDeUsoView />} />
-               <Route path='/90003' element={<TermosDeUsoView />} />
-               <Route path='/9001' element={<LogView />} />
-               <Route path='/1501' element={<AuditoriaView />} />
+               <Route path='/adm' element={<HomeView />} />
+               <Route path='/adm/login' element={<LoginView />} />
+               <Route path='/adm/logoff' element={<LogoffView />} />
+               <Route path='/adm/error' element={<ErrorView />} />
+               <Route path='/adm/about' element={<AboutView />} />
+               <Route path='/adm/1011' element={<PerfilDeUsuarioView />} />
+               <Route path='/adm/1021' element={<UsuarioAdministradorView />} />
+               <Route path='/adm/1061' element={<FormularioView />} />
+               <Route path='/adm/1031' element={<RotinaDoSistemaView />} />
+               <Route path='/adm/1041' element={<ParametroDoSistemaView />} />
+               <Route path='/adm/1051' element={<LeadView />} />
+               <Route path='/adm/1111' element={<CidadeView />} />
+               <Route path='/adm/1381' element={<TermoDeUsoView />} />
+               <Route path='/adm/90003' element={<TermosDeUsoView />} />
+               <Route path='/adm/9001' element={<LogView />} />
+               <Route path='/adm/1501' element={<AuditoriaView />} />
                <Route path='*' element={<NotFoundView />} />
             </Routes>
          </MainLayout>
