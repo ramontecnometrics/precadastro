@@ -2,11 +2,10 @@
 using framework;
 using model;
 
-namespace api
+namespace api.Dtos
 {
     public class AuditoriaFastDto
     {
-
         public long Id { get; set; }
         public long IdDoUsuario { get; set; }
         public string NomeDoUsuario { get; set; }
@@ -23,7 +22,7 @@ namespace api
             var result = new AuditoriaFastDto()
             {
                 Id = item.Id,
-                Descricao = item.Descricao,
+                Descricao = item.Descricao.GetPlainText(),
                 IdDoUsuario = item.IdDoUsuario,
                 NomeDoUsuario = item.NomeDoUsuario,
                 Acao = item.Acao,

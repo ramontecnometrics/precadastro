@@ -80,14 +80,16 @@ namespace api.Controllers
                 result = result.Where(i => i.IdDoUsuario == getParams.Usuario.Value);
             }
 
-            if (!string.IsNullOrEmpty(getParams.Descricao))
-            {
-                result = result.Where(i => i.Descricao.Contains(getParams.Descricao));
-            }
-
             if (getParams.Acao != null)
             {
                 result = result.Where(i => i.Acao == getParams.Acao.Id);
+            }
+
+            // Sempre por último 
+            if (!string.IsNullOrEmpty(getParams.Descricao))
+            {
+                result = result.ToArray()
+                    .Where(i => i.Descricao.GetPlainText().Contains(getParams.Descricao)).AsQueryable();
             }
 
             return result;
@@ -98,7 +100,7 @@ namespace api.Controllers
             var result = new AuditoriaFastDto()
             {
                 Id = entity.Id,
-                Descricao = entity.Descricao,
+                Descricao = entity.Descricao.GetPlainText(),
                 Acao = entity.Acao,
                 Data = entity.Data, 
                 IdDoUsuario = entity.IdDoUsuario, 

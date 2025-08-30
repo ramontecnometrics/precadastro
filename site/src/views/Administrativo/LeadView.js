@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import Row from '../../components/Row';
-import Col from '../../components/Col';
+import { Row, Col } from '../../components/Grid';
 import FormGroup from '../../components/FormGroup';
 import Form, { makeFormHelpers } from '../../components/forms/Form';
 import Avatar from '../../components/Avatar';
@@ -17,7 +16,6 @@ import CidadeView from '../CidadeView';
 import ProfissaoView from '../ProfissaoView';
 import { FlexRow, FlexCol } from '../../components/FlexItems';
 import DateInput from '../../components/DateInput';
-import { dateToString } from '../../utils/Functions';
 
 const url = '/lead';
 
@@ -27,8 +25,7 @@ export default function LeadView(props) {
    const renderizarFormulario = ({ formState, setFormState }) => {
       const { setItemSelecionado } = makeFormHelpers(setFormState);
 
-      const itemSelecionado = formState.itemSelecionado;
-      const alterando = !!formState.alterando;
+      const itemSelecionado = formState.itemSelecionado;      
 
       return (
          <>

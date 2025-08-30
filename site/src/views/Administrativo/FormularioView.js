@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import Row from '../../components/Row';
-import Col from '../../components/Col';
+import { Row, Col } from '../../components/Grid';
 import FormGroup from '../../components/FormGroup';
 import Form, { makeFormHelpers } from '../../components/forms/Form';
 import TextInput from '../../components/TextInput';

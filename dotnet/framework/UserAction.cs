@@ -50,5 +50,8 @@ namespace framework
         FormularioInsert = 22,
         FormularioUpdate = 23,
         FormularioDelete = 24,
+        InseriuUnidade = 25,
+        AlterouUnidade = 26,
+        ExcluiuUnidade = 27,
     }
 }

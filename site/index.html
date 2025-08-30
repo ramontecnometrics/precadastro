@@ -59,32 +59,6 @@
                location.replace(`https:${location.href.substring(location.protocol.length)}`);
             }
          }
-
-         function configurarNotificacoes() {
-            window.addEventListener('message', (event) => {
-               if ('Notification' in window) {
-                  if (Notification.permission === 'granted') {
-                     // Check whether notification permissions have already been granted
-                     // If it's okay let's create a notification
-                     if (event.data) {
-                        let data = event.data;
-                        if (data.sender === 'sensetrack') {
-                           var notification = new Notification(data.title, {
-                              body: data.text,
-                              icon: 'https://mtrack.com.br/favicon.png',
-                           });
-
-                           // Add click listener that will perform a window focus
-                           notification.onclick = function (x) {
-                              window.focus();
-                              this.close();
-                           };
-                        }
-                     }
-                  }
-               }
-            });
-         }
       </script>
    </head>
    <body>
@@ -139,6 +113,6 @@
    </body>
    <script>
       checkHttps();
-      configurarNotificacoes();
    </script>
+   <script type="module" src="/src/index.jsx"></script>
 </html>

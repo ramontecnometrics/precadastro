@@ -21,7 +21,7 @@ export default function TermosDeUsoView() {
    }, []);
 
    if (!iniciado) {
-      return <div />;
+      return <></>;
    }
 
    return (

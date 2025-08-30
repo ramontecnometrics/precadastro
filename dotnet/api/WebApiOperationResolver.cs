@@ -140,6 +140,11 @@ namespace api
                         restrictOperations.Add(1063, new KeyValuePair<string, string>("/formulario", "PUT"));
                         restrictOperations.Add(1064, new KeyValuePair<string, string>("/formulario", "DELETE"));
 
+                        restrictOperations.Add(1071, new KeyValuePair<string, string>("/unidade", "GET"));
+                        restrictOperations.Add(1072, new KeyValuePair<string, string>("/unidade", "POST"));
+                        restrictOperations.Add(1073, new KeyValuePair<string, string>("/unidade", "PUT"));
+                        restrictOperations.Add(1074, new KeyValuePair<string, string>("/unidade", "DELETE"));
+
                         restrictOperations.Add(1381, new KeyValuePair<string, string>("/termodeuso", "GET"));
                         restrictOperations.Add(1382, new KeyValuePair<string, string>("/termodeuso", "POST"));
                         restrictOperations.Add(1383, new KeyValuePair<string, string>("/termodeuso", "PUT"));

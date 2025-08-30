@@ -42,6 +42,16 @@ namespace model.Repositories
             InserirOuAtualizar(1053, "Alterar lead");
             InserirOuAtualizar(1054, "Excluir lead");
 
+            InserirOuAtualizar(1061, "Consultar formulário");
+            InserirOuAtualizar(1062, "Cadastrar formulário");
+            InserirOuAtualizar(1063, "Alterar formulário");
+            InserirOuAtualizar(1064, "Excluir formulário");
+
+            InserirOuAtualizar(1071, "Consultar unidade");
+            InserirOuAtualizar(1072, "Cadastrar unidade");
+            InserirOuAtualizar(1073, "Alterar unidade");
+            InserirOuAtualizar(1074, "Excluir unidade");
+
             InserirOuAtualizar(1382, "Cadastrar termo de uso");
 
             InserirOuAtualizar(9001, "Consultar logs do sistema");

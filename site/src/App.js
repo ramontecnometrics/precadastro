@@ -13,6 +13,9 @@ import menus from './Menus';
 import RecoverPasswordView from './components/forms/login/RecoverPasswordView';
 import LogoffView from './components/forms/login/LogoffView';
 import ErrorView from './views/ErrorView';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './contents/css/page.css';
+import './contents/css/custom-bootstrap.css';
 
 function App() {
 

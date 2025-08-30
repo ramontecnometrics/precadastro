@@ -20,7 +20,7 @@ namespace model
 
         public virtual long IdDoUsuario { get; set; } 
         public virtual DateTime Data { get; set; }
-        public virtual string Descricao { get; set; }
+        public virtual EncryptedText Descricao { get; set; }
         public virtual Tipo<UserAction> Acao { get; set; }
 
     }
@@ -35,7 +35,7 @@ namespace model
         public virtual long IdDoUsuario { get; set; } 
         public virtual string NomeDoUsuario { get; set; }
         public virtual DateTime Data { get; set; }
-        public virtual string Descricao { get; set; }
+        public virtual EncryptedText Descricao { get; set; }
         public virtual Tipo<UserAction> Acao { get; set; }
     }
 

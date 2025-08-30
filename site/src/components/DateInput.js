@@ -17,10 +17,10 @@ export default function DateInput(props) {
       if (props.defaultValue && moment(props.defaultValue).isValid()) {
          date = moment(props.defaultValue).toDate();
       }
-      return { 
-         date: date, 
-         dataDigitada: moment(date).format("DD/MM/YYYY"), 
-         mostrarCalendario: false 
+      return {
+         date: date,
+         dataDigitada: moment(date).format('DD/MM/YYYY'),
+         mostrarCalendario: false,
       };
    });
 
@@ -28,20 +28,20 @@ export default function DateInput(props) {
 
    const setDateFromCalendar = (value) => {
       let date = value;
-      setState(prev => ({ ...prev, date: date }));
-      
+      setState((prev) => ({ ...prev, date: date }));
+
       if (!date) {
          if (inputRef.current) {
             inputRef.current.value = null;
          }
-         setState(prev => ({ ...prev, dataDigitada: null }));
+         setState((prev) => ({ ...prev, dataDigitada: null }));
       } else {
          if (inputRef.current) {
-            inputRef.current.value = moment(date).format("DD/MM/YYYY");
+            inputRef.current.value = moment(date).format('DD/MM/YYYY');
          }
-         setState(prev => ({ ...prev, dataDigitada: moment(date).format("DD/MM/YYYY") }));
+         setState((prev) => ({ ...prev, dataDigitada: moment(date).format('DD/MM/YYYY') }));
       }
-      
+
       if (props.onChange) {
          props.onChange(date);
       }
@@ -49,12 +49,12 @@ export default function DateInput(props) {
 
    const closeCalendar = () => {
       setTimeout(() => {
-         setState(prev => ({ ...prev, mostrarCalendario: false }));
+         setState((prev) => ({ ...prev, mostrarCalendario: false }));
       }, 100);
    };
 
    const handleInputChange = (e) => {
-      setState(prev => ({ ...prev, dataDigitada: e.target.value }));
+      setState((prev) => ({ ...prev, dataDigitada: e.target.value }));
    };
 
    const handleInputBlur = () => {
@@ -69,17 +69,17 @@ export default function DateInput(props) {
          d = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia));
 
          var d2 = moment(d);
-         if (d2.isValid() && dataString === d2.format(replaceAll(replaceAll("DD/MM/YYYY", '-', ''), '/', ''))) {
+         if (d2.isValid() && dataString === d2.format(replaceAll(replaceAll('DD/MM/YYYY', '-', ''), '/', ''))) {
             if (props.onChange) {
                props.onChange(d2.toDate());
             }
-            inputRef.current.value = d2.format("DD/MM/YYYY");
+            inputRef.current.value = d2.format('DD/MM/YYYY');
          } else {
             showError(`${state.dataDigitada} não é uma data válida`);
-            inputRef.current.value = moment(state.date ? state.date : new Date()).format("DD/MM/YYYY");
+            inputRef.current.value = moment(state.date ? state.date : new Date()).format('DD/MM/YYYY');
          }
       } else {
-         setState(prev => ({ ...prev, date: null, dataDigitada: null }));
+         setState((prev) => ({ ...prev, date: null, dataDigitada: null }));
          if (props.onChange) {
             props.onChange(null);
          }
@@ -87,7 +87,7 @@ export default function DateInput(props) {
    };
 
    const handleCalendarClick = () => {
-      setState(prev => ({ ...prev, mostrarCalendario: true }));
+      setState((prev) => ({ ...prev, mostrarCalendario: true }));
    };
 
    const handleClearDate = () => {
@@ -113,7 +113,7 @@ export default function DateInput(props) {
                type='text'
                className={'date-input' + (props.className ? ' ' + props.className : '')}
                ref={inputRef}
-               defaultValue={props.defaultValue ? moment(state.date).format("DD/MM/YYYY") : null}
+               defaultValue={props.defaultValue ? moment(state.date).format('DD/MM/YYYY') : null}
                style={{ ...props.style, ...inputBackgroundColor }}
                onChange={handleInputChange}
                readOnly={props.readOnly}
@@ -121,24 +121,24 @@ export default function DateInput(props) {
                onBlur={handleInputBlur}
             />
             {!props.readOnly && (
-               <div className='hide-when-readonly'>
-                  <InputGroup.Text
-                     style={{
-                        padding: '1px 6px 1px 6px',
-                        height: props.style && props.style.height ? props.style.height : 38,
-                        width: 40,
-                        justifyContent: 'center',
-                     }}
-                     onClick={handleCalendarClick}
-                  >
-                     <div style={{ height: 24, width: 30, display: 'table-cell', paddingTop: 1 }}>
-                        <IconButton
-                           style={{ color: LayoutParams.colors.corDoTemaPrincipal, fontSize: 20 }}
-                           icon={faCalendarAlt}
-                        />
-                     </div>
-                  </InputGroup.Text>
-               </div>
+               <InputGroup.Text
+                  className='hide-when-readonly'
+                  style={{
+                     padding: '1px 6px 1px 6px',
+                     height: props.style && props.style.height ? props.style.height : 38,
+                     width: 40,
+                     justifyContent: 'center',
+                  }}
+                  onClick={handleCalendarClick}
+               >
+                  <div style={{ height: 24, width: 30, display: 'table-cell', paddingTop: 1 }}>
+                     <IconButton
+                        className={'date-input-icon'}
+                        style={{ color: LayoutParams.colors.corDoTemaPrincipal, fontSize: 20 }}
+                        icon={faCalendarAlt}
+                     />
+                  </div>
+               </InputGroup.Text>
             )}
          </InputGroup>
 
@@ -194,7 +194,7 @@ export default function DateInput(props) {
                            display: 'table-cell',
                            paddingLeft: 10,
                            paddingRight: 10,
-                           width: 75
+                           width: 75,
                         }}
                      >
                         <Text>Limpar</Text>

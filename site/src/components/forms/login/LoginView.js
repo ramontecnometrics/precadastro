@@ -13,6 +13,7 @@ import LoginController from './LoginController';
 import { showError } from '../../Messages';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Text from '../../Text';
+import LoginLogo from './LoginLogo';
 
 export default function LoginView(props) {
    const [lembrarLogin, setLembrarLogin] = useState(localStorage.getItem('lembrarLogin') === 'true');
@@ -44,6 +45,8 @@ export default function LoginView(props) {
 
    const formLoginTecnometrics = () => (
       <Fragment>
+
+         <LoginLogo />
          <div
             style={{
                fontSize: 16,

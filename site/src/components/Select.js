@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FormControl, Modal, InputGroup } from 'react-bootstrap';
+import { FormControl, Modal, InputGroup, FormSelect as BootstrapSelect } from 'react-bootstrap';
 import { faCaretUp, faSearch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import IconButton from './IconButton';
 import { inputToUpper } from '../utils/Functions';
@@ -246,7 +246,7 @@ export default function Select(props) {
             <InputGroup style={{ flexWrap: 'nowrap' }}>
                <React.Fragment>
                   {!state.noDropDown && (
-                     <FormControl
+                     <BootstrapSelect
                         as='select'
                         className='select-dropdown-control'
                         ref={selectRef}
@@ -256,6 +256,7 @@ export default function Select(props) {
                         style={{
                            height: props.height ? props.height : 38,
                            padding: 1,
+                           paddingLeft: 5,
                            backgroundColor: props.color,
                            cursor: props.cursor ? props.cursor : 'default',
                            outline: 'none',
@@ -292,7 +293,7 @@ export default function Select(props) {
                               );
                            }),
                         ]}
-                     </FormControl>
+                     </BootstrapSelect>
                   )}
 
                   {state.noDropDown && (
@@ -355,28 +356,34 @@ export default function Select(props) {
                   )}
 
                   {props.formularioPadrao && !props.readOnly && (
-                     <div className='hide-when-readonly' style={{ cursor: 'pointer' }}>
+                     <>
                         {!state.oneItemSelected && (
-                           <InputGroup.Text style={{ maxWidth: 48 }} onClick={showModal}>
-                              <div style={{ height: 24, width: 30, display: 'table-cell' }}>
-                                 <IconButton
-                                    style={{
-                                       fontSize: 22,
-                                       paddingTop: 3,
-                                       color: corDoIcone,
-                                    }}
-                                    icon={state.noDropDown ? faSearch : faSearch}
-                                 />
-                              </div>
+                           <InputGroup.Text
+                              className='hide-when-readonly'
+                              style={{ cursor: 'pointer' }}
+                              onClick={showModal}
+                           >
+                              <IconButton
+                                 className={'select-icon'}
+                                 style={{
+                                    fontSize: 22,
+                                    color: corDoIcone,
+                                 }}
+                                 icon={state.noDropDown ? faSearch : faSearch}
+                              />
                            </InputGroup.Text>
                         )}
                         {state.oneItemSelected && (
-                           <InputGroup.Text style={{ cursor: 'pointer' }} onClick={clear}>
+                           <InputGroup.Text
+                              className='hide-when-readonly'
+                              style={{ cursor: 'pointer' }}
+                              onClick={clear}
+                           >
                               <React.Fragment>
                                  <IconButton
+                                    className={'select-icon'}
                                     style={{
                                        fontSize: 22,
-                                       paddingTop: 3,
                                        color: corDoIcone,
                                     }}
                                     icon={faTimesCircle}
@@ -384,7 +391,7 @@ export default function Select(props) {
                               </React.Fragment>
                            </InputGroup.Text>
                         )}
-                     </div>
+                     </>
                   )}
                </React.Fragment>
             </InputGroup>
@@ -453,7 +460,7 @@ export default function Select(props) {
                   if (e.keyCode === 27) setState((prev) => ({ ...prev, inserindo: false }));
                }}
                aria-labelledby='contained-modal-title-vcenter'
-               centered               
+               centered
             >
                <Modal.Body
                   style={{

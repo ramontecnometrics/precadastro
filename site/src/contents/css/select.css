@@ -9,3 +9,11 @@
 .select-text-control {
     box-shadow: none !important;
 }
+
+.select-icon {
+    opacity: 0.5;
+}
+
+.select-icon:hover {
+    opacity: 1;
+}

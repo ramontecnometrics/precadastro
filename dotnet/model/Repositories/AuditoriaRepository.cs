@@ -15,7 +15,7 @@ namespace model.Repositories
             {
                 Data = DateTimeSync.Now,
                 Acao = acao,
-                Descricao = descricao,
+                Descricao = EncryptedText.Build(descricao),
                 IdDoUsuario = idDoUsuario,
             };
             Insert(item);

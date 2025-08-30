@@ -1,5 +1,5 @@
 import { faIdCard } from '@fortawesome/free-regular-svg-icons';
-import { faBars, faCogs, faFile, faHome, faInfoCircle, faListAlt, faTools, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faCogs, faFile, faHome, faInfoCircle, faListAlt, faStore, faTools, faUser } from '@fortawesome/free-solid-svg-icons';
 import sessionManager from './SessionManager';
 
 class Menus {
@@ -58,6 +58,13 @@ class Menus {
                   icon: faFile,
                   route: '/adm/1061',
                   enabled: this.temAcessoARotina(1061),
+               },
+               {
+                  key: 1071,
+                  label: 'Unidades',
+                  icon: faStore,
+                  route: '/adm/1071',
+                  enabled: this.temAcessoARotina(1071),
                },
             ],
          },

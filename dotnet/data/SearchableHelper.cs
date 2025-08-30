@@ -56,5 +56,10 @@ namespace data
             }
             return string.Join(' ', sb.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries)).Replace(" ", "");
         }
+
+        public static string Build(object searchable, string searchableScope)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
