@@ -1,26 +1,14 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import './contents/css/page.css';
-// import './contents/css/custom-bootstrap.css';
-// import App from './App';
-// import MyApp from './MyApp';
-
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//   <React.StrictMode>
-//     <MyApp />
-//   </React.StrictMode>
-// );
-
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import MyApp from './MyApp'; 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './contents/css/page.css';
+import './contents/css/custom-bootstrap.css';
+import App from './App'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <MyApp />
+    <App />
   </React.StrictMode>
 );
+ 

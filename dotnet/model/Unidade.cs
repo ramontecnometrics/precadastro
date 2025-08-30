@@ -11,6 +11,7 @@ namespace model
         public virtual string NomeDaEntidade => "Unidade";
         public virtual Genero GeneroDaEntidade => Genero.Feminino;
         public virtual string Nome { get; set; } 
+        public virtual string Uuid { get; set; }
         public virtual EncryptedText UnoSecretKey { get; set; }
         public virtual EncryptedText UnoAccessToken { get; set; }
 

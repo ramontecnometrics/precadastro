@@ -10,21 +10,26 @@ import { Row, Col } from '../../components/Grid';
 import BoldLabel from '../../components/BoldLabel';
 import Panel from '../../components/Panel';
 import QRCode from 'react-qr-code';
-import { LayoutParams } from '../../config/LayoutParams';
 import Filler from '../../components/Filler';
 import Button from '../../components/Button';
 import { useReactToPrint } from 'react-to-print';
+import logo from '../../contents/img/logo.png';
+import Text from '../../components/Text';
+import Line from '../../components/Line';
+import { Enviroment } from '../../utils/Functions';
 
 export default function UnidadeView(props) {
    const lastFormStateRef = useRef(null);
-   const controller = useMemo(() => new UnidadeController(), []);
-   const contentRef = useRef<HTMLDivElement>(null);
+   const controller = Enviroment.isDevelopment ? new UnidadeController() :  new UnidadeController(); // useMemo(() => new UnidadeController(), []);
+   const contentRef = useRef(null);
    const handlePrint = useReactToPrint({ contentRef });
 
    const renderizarFormulario = ({ formState, setFormState }) => {
       lastFormStateRef.current = formState;
 
-      const item = formState.itemSelecionado || controller.itemVazio;
+      const item = formState.itemSelecionado;
+
+      const getLink = () => `${window.location.origin}?id=${item.uuid}`;
 
       return (
          <>
@@ -103,17 +108,15 @@ export default function UnidadeView(props) {
 
             <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
                <div ref={contentRef}>
-                  {/* <BoldLabel>QR Code para acesso ao Pré-cadastro</BoldLabel>
+                  <BoldLabel>QR Code para acesso ao Pré-cadastro</BoldLabel>
                   <FlexRow>
                      <FlexCol style={{ width: 35 }}>
                         <BoldLabel>Link:</BoldLabel>
                      </FlexCol>
-                     <FlexCol>
-                        <a
-                           href={`${window.location.origin}?unidade=${item.id}`}
-                           style={{ color: 'blue' }}
-                           target='_blank'
-                        >{`${window.location.origin}?unidade=${item.id}`}</a>
+                     <FlexCol style={{ paddingLeft: 3 }}>
+                        <a href={getLink()} style={{ color: 'blue' }} target='_blank'>
+                           {getLink()}
+                        </a>
                      </FlexCol>
                   </FlexRow>
                   <Filler height={10} />
@@ -121,14 +124,45 @@ export default function UnidadeView(props) {
                      <QRCode
                         size={256}
                         style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                        value={item.id}
+                        value={getLink()}
                         viewBox={`0 0 256 256`}
                      />
                   </div>
-                  <Filler height={10} /> */}
+                  <Filler height={10} />
                </div>
-               {/* <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrint} /> */}
-               <button onClick={handlePrint}>Print</button>
+
+               <div ref={contentRef}>
+                  <div className='show-on-print-only' style={{ textAlign: 'center' }}>
+                     <img
+                        src={logo}
+                        alt='Logo'
+                        style={{
+                           width: 300,
+                        }}
+                     />
+
+                     <Line />
+
+                     <Filler height={30} />
+                     <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Pré-cadastro</Text>
+                     <Filler height={40} />
+                     <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
+                        <QRCode
+                           size={256}
+                           style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+                           value={getLink()}
+                           viewBox={`0 0 256 256`}
+                        />
+                     </div>
+                     <Filler height={40} />
+                     <BoldLabel>{getLink()}</BoldLabel>
+                     <Filler height={20} />
+                     <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                  </div>
+               </div>
+
+               <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrint} />
+               {/* <button onClick={handlePrint}>Print</button> */}
                <Filler height={10} />
             </Panel>
          </>
@@ -145,6 +179,7 @@ export default function UnidadeView(props) {
          getDadosDaTabela={controller.getDadosDaTabela}
          renderizarFormulario={renderizarFormulario}
          getObjetoDeDados={controller.getObjetoDeDados}
+         aposInserir={controller.aposInserir}
          select={props.select}
          itemVazio={controller.itemVazio}
       />

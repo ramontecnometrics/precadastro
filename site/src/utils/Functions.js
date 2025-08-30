@@ -1,5 +1,4 @@
 import * as moment from 'moment';
-// import crypto from 'crypto';
 import { showError } from '../components/Messages';
 
 export const stringToDate = (stringDate) => {
@@ -16,19 +15,19 @@ export function addDays(date, days) {
    return result;
 }
 
-export const mesPorExtenso = (data ) => {
+export const mesPorExtenso = (data) => {
    var result = [
-       'Janeiro',
-     'Fevereiro',
-     'Março',
+      'Janeiro',
+      'Fevereiro',
+      'Março',
       'Abril',
       'Maio',
       'Junho',
-        'Julho',
+      'Julho',
       'Agosto',
-       'Setembro',
-        'Outubro',
-       'Novembro',
+      'Setembro',
+      'Outubro',
+      'Novembro',
       'Dezembro',
    ][data.getMonth()];
    return result;
@@ -42,7 +41,7 @@ export const isString = (value) => {
    return typeof value === 'string' || value instanceof String;
 };
 
-export const dateToString = (stringDate,) => {
+export const dateToString = (stringDate) => {
    if (!stringDate) return null;
    let date = new Date(stringDate);
    let result = moment(date).format('DD/MM/YYYY');
@@ -52,7 +51,7 @@ export const dateToString = (stringDate,) => {
 export const dateTimeToString = (stringDate) => {
    if (!stringDate) return null;
    let date = new Date(stringDate);
-   let result = moment(date).format( 'DD/MM/YYYY HH:mm:ss');
+   let result = moment(date).format('DD/MM/YYYY HH:mm:ss');
    return result;
 };
 
@@ -119,7 +118,7 @@ export const numberToString = (number, minimumFractionDigits = 0, maximumFractio
 export const numberToString2 = (number, minimumFractionDigits = 0) => {
    if (number === null || number === undefined) return null;
    if (isNaN(number)) return null;
-   let result = new Intl.NumberFormat( 'pt-BR', {
+   let result = new Intl.NumberFormat('pt-BR', {
       minimumFractionDigits: minimumFractionDigits,
       signDisplay: 'auto',
    }).format(number);
@@ -190,15 +189,7 @@ export const converterMinutosParaHora = (minutos) => {
 };
 
 export const getNomeDoDiaDaSemana = (diaDaSemana) => {
-   let nomes = [
-     'Domingo',
-     'Segunda-feira',
-      'Terça-feira',
-       'Quarta-feira',
-    'Quinta-feira',
-     'Sexta-feira',
-      'Sábado',
-   ];
+   let nomes = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
    let result = nomes[diaDaSemana - 1];
    return result;
 };
@@ -215,7 +206,7 @@ export const getTelefones = (item) => {
 };
 
 export const generatePassword = (numberOnly, length) => {
-   var charset = numberOnly ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : '0123456789',
+   var charset = numberOnly ? '0123456789' : 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ123456789',
       retVal = '';
    for (var i = 0, n = charset.length; i < length; ++i) {
       retVal += charset.charAt(Math.floor(Math.random() * n));
@@ -254,7 +245,7 @@ export const inputToUpper = (e) => {
    e.target.setSelectionRange(start, start);
    e.preventDefault();
 };
- 
+
 export const buildQueryString = (pageSize, skip, orderBy, filter) => {
    let query = '?';
    if (pageSize) query += 'pagesize=' + pageSize.toString() + '&';
@@ -313,7 +304,7 @@ function pemToArrayBuffer(pem) {
 }
 
 export async function rsaEncrypt(data, pemKey) {
-    // 1. Importa a chave pública PEM
+   // 1. Importa a chave pública PEM
    const key = await crypto.subtle.importKey(
       'spki',
       pemToArrayBuffer(pemKey),
@@ -344,16 +335,16 @@ export async function rsaEncrypt(data, pemKey) {
 
 // Helpers (coloque num util compartilhado, se preferir)
 export function base64ToUint8(base64) {
-  const bin = atob(base64);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
+   const bin = atob(base64);
+   const out = new Uint8Array(bin.length);
+   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+   return out;
 }
 
-export  function uint8ToBase64(u8) {
-  let bin = '';
-  for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
-  return btoa(bin);
+export function uint8ToBase64(u8) {
+   let bin = '';
+   for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+   return btoa(bin);
 }
 
 // helper: ArrayBuffer -> base64
@@ -366,32 +357,31 @@ export const arrayBufferToBase64 = (buffer) => {
 };
 
 export function concatUint8Arrays(arrays) {
-  
-  const totalLength = arrays.reduce((acc, value) => acc + value.length, 0);
+   const totalLength = arrays.reduce((acc, value) => acc + value.length, 0);
 
-  // cria buffer final
-  const result = new Uint8Array(totalLength);
+   // cria buffer final
+   const result = new Uint8Array(totalLength);
 
-  // copia pedaços
-  let offset = 0;
-  for (const arr of arrays) {
-    result.set(arr, offset);
-    offset += arr.length;
-  }
-  return result;
+   // copia pedaços
+   let offset = 0;
+   for (const arr of arrays) {
+      result.set(arr, offset);
+      offset += arr.length;
+   }
+   return result;
 }
 
 export function concatArrayBuffers(buffers) {
-  const totalLength = buffers.reduce((acc, b) => acc + b.byteLength, 0);
-  const tmp = new Uint8Array(totalLength);
+   const totalLength = buffers.reduce((acc, b) => acc + b.byteLength, 0);
+   const tmp = new Uint8Array(totalLength);
 
-  let offset = 0;
-  for (const b of buffers) {
-    tmp.set(new Uint8Array(b), offset);
-    offset += b.byteLength;
-  }
-  console.log(tmp.buffer);
-  return tmp.buffer; // retorna ArrayBuffer
+   let offset = 0;
+   for (const b of buffers) {
+      tmp.set(new Uint8Array(b), offset);
+      offset += b.byteLength;
+   }
+   console.log(tmp.buffer);
+   return tmp.buffer; // retorna ArrayBuffer
 }
 
 export const validarEndereco = (paisObrigatorio, endereco, reject) => {
@@ -552,4 +542,8 @@ export const getTempoDecorrido = (data) => {
    } else {
       return `${dias} dia${dias !== 1 ? 's' : ''}`;
    }
+};
+
+export const Enviroment = {
+   isDevelopment: () => process && process.env && process.env.NODE_ENV === 'development',
 };

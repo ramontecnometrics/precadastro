@@ -256,7 +256,7 @@ export default function ListaPadraoOffline(props) {
                                     <strong>{textoDosTitulos[campoIndex]}:&nbsp;</strong>
                                  </div>
                                  <div style={{ display: 'table-cell' }}>
-                                    <span style={{ wordWrap: 'anywhere' }}>{dado}</Text>
+                                    <Text style={{ wordWrap: 'anywhere' }}>{dado}</Text>
                                  </div>
                               </div>
                            );

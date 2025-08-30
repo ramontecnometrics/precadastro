@@ -158,7 +158,7 @@ export default function UsuarioAdministradorView(props) {
                                        } else {
                                           showConfirm('Deseja realmente gerar uma nova senha?', () => {
                                              setItemSelecionado({
-                                                senha: generatePassword(true, 8),
+                                                senha: generatePassword(false, 8),
                                                 senhaAlterada: true,
                                                 enviarNovaSenhaPorEmail: true,
                                              });

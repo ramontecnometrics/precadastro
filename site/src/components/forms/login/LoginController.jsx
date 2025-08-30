@@ -1,10 +1,10 @@
-import { showError } from '../../Messages.js';
+import { showError } from '../../Messages';
 import cryptoJs from 'crypto-js';
 // ❌ não precisa mais do btoa: a rsaEncrypt (Web Crypto) já retorna base64
 // import btoa from 'btoa';
-import { rsaEncrypt } from '../../../utils/Functions.js'; // deve retornar base64 (string)
-import sessionManager from '../../../SessionManager.js';
-import api from '../../../utils/Api.js';
+import { rsaEncrypt } from '../../../utils/Functions'; // deve retornar base64 (string)
+import sessionManager from '../../../SessionManager';
+import api from '../../../utils/Api';
 
 export default function LoginController() {
 

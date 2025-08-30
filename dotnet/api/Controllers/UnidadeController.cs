@@ -16,6 +16,7 @@ namespace api.Controllers
     public class UnidadePostParams : IPostParams
     {
         public string Nome { get; set; }
+        public string Uuid { get; set; }
         public string UnoSecretKey { get; set; }
         public string UnoAccessToken { get; set; }
     }
