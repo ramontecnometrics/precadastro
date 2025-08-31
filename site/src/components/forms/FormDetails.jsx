@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IconButton from '../IconButton';
 import { faTrashAlt, faEdit } from '@fortawesome/free-regular-svg-icons';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
@@ -20,6 +20,14 @@ export default function FormDetails(props) {
       indiceEmEdicao: null,
    });
 
+   useEffect(() => {
+      if (props.autoFocus && props.autoFocus.current && (state.inserindo || state.alterando)) {
+         setTimeout(() => {
+            props.autoFocus.current.focus();
+         }, 100);
+      }
+   }, [state.inserindo, state.alterando]);
+
    const renderizarAcoes = (index) => {
       return props.alterar ||
          (props.excluir && ((props.podeExcluir && props.podeExcluir(index)) || !props.podeExcluir)) ||
@@ -30,10 +38,7 @@ export default function FormDetails(props) {
                   (!props.gradeSempreVisivel ||
                      (props.gradeSempreVisivel && !(state.inserindo || state.alterando))) && (
                      <div style={{ display: 'table-cell', margin: 'auto' }}>
-                        <AlterFormDetailItemButtom
-                           onClick={() => selecionarParaAlteracao(index)}
-                           title={'Alterar'}
-                        />
+                        <AlterFormDetailItemButtom onClick={() => selecionarParaAlteracao(index)} title={'Alterar'} />
                      </div>
                   )}
                {props.excluir && ((props.podeExcluir && props.podeExcluir(index)) || !props.podeExcluir) && (
@@ -215,7 +220,7 @@ export default function FormDetails(props) {
                         props.formulario &&
                         !props.formularioPadrao &&
                         !props.modal && (
-                           <React.Fragment>                              
+                           <React.Fragment>
                               <div style={{ fontWeight: '600', paddingTop: 6 }}>
                                  <Text>{props.titulo}</Text>
                               </div>
@@ -379,15 +384,13 @@ export default function FormDetails(props) {
                props.gradeSempreVisivel) && (
                <React.Fragment>
                   {!props.itens || props.itens.length === 0 ? (
-                     <table className='tabela-formulario-padrao'>
-                        <tbody>
-                           <tr>
-                              <td style={{ width: '100%', textAlign: 'center', color: '#999' }}>
-                                 <Text>{'Nenhum registro encontrado'}</Text>
-                              </td>
-                           </tr>
-                        </tbody>
-                     </table>
+                     <tbody>
+                        <tr>
+                           <td style={{ width: '100%', textAlign: 'center', color: '#999' }}>
+                              <Text>{'Nenhum registro encontrado'}</Text>
+                           </td>
+                        </tr>
+                     </tbody>
                   ) : (
                      <tbody>
                         {props.itens.map((item, rowIndex) => {

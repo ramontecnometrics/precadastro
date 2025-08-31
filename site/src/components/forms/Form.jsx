@@ -175,7 +175,22 @@ const Form = forwardRef(function Form(props, ref) {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
-   const isMobile = () => {      
+   useEffect(() => {
+      console.log('focus');
+
+      if (props.autoFocus && props.autoFocus.current && (formState.inserindo || formState.alterando)) {
+         setTimeout(() => {
+            props.autoFocus.current.focus();
+         }, 100);
+      } else if (formState.navegando && textoFiltroRef.current) {
+         setTimeout(() => {
+            console.log('focus');
+            textoFiltroRef.current.focus();
+         }, 100);
+      }
+   }, [formState.inserindo, formState.alterando, formState.navegando]);
+
+   const isMobile = () => {
       return window.screen.width <= 600;
    };
 
@@ -461,11 +476,7 @@ const Form = forwardRef(function Form(props, ref) {
                   onClick={filtrar}
                   title='Pesquisar'
                >
-                  <FontAwesomeIcon
-                     className='custom-hover'
-                     style={{ fontSize: 22, paddingTop: 2 }}
-                     icon={faSearch}
-                  />
+                  <FontAwesomeIcon className='custom-hover' style={{ fontSize: 22, paddingTop: 2 }} icon={faSearch} />
                </InputGroup.Text>
             </InputGroup>
          </BootstrapForm.Group>
@@ -836,7 +847,7 @@ const Form = forwardRef(function Form(props, ref) {
             style={{ overflowY: props.overflowY || 'auto', overflowX: props.overflowX || 'hidden', paddingTop: 5 }}
          >
             <Col style={{ maxWidth: props.maxWidth || 800, minHeight: props.minHeight || 400 }}>
-               <fieldset disabled={(formState.incluindo || (formState.alterando && podeAlterar)) ? false : true}>
+               <fieldset disabled={formState.incluindo || (formState.alterando && podeAlterar) ? false : true}>
                   {renderizarFormularioProp?.({
                      formState,
                      setFormState,

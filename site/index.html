@@ -22,6 +22,11 @@
             display: none;
          }
 
+         .page-break {
+            page-break-before: always;
+            break-before: page;
+         }
+
          @page {
             margin: 15mm;
          }
@@ -54,6 +59,11 @@
             .show-on-print,
             .show-on-print-only {
                display: block !important;
+            }
+
+            .no-break-on-print {
+               page-break-inside: avoid !important;
+               break-inside: avoid !important;
             }
          }
       </style>

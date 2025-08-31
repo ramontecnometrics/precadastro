@@ -51,6 +51,13 @@ export default function FormularioController() {
    const alterarGrupo = (formState, setFormState, itemSelecionado, setItemSelecionado, indiceEmEdicao) => {
       return new Promise((resolve, reject) => {
          let grupoSelecionado = formState.grupoSelecionado;
+
+         if (!grupoSelecionado.ordem) {
+            showError('Informe a descrição da sessão.');
+            reject();
+            return;
+         }
+         
          const grupos = itemSelecionado.grupos || [];
          grupos[indiceEmEdicao] = grupoSelecionado;
          console.log(grupos);
@@ -64,6 +71,13 @@ export default function FormularioController() {
       return new Promise((resolve, reject) => {
          const grupo = formState.grupoSelecionado;
          if (!grupo) return;
+
+         if (!grupo.ordem) {
+            showError('Informe a descrição da sessão.');
+            reject();
+            return;
+         }
+
          const grupos = itemSelecionado.grupos || [];
          grupos.push(grupo);
          setItemSelecionado({ grupos: grupos });
@@ -72,11 +86,30 @@ export default function FormularioController() {
       });
    };
 
-   const inserirCampo = (formState, setFormState, grupoSelecionado, setItemSelecionado) => {
+   const inserirCampo = (formState, setFormState, itemSelecionado, setItemSelecionado) => {
       return new Promise((resolve, reject) => {
          const campo = formState.campoSelecionado;
          if (!campo) return;
-         const campos = grupoSelecionado.campos || [];
+
+         if (!campo.titulo) {
+            showError('Informe a descrição do campo.');
+            reject();
+            return;
+         }
+
+         if (!campo.ordem) {
+            showError('Informe a descrição do campo.');
+            reject();
+            return;
+         }
+
+         if (!campo.tipo) {
+            showError('Informe a descrição do campo.');
+            reject();
+            return;
+         }
+
+         const campos = formState.grupoSelecionado.campos || [];
          campos.push(campo);
          setFormState((prev) => ({
             ...prev,
@@ -91,6 +124,25 @@ export default function FormularioController() {
       return new Promise((resolve, reject) => {
          const campo = formState.campoSelecionado;
          if (!campo) return;
+
+         if (!campo.titulo) {
+            showError('Informe a descrição do campo.');
+            reject();
+            return;
+         }
+
+         if (!campo.ordem) {
+            showError('Informe a descrição do campo.');
+            reject();
+            return;
+         }
+
+         if (!campo.tipo) {
+            showError('Informe a descrição do campo.');
+            reject();
+            return;
+         }
+
          const campos = formState.grupoSelecionado.campos || [];
          campos[indiceEmEdicao] = campo;
          setFormState((prev) => ({
@@ -100,7 +152,7 @@ export default function FormularioController() {
          }));
          resolve();
       });
-   };   
+   };
 
    return {
       getTitulosDaTabela,
@@ -110,6 +162,6 @@ export default function FormularioController() {
       inserirCampo,
       itemVazio,
       alterarGrupo,
-      alterarCampo
+      alterarCampo,
    };
 }

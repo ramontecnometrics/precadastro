@@ -543,3 +543,31 @@ export const getTempoDecorrido = (data) => {
 export const Enviroment = {
    isDevelopment: () => process && process.env && process.env.NODE_ENV === 'development',
 };
+
+export function calcularIdade(dataNascimento, porExtenso) {
+   // dataNascimento no formato "YYYY-MM-DD"
+   const hoje = new Date();
+   const nascimento = new Date(dataNascimento);
+
+   let idade = hoje.getFullYear() - nascimento.getFullYear();
+   const mes = hoje.getMonth() - nascimento.getMonth();
+
+   // ajusta se ainda não fez aniversário no ano atual
+   if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade--;
+   }
+
+   let result = idade;
+
+   if (porExtenso) {
+      if (idade === 0) {
+         result == 'Menos de 1 ano';
+      } else if (idade === 1) {
+         result = '1 ano';
+      } else {
+         result = `${idade} anos`;
+      }
+   }
+
+   return result;
+}

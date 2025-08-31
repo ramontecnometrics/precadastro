@@ -100,7 +100,14 @@ namespace model
         public Tipo<SituacaoDeLead> Situacao { get; set; }
     }
 
-    public class ResultadoDeAvaliacaoClinica: IEntity
+    public interface IResultadoDeFormulario
+    {
+        public long Id { get; set; }
+        public CampoDeGrupoDeFormulario Campo { get; }
+        public string Valor { get; }
+    }
+
+    public class ResultadoDeAvaliacaoClinica: IEntity, IResultadoDeFormulario
     {
         public long Id { get; set; }
         public string Thumbprint { get; set; }

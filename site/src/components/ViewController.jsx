@@ -1,30 +1,67 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-export default function ViewController(props) {
-    const [state, setState] = useState(props.initialState || {});
+export const ViewController = ({ selected, v1, v2, v3, v4, v5, v6 }) => {
+   return (
+      <div
+         id='div-view-controller'
+         style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto', marginBottom: 5 }}
+      >
+         <div
+            style={{
+               height: selected === 1 ? '100%' : 0.0001,
+               width: selected === 1 ? '100%' : 0.0001,
+               overflow: 'clip',
+            }}
+         >
+            {v1}
+         </div>
+         <div
+            style={{
+               height: selected === 2 ? '100%' : 0.0001,
+               width: selected === 2 ? '100%' : 0.0001,
+               overflow: 'clip',
+            }}
+         >
+            {v2}
+         </div>
+         <div
+            style={{
+               height: selected === 3 ? '100%' : 0.0001,
+               width: selected === 3 ? '100%' : 0.0001,
+               overflow: 'clip',
+            }}
+         >
+            {v3}
+         </div>
+         <div
+            style={{
+               height: selected === 4 ? '100%' : 0.0001,
+               width: selected === 4 ? '100%' : 0.0001,
+               overflow: 'clip',
+            }}
+         >
+            {v4}
+         </div>
 
-    useEffect(() => {
-        if (props.onStateChange) {
-            props.onStateChange(state);
-        }
-    }, [state, props.onStateChange]);
+         <div
+            style={{
+               height: selected === 5 ? '100%' : 0.0001,
+               width: selected === 5 ? '100%' : 0.0001,
+               overflow: 'clip',
+            }}
+         >
+            {v5}
+         </div>
 
-    const updateState = (newState) => {
-        setState(prevState => ({
-            ...prevState,
-            ...newState
-        }));
-    };
-
-    const getState = () => state;
-
-    return (
-        <div className={props.className} style={props.style}>
-            {props.children && React.cloneElement(props.children, {
-                state,
-                updateState,
-                getState
-            })}
-        </div>
-    );
-}
+         <div
+            style={{
+               height: selected === 6 ? '100%' : 0.0001,
+               width: selected === 6 ? '100%' : 0.0001,
+               overflow: 'clip',
+            }}
+         >
+            {v6}
+         </div>
+      </div>
+   );
+};

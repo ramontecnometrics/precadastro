@@ -3,11 +3,129 @@ import './../PreCadastro.css';
 import api from '../utils/Api';
 import { showError } from '../components/Messages';
 import Formulario from './Formulario';
+import { FlexRow, FlexCol } from '../components/FlexItems';
+import IconButton from '../components/IconButton';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { LayoutParams } from '../config/LayoutParams';
 
 function PreCadastro() {
    const [formData, setFormData] = useState({});
    const [inicializado, setInicializado] = useState(false);
-   const [parametros, setParametros] = useState(null);
+   const [parametros, setParametros] = useState(false);
+  /* const [parametros, setParametros] = useState({
+      unidade: { id: 2, nome: 'DR HAIR - ANCHIETA' },
+      fichaDeAvaliacaoClinicaParaGeneroMasculino: {
+         id: 1,
+         nome: 'Ficha de Avaliação Clínica (Masculino)',
+         descricao: 'Teste',
+         grupos: [
+            {
+               id: 3,
+               ordem: 1,
+               titulo: 'Formulário',
+               campos: [
+                  {
+                     id: 1,
+                     ordem: 1,
+                     titulo: 'Há quanto tempo você começou a perceber a queda de cabelo?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  { id: 3, ordem: 2, titulo: 'Foi de uma vez ou gradativa?', tipo: 'texto', obrigatorio: true },
+                  {
+                     id: 4,
+                     ordem: 3,
+                     titulo: 'Queixa principal (O que te incomoda)?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  {
+                     id: 5,
+                     ordem: 4,
+                     titulo: 'Em caso de queda, ela está aumentando ou está estável?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  {
+                     id: 6,
+                     ordem: 5,
+                     titulo: 'Histórico de queda ou calvície na família? Quem?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  {
+                     id: 7,
+                     ordem: 6,
+                     titulo: 'Já fez algum tratamento capilar? Se sim, quais? Como foi o resultado? Há quanto tempo?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  {
+                     id: 8,
+                     ordem: 7,
+                     titulo: 'Faz uso de algum medicamento contra queda do cabelo? Qual?',
+                     tipo: 'texto',
+                     obrigatorio: false,
+                  },
+                  { id: 9, ordem: 8, titulo: 'Algum medicamento em uso? Qual?', tipo: 'texto', obrigatorio: false },
+                  { id: 10, ordem: 9, titulo: 'Faz uso de reposição hormonal?', tipo: 'texto', obrigatorio: true },
+                  {
+                     id: 11,
+                     ordem: 10,
+                     titulo: 'Pretende ter filhos nos próximos 12 meses?',
+                     tipo: 'simnao',
+                     obrigatorio: true,
+                  },
+                  { id: 12, ordem: 11, titulo: 'Uso de boné/chapéu?', tipo: 'simnao', obrigatorio: true },
+                  { id: 13, ordem: 12, titulo: 'Uso de capacete?', tipo: 'simnao', obrigatorio: true },
+                  { id: 14, ordem: 13, titulo: 'Faz dieta? Como é a dieta?', tipo: 'texto', obrigatorio: true },
+                  { id: 15, ordem: 14, titulo: 'Cirurgia bariátrica?', tipo: 'simnao', obrigatorio: true },
+                  { id: 16, ordem: 15, titulo: 'Atividade física? Frequência?', tipo: 'texto', obrigatorio: true },
+                  { id: 17, ordem: 16, titulo: 'Ansiedade?', tipo: 'simnao', obrigatorio: true },
+                  { id: 18, ordem: 17, titulo: 'Estresse?', tipo: 'simnao', obrigatorio: true },
+                  { id: 19, ordem: 18, titulo: 'Depressão?', tipo: 'simnao', obrigatorio: true },
+                  { id: 20, ordem: 19, titulo: 'Hipertensão?', tipo: 'simnao', obrigatorio: true },
+                  { id: 21, ordem: 20, titulo: 'Diabetes?', tipo: 'simnao', obrigatorio: true },
+                  { id: 22, ordem: 21, titulo: 'Tireoide?', tipo: 'simnao', obrigatorio: true },
+                  {
+                     id: 23,
+                     ordem: 22,
+                     titulo: 'Histórico de câncer na família? Se sim, quem?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  {
+                     id: 24,
+                     ordem: 23,
+                     titulo: 'Histórico de doença autoimune? Se sim, qual?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  {
+                     id: 25,
+                     ordem: 24,
+                     titulo: 'Condição dermatológica? Se sim, qual?',
+                     tipo: 'texto',
+                     obrigatorio: true,
+                  },
+                  { id: 26, ordem: 25, titulo: 'Outras patologias?', tipo: 'texto', obrigatorio: true },
+               ],
+            },
+         ],
+      },
+      fichaDeAvaliacaoClinicaParaGeneroFeminino: {
+         id: 2,
+         nome: 'Ficha de Avaliação Clínica (Feminino)',
+         grupos: [
+            { id: 7, ordem: 1, titulo: 'sdfasd', campos: [] },
+            { id: 8, ordem: 2, titulo: 'asdfasd', campos: [] },
+         ],
+      },
+      unidades: [
+         { id: 2, nome: 'DR HAIR - ANCHIETA' },
+         { id: 1, nome: 'DR HAIR - CONTAGEM' },
+      ],
+   });*/
    const [cadastroRealizado, setCadastroRealizado] = useState(false);
    const [avaliacaoRealizada, setAvaliacaoRealizada] = useState(false);
    const [idDoLead, setIdDoLead] = useState(null);
@@ -666,15 +784,29 @@ function PreCadastro() {
                </>
             )}
 
-            {idDoLead && !avaliacaoRealizada && (
+            {idDoLead && cadastroRealizado && !avaliacaoRealizada && (
                <>
-                  <header className='pre-cadastro-header'>
-                     <h1>Cadastro Dr. Hair</h1>
-                     <p>Avaliação clínica</p>
-                  </header>
-
+                  <FlexRow>
+                     <FlexCol width='50px'>
+                        <h1>
+                           <IconButton
+                              icon={faArrowLeft}
+                              onClick={() => setCadastroRealizado(false)}
+                              style={{ fontSize: 30, color: LayoutParams.colors.corSecundaria }}
+                              title={'Voltar'}
+                           />
+                        </h1>
+                     </FlexCol>
+                     <FlexCol>
+                        <header className='pre-cadastro-header'>
+                           <h1>Cadastro Dr. Hair</h1>
+                           <p>Avaliação clínica</p>
+                        </header>
+                     </FlexCol>
+                  </FlexRow>
                   <Formulario
-                     formulario={avaliacao}
+                     // formulario={avaliacao}
+                     formulario={parametros.fichaDeAvaliacaoClinicaParaGeneroMasculino}
                      setFormulario={handleSubmitAvaliacaoClinica}
                      mostrarTitulo={false}
                   />

@@ -131,7 +131,8 @@ namespace api.Controllers
 
         protected override LeadDto Convert(Lead entity)
         {
-            var result = LeadDto.Build(entity);
+            var result = LeadDto.Build(entity, 
+                ResultadoDeAvaliacaoClinicaRepository.GetAll().Where(i => i.Lead.Id == entity.Id));
             return result;
         }
 
@@ -519,7 +520,7 @@ namespace api.Controllers
                             Url = $"{urlDaApiDoUno}/v1/lead",
                         },
                         new WebRequestHeaders(
-                            new WebRequestHeader("x-uno-access-token", unidade.UnoSecretKey.GetPlainText()),
+                            new WebRequestHeader("x-uno-access-token", unidade.UnoAccessToken.GetPlainText()),
                             new WebRequestHeader("x-uno-secret-key", unidade.UnoSecretKey.GetPlainText())
                         ),
                         content,
@@ -753,4 +754,5 @@ namespace api.Controllers
         public long Id { get; set; }
         public string Valor { get; set; }
     }
+    
 }

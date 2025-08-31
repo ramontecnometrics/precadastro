@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Row, Col } from '../../components/Grid';
 import FormGroup from '../../components/FormGroup';
 import Form, { makeFormHelpers } from '../../components/forms/Form';
@@ -17,6 +17,9 @@ const url = '/formulario';
 
 export default function FormularioView(props) {
    const controller = useMemo(() => new FormularioController(), []);
+   const autoFocusRef = useRef(null);
+   const autoFocusGrupoRef = useRef(null);
+   const autoFocusCampoRef = useRef(null);
 
    const renderizarFormulario = ({ formState, setFormState }) => {
       const { setItemSelecionado } = makeFormHelpers(setFormState);
@@ -40,6 +43,7 @@ export default function FormularioView(props) {
                      <TextInput
                         defaultValue={itemSelecionado.nome}
                         onChange={(value) => setItemSelecionado({ nome: value })}
+                        ref={autoFocusRef}
                      />
                   </FormGroup>
                </Col>
@@ -62,7 +66,16 @@ export default function FormularioView(props) {
             <FormDetails
                titulo='Sessões'
                itens={itemSelecionado.grupos || []}
-               novo={() => setFormState((prev) => ({ ...prev, grupoSelecionado: {} }))}
+               autoFocus={autoFocusGrupoRef}
+               novo={() =>
+                  setFormState((prev) => ({
+                     ...prev,
+                     grupoSelecionado: {
+                        ordem:
+                           (itemSelecionado.grupos || []).length === 0 ? 1 : itemSelecionado.grupos.at(-1).ordem + 1,
+                     },
+                  }))
+               }
                cancelar={() => setFormState((prev) => ({ ...prev, grupoSelecionado: null }))}
                inserir={() => controller.inserirGrupo(formState, setFormState, itemSelecionado, setItemSelecionado)}
                alterar={(indiceEmEdicao) =>
@@ -80,15 +93,17 @@ export default function FormularioView(props) {
                   })
                }
                aposSalvar={() => {
+                  const gruposOrdenados = [...(itemSelecionado.grupos || [])].sort(
+                     (a, b) => Number(a.ordem) - Number(b.ordem)
+                  );
+
                   setItemSelecionado({
-                     grupos: [...(itemSelecionado.grupos || [])].sort(
-                        (a, b) => Number(a.ordem) - Number(b.ordem)
-                     ),
+                     grupos: gruposOrdenados,
                   });
                }}
                colunas={() => [
                   { titulo: 'Descrição', width: '80%' },
-                  { titulo: 'Ordem', width: '20%' },
+                  { titulo: 'Ordem', width: '20%', className: 'center' },
                ]}
                linha={(item) => [item.titulo || '', item.ordem]}
                formulario={() =>
@@ -106,6 +121,7 @@ export default function FormularioView(props) {
                                           grupoSelecionado: { ...prev.grupoSelecionado, titulo: value },
                                        }));
                                     }}
+                                    ref={autoFocusGrupoRef}
                                  />
                               </FormGroup>
                            </Col>
@@ -129,12 +145,23 @@ export default function FormularioView(props) {
                         <FormDetails
                            titulo='Campos'
                            modal={true}
-                           exibirTitulos={false}
                            itens={grupoSelecionado.campos || []}
-                           novo={() => setFormState((prev) => ({ ...prev, campoSelecionado: {} }))}
+                           novo={() => {
+                              setFormState((prev) => ({
+                                 ...prev,
+                                 campoSelecionado: {
+                                    obrigatorio: true,
+                                    ordem:
+                                       (grupoSelecionado.campos || []).length === 0
+                                          ? 1
+                                          : grupoSelecionado.campos.at(-1).ordem + 1,
+                                 },
+                              }));
+                           }}
+                           autoFocus={autoFocusCampoRef}
                            cancelar={() => setFormState((prev) => ({ ...prev, campoSelecionado: null }))}
                            inserir={() =>
-                              controller.inserirCampo(formState, setFormState, campoSelecionado, setItemSelecionado)
+                              controller.inserirCampo(formState, setFormState, itemSelecionado, setItemSelecionado)
                            }
                            alterar={(indiceEmEdicao) =>
                               controller.alterarCampo(
@@ -155,10 +182,13 @@ export default function FormularioView(props) {
                               setItemSelecionado({
                                  grupos: (itemSelecionado.grupos || []).filter((_, i) => i !== index),
                               })
-                           }       
-                                              
-                           colunas={() => [{ titulo: 'Campo', width: '100%' }]}
-                           linha={(item) => [item.titulo || '']}
+                           }
+                           aposSalvar={() => {}}
+                           colunas={() => [
+                              { titulo: 'Descrição', width: '80%' },
+                              { titulo: 'Ordem', width: '20%', className: 'center' },
+                           ]}
+                           linha={(item) => [item.titulo || '', item.ordem]}
                            formulario={() =>
                               campoSelecionado && (
                                  <>
@@ -167,6 +197,7 @@ export default function FormularioView(props) {
                                           <FormGroup>
                                              <BoldLabel>Campo</BoldLabel>
                                              <TextInput
+                                                ref={autoFocusCampoRef}
                                                 defaultValue={campoSelecionado.titulo}
                                                 onChange={(value) => {
                                                    setFormState((prev) => ({
@@ -264,6 +295,7 @@ export default function FormularioView(props) {
          antesDeEditar={controller.antesDeEditar}
          select={props.select}
          itemVazio={controller.itemVazio}
+         autoFocus={autoFocusRef}
       />
    );
 }
