@@ -62,6 +62,7 @@ namespace api.Dtos
     public class GrupoDeFormularioDto
     {
         public long Id { get; set; }
+        public int Ordem { get; set; }
         public string Titulo { get; set; }
 
         public CampoDeGrupoDeFormularioDto[] Campos { get; set; }
@@ -74,7 +75,8 @@ namespace api.Dtos
             {
                 Id = entity.Id,
                 Titulo = entity.Titulo,
-                Campos = entity.Campos?.Select(CampoDeGrupoDeFormularioDto.Build).ToArray()
+                Campos = entity.Campos?.Select(CampoDeGrupoDeFormularioDto.Build).ToArray(),
+                Ordem = entity.Ordem
             };
         }
     }
@@ -82,6 +84,7 @@ namespace api.Dtos
     public class CampoDeGrupoDeFormularioDto
     {
         public long Id { get; set; }
+        public int Ordem { get; set; }
         public string Titulo { get; set; }
         public string Tipo { get; set; }
         public bool Obrigatorio { get; set; }
@@ -95,7 +98,8 @@ namespace api.Dtos
                 Id = entity.Id,
                 Titulo = entity.Titulo,
                 Tipo = entity.Tipo,
-                Obrigatorio = entity.Obrigatorio
+                Obrigatorio = entity.Obrigatorio,
+                Ordem = entity.Ordem
             };
         }
     }

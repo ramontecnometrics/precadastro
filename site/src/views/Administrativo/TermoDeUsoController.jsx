@@ -12,14 +12,13 @@ export default function TermoDeUsoController() {
       return [item.id, item.nome];
    };
 
-   const getObjetoDeDados = (formState) => {
-      return new Promise((resolve, reject) => {
+   const getObjetoDeDados = async (formState) => {
+      try {
          const item = formState?.itemSelecionado || {};
 
          if (!item.nome) {
             showError('Informe o termo de uso');
-            reject();
-            return;
+            return Promise.reject();
          }
          var input = {
             nome: item.nome,
@@ -30,8 +29,12 @@ export default function TermoDeUsoController() {
             input.id = parseInt(item.id);
          }
 
-         resolve(input);
-      });
+         return input;
+      } catch (e) {
+         showError(e.toString());
+         console.error(e);
+         return Promise.reject(e);
+      }
    };
 
    const itemVazio = {

@@ -35,6 +35,7 @@ namespace model
         public string Titulo { get; set; }
 
         public IList<CampoDeGrupoDeFormulario> Campos { get; set; }
+        public int Ordem { get; set; }
     }
 
     public class CampoDeGrupoDeFormulario : IEntity
@@ -48,6 +49,7 @@ namespace model
         public string Titulo { get; set; }
         public string Tipo { get; set; }
         public bool Obrigatorio { get; set; }
+        public int Ordem { get; set; }
     }
 
     public class FormularioFast : IEntity

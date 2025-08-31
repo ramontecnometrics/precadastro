@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { showError } from '../components/Messages';
 
 export const stringToDate = (stringDate) => {
@@ -304,32 +304,28 @@ function pemToArrayBuffer(pem) {
 }
 
 export async function rsaEncrypt(data, pemKey) {
-   // 1. Importa a chave pública PEM
    const key = await crypto.subtle.importKey(
       'spki',
       pemToArrayBuffer(pemKey),
       {
          name: 'RSA-OAEP',
-         hash: 'SHA-1', // equivalente ao oaepHash: 'sha1'
+         hash: 'SHA-256',
       },
       false,
       ['encrypt']
    );
 
-   // 2. Converte string para ArrayBuffer
-   const enc = new TextEncoder();
-   const encoded = enc.encode(data);
+   let encoded;
+   if (typeof data === 'string') {
+      encoded = new TextEncoder().encode(data);
+   } else if (data instanceof Uint8Array) {
+      encoded = data;
+   } else {
+      throw new Error('rsaEncrypt: tipo de entrada inválido');
+   }
 
-   // 3. Criptografa
-   const encrypted = await crypto.subtle.encrypt(
-      {
-         name: 'RSA-OAEP',
-      },
-      key,
-      encoded
-   );
+   const encrypted = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, key, encoded);
 
-   // 4. Retorna em base64 (pode trocar para hex, se preferir)
    return window.btoa(String.fromCharCode(...new Uint8Array(encrypted)));
 }
 

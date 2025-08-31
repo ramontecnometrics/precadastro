@@ -42,7 +42,7 @@ namespace framework.Security
             var result = new byte[] { };
             try
             {
-                result = rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA1);
+                result = rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
             }
             catch (Exception e)
             {

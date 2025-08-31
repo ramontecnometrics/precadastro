@@ -1,47 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './../PreCadastro.css';
 
-function Formulario({ formData, setFormData, formulario }) {
-   useEffect(() => {
-      setFormData((prevState) => ({
-         ...prevState,
-         avaliacao: formulario,
-      }));
-   }, []);
+function Formulario({ formulario, setFormulario, mostrarTitulo }) {
+   const [formData, setFormData] = useState(formulario ?? null);
 
-   return !formData.avaliacao ? null : (
+   if (!formData) return null;
+
+   const handleChange = (grupoIndex, campoIndex, valor) => {
+      setFormData((prev) => {
+         const novo = structuredClone(prev); // ou JSON.parse/stringify se não tiver polyfill
+         novo.grupos[grupoIndex].campos[campoIndex].valor = valor;
+         return novo;
+      });
+   };
+
+   const handleSubmit = () => {
+      setFormulario(formData);
+   };
+
+   return (
       <>
-         {formulario.map((grupo, grupoIndex) => {
-            var result = null;
+         {formData.grupos.map((grupo, grupoIndex) => (
+            <div key={grupo.id} className="pre-cadastro-grupo">
+               {grupo.titulo && mostrarTitulo && <span>{grupo.titulo}</span>}
 
-            if (grupo.campos && grupo.campos.length > 0) {
-               result = (
-                  <>
-                     {grupo.titulo && <span>{grupo.titulo}</span>}
+               {grupo.campos.map((campo, campoIndex) => {
+                  const nomeDoCampo = `grupo-${grupo.id}-campo-${campo.id}`;
+                  return (
+                     <div key={campo.id} className="pre-cadastro-form-group">
+                        <label htmlFor={nomeDoCampo}>{campo.titulo}</label>
+                        <input
+                           type="text"
+                           id={nomeDoCampo}
+                           name={nomeDoCampo}
+                           value={formData.grupos[grupoIndex].campos[campoIndex].valor || ''}
+                           onChange={(e) => handleChange(grupoIndex, campoIndex, e.target.value)}
+                           required={campo.obrigatorio}
+                        />
+                     </div>
+                  );
+               })}
+            </div>
+         ))}
 
-                     {grupo.campos.map((campo, campoIndex) => {
-                        return (
-                           <div key={campoIndex} className='pre-cadastro-form-group'>
-                              <label htmlFor={`campo-${campo.id}`}>{campo.titulo}</label>
-                              <input
-                                 type='text'
-                                 id='nome'
-                                 name='nome'
-                                 value={formData.avaliacao[grupoIndex].campos[campoIndex].valor}
-                                 onChange={(e) => {
-                                    formData.avaliacao[grupoIndex].campos[campoIndex].valor = e.target.value;
-                                 }}
-                                 required={campo.obrigatorio}
-                              />
-                           </div>
-                        );
-                     })}
-                  </>
-               );
-            }
-
-            return result;
-         })}
+         <button type="submit" className="pre-cadastro-submit-btn" onClick={handleSubmit}>
+            Enviar
+         </button>
       </>
    );
 }

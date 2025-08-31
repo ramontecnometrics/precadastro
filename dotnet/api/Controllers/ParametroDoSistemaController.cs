@@ -21,17 +21,17 @@ namespace api.Controllers
         protected override UserAction UserActionForInsert => UserAction.InseriuParametroDoSistema;
         protected override UserAction UserActionForUpdate => UserAction.AlterouParametroDoSistema;
         protected override UserAction UserActionForDelete => UserAction.ExcluiuParametroDoSistema;
- 
+
         private readonly ParametroDoSistemaRepository ParametroDoSistemaRepository;
 
         public ParametroDoSistemaController(
-            ParametroDoSistemaRepository repository, 
-            
+            ParametroDoSistemaRepository repository,
+
             IAppContext appContext
         ) : base(repository, appContext)
-        { 
+        {
             ParametroDoSistemaRepository = repository;
-        } 
+        }
 
         protected override IQueryable<ParametroDoSistema> Get(ParametroDoSistemaGetParams getParams)
         {
@@ -46,7 +46,8 @@ namespace api.Controllers
             if (!string.IsNullOrWhiteSpace(getParams.Searchable))
             {
                 result = result.ToArray()
-                    .Where(i => i.Nome.Contains(getParams.Searchable, System.StringComparison.InvariantCultureIgnoreCase))
+                    .Where(i => i.Nome.Contains(getParams.Searchable, System.StringComparison.InvariantCultureIgnoreCase) ||
+                        i.Descricao.Contains(getParams.Searchable, System.StringComparison.InvariantCultureIgnoreCase))
                     .ToList()
                     .AsQueryable();
             }

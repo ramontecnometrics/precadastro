@@ -1,75 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './../PreCadastro.css';
-import Text from '../components/Text';
 import api from '../utils/Api';
 import { showError } from '../components/Messages';
 import Formulario from './Formulario';
 
 function PreCadastro() {
    const [formData, setFormData] = useState({});
+   const [inicializado, setInicializado] = useState(false);
+   const [parametros, setParametros] = useState(null);
    const [cadastroRealizado, setCadastroRealizado] = useState(false);
-   const [fichaPreenchida, setFichaPreenchida] = useState(false);
-
+   const [avaliacaoRealizada, setAvaliacaoRealizada] = useState(false);
+   const [idDoLead, setIdDoLead] = useState(null);
    const [buscandoCEP, setBuscandoCEP] = useState(false);
+   const [avaliacao, setAvaliacao] = useState(null);
+   const [tokenParaAvaliacaoClinica, setTokenParaAvaliacaoClinica] = useState(null);
 
-   // Função para aplicar máscara de telefone/celular
    const aplicarMascaraTelefone = (valor) => {
-      // Remove tudo que não é dígito
       const apenasDigitos = valor.replace(/\D/g, '');
 
-      // Aplica máscara baseada no número de dígitos
       if (apenasDigitos.length <= 10) {
-         // Telefone fixo: (00) 0000-0000
          return apenasDigitos.replace(/(\d{2})(\d{0,4})(\d{0,4})/, '($1) $2-$3').trim();
       } else {
-         // Celular: (00) 00000-0000
          return apenasDigitos.replace(/(\d{2})(\d{0,5})(\d{0,4})/, '($1) $2-$3').trim();
       }
    };
 
-   // Função para aplicar máscara de CPF
    const aplicarMascaraCPF = (valor) => {
-      // Remove tudo que não é dígito
       const apenasDigitos = valor.replace(/\D/g, '');
-
-      // Aplica máscara: 000.000.000-00
       return apenasDigitos.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
    };
 
-   // Função para aplicar máscara de CEP
    const aplicarMascaraCEP = (valor) => {
-      // Remove tudo que não é dígito
       const apenasDigitos = valor.replace(/\D/g, '');
-
-      // Aplica máscara: 00000-000
       return apenasDigitos.replace(/(\d{5})(\d{0,3})/, '$1-$2');
    };
 
-   // Função para buscar CEP na API Via CEP
    const buscarCEP = async (cep) => {
-      // Remove caracteres não numéricos
       const cepLimpo = cep.replace(/\D/g, '');
-
-      // Verifica se o CEP tem 8 dígitos
       if (cepLimpo.length !== 8) {
          return;
       }
-
       setBuscandoCEP(true);
-
       try {
          const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
          const data = await response.json();
-
          if (!data.erro) {
-            // Preenche os campos do endereço automaticamente
             setFormData((prevState) => ({
                ...prevState,
                logradouro: data.logradouro || '',
                bairro: data.bairro || '',
                cidade: data.localidade || '',
                estado: data.uf?.toLowerCase() || '',
-               pais: 'brasil', // Define Brasil como padrão
+               pais: 'brasil',
             }));
          } else {
             showError('CEP não encontrado. Verifique o número digitado.');
@@ -105,19 +87,62 @@ function PreCadastro() {
       if (name === 'cep' && valorProcessado.length === 9) {
          buscarCEP(valorProcessado);
       }
+
+      if (name === 'genero') {
+         const ficha = value
+            ? value === '2'
+               ? parametros.fichaDeAvaliacaoClinicaParaGeneroFeminino
+               : parametros.fichaDeAvaliacaoClinicaParaGeneroMasculino
+            : null;
+
+         setAvaliacao(ficha);
+      }
    };
 
-   const handleSubmit = (e) => {
+   useEffect(() => {
+      const params = new URL(location.href).searchParams;
+      const id = params.get('id');
+      api.get(`/lead/precadastro/parametros?id=${id}`)
+         .then((result) => {
+            setFormData((prevState) => ({
+               ...prevState,
+               idDaUnidade: result.unidade?.id,
+            }));
+            setParametros(result);
+            setInicializado(true);
+         })
+         .catch((error) => {});
+   }, []);
+
+   const handleSubmitCadastro = (e) => {
       e.preventDefault();
       console.log('Dados do pré-cadastro:', formData);
 
       api.post('/lead/precadastro', formData)
          .then((response) => {
-            if (response) {
-               showError(response).then(() => setFichaPreenchida(true));
-            } else {
-               setFichaPreenchida(true);
-            }
+            setCadastroRealizado(true);
+            setIdDoLead(response.idDoLead);
+            setTokenParaAvaliacaoClinica(response.tokenParaAvaliacaoClinica);
+         })
+         .catch((error) => {});
+   };
+
+   const handleSubmitAvaliacaoClinica = (formulario) => {
+      setAvaliacao(formulario);
+
+      console.log('Dados da avaliação clínica:', formulario);
+
+      const input = {
+         idDoLead: idDoLead,
+         fichaDeAvaliacao: formulario,
+      };
+
+      api.post('/lead/precadastro/avaliacaoclinica', input, null, null, {
+         TokenParaAvaliacaoClinica: tokenParaAvaliacaoClinica,
+      })
+         .then((response) => {
+            setAvaliacaoRealizada(true);
+            setIdDoLead(response.idDoLead);
          })
          .catch((error) => {});
    };
@@ -125,14 +150,57 @@ function PreCadastro() {
    return (
       <div className='pre-cadastro'>
          <div className='pre-cadastro-container'>
-            {!cadastroRealizado && (
+            {!inicializado && (
+               <>
+                  <header className='pre-cadastro-header'>
+                     <h1>Cadastro Dr. Hair</h1>
+                     <p>Preparando...</p>
+                  </header>
+                  <main className='pre-cadastro-main-content'>
+                     <div style={{ textAlign: 'center' }}>
+                        <div style={{ margin: 'auto', width: 'fit-content' }}>
+                           <div className='spinner'></div>
+                        </div>
+                     </div>
+                  </main>
+               </>
+            )}
+
+            {inicializado && !formData.idDaUnidade && parametros.unidades && (
+               <div>
+                  <header className='pre-cadastro-header'>
+                     <h1>Cadastro Dr. Hair</h1>
+                  </header>
+                  <main className='pre-cadastro-main-content'>
+                     <div className='pre-cadastro-form-group'>
+                        <label htmlFor='genero'>Unidade</label>
+                        <select
+                           id='unidade'
+                           name='unidade'
+                           value={formData.idDaUnidade}
+                           onChange={(e) => {
+                              setFormData((prevState) => ({ ...prevState, idDaUnidade: e.target.value }));
+                           }}
+                           required
+                        >
+                           <option value=''></option>
+                           {parametros.unidades.map((i, index) => {
+                              return <option value={i.id}>{i.nome}</option>;
+                           })}
+                        </select>
+                     </div>
+                  </main>
+               </div>
+            )}
+
+            {inicializado && !cadastroRealizado && !avaliacaoRealizada && formData.idDaUnidade && (
                <>
                   <header className='pre-cadastro-header'>
                      <h1>Cadastro Dr. Hair</h1>
                      <p>Preencha os dados abaixo para realizar seu cadastro</p>
                   </header>
                   <main className='pre-cadastro-main-content'>
-                     <form onSubmit={handleSubmit} className='pre-cadastro-form'>
+                     <form onSubmit={handleSubmitCadastro} className='pre-cadastro-form'>
                         {/* Seção: Dados básicos */}
                         <div className='pre-cadastro-form-section'>
                            <h2 className='pre-cadastro-section-title'>Dados básicos</h2>
@@ -598,7 +666,22 @@ function PreCadastro() {
                </>
             )}
 
-            {fichaPreenchida && (
+            {idDoLead && !avaliacaoRealizada && (
+               <>
+                  <header className='pre-cadastro-header'>
+                     <h1>Cadastro Dr. Hair</h1>
+                     <p>Avaliação clínica</p>
+                  </header>
+
+                  <Formulario
+                     formulario={avaliacao}
+                     setFormulario={handleSubmitAvaliacaoClinica}
+                     mostrarTitulo={false}
+                  />
+               </>
+            )}
+
+            {avaliacaoRealizada && (
                <>
                   <header className='pre-cadastro-header'>
                      <h1>Cadastro Dr. Hair</h1>

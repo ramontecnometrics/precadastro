@@ -1,9 +1,10 @@
-using System;
+using data;
+using DocumentFormat.OpenXml.Spreadsheet;
 using framework;
 using model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using data;
 
 namespace api
 {
@@ -82,6 +83,8 @@ namespace api
                         openOperations.Add(0010, new KeyValuePair<string, string>("/parametrodosistema/urlpublica", "GET"));
                         openOperations.Add(0011, new KeyValuePair<string, string>("/lead/precadastro", "POST"));
                         openOperations.Add(0012, new KeyValuePair<string, string>("/lead/identificar", "GET"));
+                        openOperations.Add(0013, new KeyValuePair<string, string>("/lead/precadastro/parametros", "GET"));                        
+                        openOperations.Add(0014, new KeyValuePair<string, string>("/lead/precadastro/avaliacaoclinica", "POST"));
                         openOperations.Add(0020, new KeyValuePair<string, string>("/", "HEAD"));
                     }
                 }

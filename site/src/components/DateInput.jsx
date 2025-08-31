@@ -4,7 +4,7 @@ import { InputGroup, Form, Modal } from 'react-bootstrap';
 import IconButton from './IconButton';
 import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
 import styled from 'styled-components';
-import * as moment from 'moment';
+import moment from 'moment';
 import { showError } from '../components/Messages';
 import { replaceAll } from '../utils/Functions';
 import '../contents/css/date-input.css';

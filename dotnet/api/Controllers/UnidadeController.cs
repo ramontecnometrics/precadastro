@@ -67,6 +67,7 @@ namespace api.Controllers
             return new Unidade()
             {
                 Nome = insertRequest.Nome,
+                Uuid = insertRequest.Uuid,
                 UnoSecretKey = EncryptedText.Build(insertRequest.UnoSecretKey),
                 UnoAccessToken = EncryptedText.Build(insertRequest.UnoAccessToken)
             };

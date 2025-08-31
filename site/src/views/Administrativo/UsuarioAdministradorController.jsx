@@ -83,8 +83,9 @@ export default function UsuarioAdministradorController() {
             input.nomeDeUsuario = null;
          }
 
-         return input; // async -> Promise resolvida com o objeto
+         return input;
       } catch (e) {
+         showError(e.toString());
          console.error(e);
          return Promise.reject(e);
       }

@@ -332,7 +332,7 @@ const Form = forwardRef(function Form(props, ref) {
    const excluir = async (item) => {
       console.log('Form.excluir()');
       await api.delete(`${url}?id=${item.id}`);
-      await showInfo('Excluído com sucesso');
+      await showInfo('Excluído com sucesso!');
       await setMany({
          navegando: true,
          alterando: false,
@@ -411,7 +411,7 @@ const Form = forwardRef(function Form(props, ref) {
                      consultou: true,
                   });
                }
-               await showInfo('Salvo com sucesso');
+               await showInfo('Salvo com sucesso!');
                filtrar();
             }
          }

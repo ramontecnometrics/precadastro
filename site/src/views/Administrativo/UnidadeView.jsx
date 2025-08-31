@@ -1,6 +1,5 @@
 import React, { useMemo, useRef } from 'react';
 import Form from '../../components/forms/Form';
-import Label from '../../components/Label';
 import TextInput from '../../components/TextInput';
 import UnidadeController from './UnidadeController';
 import PasswordInput from '../../components/PasswordInput';
@@ -20,7 +19,7 @@ import { Enviroment } from '../../utils/Functions';
 
 export default function UnidadeView(props) {
    const lastFormStateRef = useRef(null);
-   const controller = Enviroment.isDevelopment ? new UnidadeController() :  new UnidadeController(); // useMemo(() => new UnidadeController(), []);
+   const controller = useMemo(() => new UnidadeController(), []);
    const contentRef = useRef(null);
    const handlePrint = useReactToPrint({ contentRef });
 
@@ -36,13 +35,13 @@ export default function UnidadeView(props) {
             <Row>
                <Col sm={3} md={3} lg={3}>
                   <FormGroup>
-                     <Label>Código</Label>
+                     <BoldLabel>Código</BoldLabel>
                      <TextInput readOnly defaultValue={item.id || ''} />
                   </FormGroup>
                </Col>
                <Col sm={9} md={9} lg={9}>
                   <FormGroup>
-                     <Label>Nome</Label>
+                     <BoldLabel>Nome</BoldLabel>
                      <TextInput
                         defaultValue={item.nome}
                         onChange={(value) =>
@@ -59,93 +58,71 @@ export default function UnidadeView(props) {
                   </FormGroup>
                </Col>
             </Row>
-            <Row>
-               <Col>
-                  <BoldLabel>Integração com Uno</BoldLabel>
-               </Col>
-            </Row>
-            <Row>
-               <Col>
-                  <FormGroup>
-                     <Label>Código de acesso</Label>
-                     <PasswordInput
-                        defaultValue={item.unoAccessToken || ''}
-                        rows={props.rows || 15}
-                        onChange={(value) =>
-                           setFormState((prev) => ({
-                              ...prev,
-                              itemSelecionado: {
-                                 ...prev.itemSelecionado,
-                                 unoAccessToken: value,
-                              },
-                           }))
-                        }
-                     />
-                  </FormGroup>
-               </Col>
+            <Filler height={10}/>
+            <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
+               <Row>
+                  <Col>
+                     <BoldLabel>Integração com Uno</BoldLabel>
+                  </Col>
+               </Row>
+               <Row>
+                  <Col>
+                     <FormGroup>
+                        <BoldLabel>Código de acesso</BoldLabel>
+                        <PasswordInput
+                           defaultValue={item.unoAccessToken || ''}
+                           rows={props.rows || 15}
+                           onChange={(value) =>
+                              setFormState((prev) => ({
+                                 ...prev,
+                                 itemSelecionado: {
+                                    ...prev.itemSelecionado,
+                                    unoAccessToken: value,
+                                 },
+                              }))
+                           }
+                        />
+                     </FormGroup>
+                  </Col>
 
-               <Col>
-                  <FormGroup>
-                     <Label>Chave secreta</Label>
+                  <Col>
+                     <FormGroup>
+                        <BoldLabel>Chave secreta</BoldLabel>
 
-                     <PasswordInput
-                        defaultValue={item.unoSecretKey || ''}
-                        rows={props.rows || 15}
-                        onChange={(value) =>
-                           setFormState((prev) => ({
-                              ...prev,
-                              itemSelecionado: {
-                                 ...prev.itemSelecionado,
-                                 unoSecretKey: value,
-                              },
-                           }))
-                        }
-                     />
-                  </FormGroup>
-               </Col>
-            </Row>
+                        <PasswordInput
+                           defaultValue={item.unoSecretKey || ''}
+                           rows={props.rows || 15}
+                           onChange={(value) =>
+                              setFormState((prev) => ({
+                                 ...prev,
+                                 itemSelecionado: {
+                                    ...prev.itemSelecionado,
+                                    unoSecretKey: value,
+                                 },
+                              }))
+                           }
+                        />
+                     </FormGroup>
+                  </Col>
+               </Row>
+            </Panel>
             <br />
 
-            <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
-               <div ref={contentRef}>
-                  <BoldLabel>QR Code para acesso ao Pré-cadastro</BoldLabel>
-                  <FlexRow>
-                     <FlexCol style={{ width: 35 }}>
-                        <BoldLabel>Link:</BoldLabel>
-                     </FlexCol>
-                     <FlexCol style={{ paddingLeft: 3 }}>
-                        <a href={getLink()} style={{ color: 'blue' }} target='_blank'>
-                           {getLink()}
-                        </a>
-                     </FlexCol>
-                  </FlexRow>
-                  <Filler height={10} />
-                  <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
-                     <QRCode
-                        size={256}
-                        style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                        value={getLink()}
-                        viewBox={`0 0 256 256`}
-                     />
-                  </div>
-                  <Filler height={10} />
-               </div>
-
-               <div ref={contentRef}>
-                  <div className='show-on-print-only' style={{ textAlign: 'center' }}>
-                     <img
-                        src={logo}
-                        alt='Logo'
-                        style={{
-                           width: 300,
-                        }}
-                     />
-
-                     <Line />
-
-                     <Filler height={30} />
-                     <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Pré-cadastro</Text>
-                     <Filler height={40} />
+            {item.uuid && (
+               <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
+                  <div ref={contentRef}>
+                     <BoldLabel>QR Code para acesso ao Pré-cadastro</BoldLabel>
+                     <FlexRow>
+                        <FlexCol style={{ width: 35 }}>
+                           <BoldLabel>Link:</BoldLabel>
+                        </FlexCol>
+                        <FlexCol style={{ paddingLeft: 3 }}>
+                           <a href={getLink()} style={{ color: 'blue' }} target='_blank'>
+                              {getLink()}
+                           </a>
+                        </FlexCol>
+                     </FlexRow>
+                     <Filler height={10} />
                      <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
                         <QRCode
                            size={256}
@@ -154,17 +131,43 @@ export default function UnidadeView(props) {
                            viewBox={`0 0 256 256`}
                         />
                      </div>
-                     <Filler height={40} />
-                     <BoldLabel>{getLink()}</BoldLabel>
-                     <Filler height={20} />
-                     <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                     <Filler height={10} />
                   </div>
-               </div>
 
-               <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrint} />
-               {/* <button onClick={handlePrint}>Print</button> */}
-               <Filler height={10} />
-            </Panel>
+                  <div ref={contentRef}>
+                     <div className='show-on-print-only' style={{ textAlign: 'center' }}>
+                        <img
+                           src={logo}
+                           alt='Logo'
+                           style={{
+                              width: 300,
+                           }}
+                        />
+
+                        <Line />
+
+                        <Filler height={30} />
+                        <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Pré-cadastro</Text>
+                        <Filler height={40} />
+                        <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
+                           <QRCode
+                              size={256}
+                              style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+                              value={getLink()}
+                              viewBox={`0 0 256 256`}
+                           />
+                        </div>
+                        <Filler height={40} />
+                        <BoldLabel>{getLink()}</BoldLabel>
+                        <Filler height={20} />
+                        <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                     </div>
+                  </div>
+
+                  <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrint} />
+                  <Filler height={10} />
+               </Panel>
+            )}
          </>
       );
    };

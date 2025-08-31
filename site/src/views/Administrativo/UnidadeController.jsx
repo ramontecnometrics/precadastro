@@ -15,15 +15,13 @@ export default function UnidadeController() {
       return [item.id, item.nome];
    };
 
-   const getObjetoDeDados = (formState) => {
-      return new Promise((resolve, reject) => {
+   const getObjetoDeDados = async (formState) => {
+     try {
          const item = formState?.itemSelecionado || {};
 
          if (!item.nome) {
             showError('Informe o nome da unidade.');
-
-            reject();
-            return;
+            return Promise.reject();
          }
          var input = {
             uuid: item.uuid,
@@ -36,8 +34,13 @@ export default function UnidadeController() {
             input.id = parseInt(item.id);
          }
 
-         resolve(input);
-      });
+         return input;
+         
+      } catch (e) {
+         showError(e.toString());
+         console.error(e);
+         return Promise.reject(e);
+      }
    };
 
    const aposInserir = async (formState, setFormState) => {

@@ -67,6 +67,8 @@ namespace model
         public Tipo<EstadoCivil> EstadoCivil { get; set; }
         public string Observacao { get; set; }
         public string AlertaDeSaude { get; set; }
+        public int? IdentificacaoNoUno { get; set; }
+        public string TokenParaAvaliacaoClinica { get; set; }
 
         public static string SearchableScope = "Lead";
         public override string GetSearchableText()
@@ -96,5 +98,17 @@ namespace model
         public string Searchable { get; set; }
         public DateTime DataDeCadastro { get; set; }
         public Tipo<SituacaoDeLead> Situacao { get; set; }
+    }
+
+    public class ResultadoDeAvaliacaoClinica: IEntity
+    {
+        public long Id { get; set; }
+        public string Thumbprint { get; set; }
+        public string NomeDaEntidade => "Resultado de avaliação";
+        public Genero GeneroDaEntidade => Genero.Masculino;
+
+        public Lead Lead { get; set; }
+        public CampoDeGrupoDeFormulario Campo { get; set; }
+        public string Valor { get; set; }
     }
 }

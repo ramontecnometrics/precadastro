@@ -35,12 +35,12 @@ class Api {
 
    urlBase = () => urlBase;
 
-   getOptions = (queryParams, responseType) => {
+   getOptions = (queryParams, responseType, customHeaders) => {
       let login = sessionManager.getLogin();
-      let headers = {};
+      let headers = customHeaders ? customHeaders : {};
 
       if (login?.token) headers.Authorization = login.token;
-      if (login?.idDoUsuario) headers.UserId = login.idDoUsuario;      
+      if (login?.idDoUsuario) headers.UserId = login.idDoUsuario;
       if (login?.impersonatedBy) headers.RepresentingId = login.impersonatedBy;
 
       return {
@@ -67,11 +67,11 @@ class Api {
    };
 
    // ========= HTTP =========
-   post = (url, data, useProgress = true, showErrors = true) =>
+   post = (url, data, useProgress = true, showErrors = true, headers) =>
       new Promise((resolve, reject) => {
          if (useProgress) this.startLoading();
          axios
-            .post(urlBase + url, data, this.getOptions())
+            .post(urlBase + url, data, this.getOptions(null, null, headers))
             .then((result) => {
                this.finishLoading();
                resolve(result.data);
@@ -82,11 +82,11 @@ class Api {
             });
       });
 
-   put = (url, data, useProgress = true, showErrors = true) =>
+   put = (url, data, useProgress = true, showErrors = true, headers) =>
       new Promise((resolve, reject) => {
-         if (useProgress) this.startLoading();
+         if (useProgress) this.startLoading();  
          axios
-            .put(urlBase + url, data, this.getOptions())
+            .put(urlBase + url, data, this.getOptions(null, null, headers))
             .then((result) => {
                this.finishLoading();
                resolve(result.data);
@@ -125,9 +125,7 @@ class Api {
                   if (useCache) this.insertToCache(url, result.data);
 
                   // corrigido length
-                  resolve(
-                     Array.isArray(result.data) && result.data.length > 0 ? result.data[0] : result.data
-                  );
+                  resolve(Array.isArray(result.data) && result.data.length > 0 ? result.data[0] : result.data);
                })
                .catch((e) => {
                   this.finishLoading();
@@ -199,7 +197,7 @@ class Api {
       }
 
       if (mensagem === 'Network Error') {
-         mensagem = "Servidor indisponível.";
+         mensagem = 'Servidor indisponível.';
       }
       return mensagem;
    };
@@ -215,9 +213,7 @@ class Api {
       try {
          const publicKeyResp = await this.get('/publickey');
          const publicKey =
-            typeof publicKeyResp === 'string'
-               ? publicKeyResp
-               : publicKeyResp?.key || publicKeyResp?.pem || '';
+            typeof publicKeyResp === 'string' ? publicKeyResp : publicKeyResp?.key || publicKeyResp?.pem || '';
 
          const inputString = JSON.stringify(data);
          const encoder = new TextEncoder();
@@ -233,6 +229,7 @@ class Api {
          const encryptedInput = await Promise.all(blocks.map((b) => rsaEncrypt(b, publicKey)));
          return this[method](url, { data: encryptedInput });
       } catch (e) {
+         this.handleErrorMessage(e);
          return Promise.reject(e);
       }
    };

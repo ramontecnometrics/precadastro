@@ -15,13 +15,15 @@ namespace config.NHibernate.Map
                 .CustomType<IntToTipoType<SituacaoDeLead>>()
                 .Not.Nullable()
                 .Check(EnumExtensions.GetDatabaseCheckConstraint<Lead, SituacaoDeLead>(p => p.Situacao));
-      
+
             References(x => x.Profissao);
 
             Map(x => x.Cnh);
+            Map(x => x.IdentificacaoNoUno).Index("");
+            Map(x => x.TokenParaAvaliacaoClinica).Length(36).Index("");
 
             Map(x => x.EstadoCivil)
-                .CustomType<IntToTipoType<EstadoCivil>>()                
+                .CustomType<IntToTipoType<EstadoCivil>>()
                 .Check(EnumExtensions.GetDatabaseCheckConstraint<Lead, EstadoCivil>(p => p.EstadoCivil));
 
             Map(x => x.Observacao).CustomSqlType("text");
@@ -34,7 +36,7 @@ namespace config.NHibernate.Map
         public LeadFastMap()
         {
             Id(p => p.Id).GeneratedBy.Identity();
-            Map(p => p.Thumbprint).Length(36).Index("");            
+            Map(p => p.Thumbprint).Length(36).Index("");
             Map(p => p.Searchable).Length(500).Index("");
             Map(p => p.Cpf).Length(20);
             Map(p => p.NomeCompleto).Length(200);
@@ -63,6 +65,18 @@ select lead.id,
     left join telefonedepessoa celular on celular.pessoa_id = pessoa.id and celular.tipo = 1
   where lead.situacao <> 3"
                 );
+        }
+    }
+
+    public class ResultadoDeAvaliacaoClinicaMap : ClassMap<ResultadoDeAvaliacaoClinica>
+    {
+        public ResultadoDeAvaliacaoClinicaMap()
+        {
+            Id(p => p.Id).GeneratedBy.Identity();
+            Map(p => p.Thumbprint).Length(36).Index("");
+            References(p => p.Lead);
+            References(p => p.Campo);
+            Map(p => p.Valor).Length(500);
         }
     }
 }

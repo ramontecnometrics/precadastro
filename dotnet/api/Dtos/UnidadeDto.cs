@@ -7,6 +7,7 @@ namespace api.Dtos
     {
         public long Id { get; set; }
         public string Nome { get; set; }
+        public string Uuid { get; set; }
         public string UnoSecretKey { get; set; }
         public string UnoAccessToken { get; set; }
 
@@ -18,6 +19,7 @@ namespace api.Dtos
             {
                 Id = entity.Id,
                 Nome = entity.Nome,
+                Uuid = entity.Uuid,
                 UnoSecretKey = entity.UnoSecretKey.GetPlainText(),
                 UnoAccessToken = entity.UnoAccessToken?.GetPlainText()
             };

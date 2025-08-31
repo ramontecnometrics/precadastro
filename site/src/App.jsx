@@ -41,10 +41,7 @@ function App() {
                </MainLayout>
             </HashRouter>
          );
-      } else if (sessionManager.isUsuarioAdministrador()) {
-
-         console.log(window.location.pathname);
-
+      } else if (sessionManager.isUsuarioAdministrador()) {      
          if (window.location.pathname === '/') {
             result = (
                <PreCadastroView />

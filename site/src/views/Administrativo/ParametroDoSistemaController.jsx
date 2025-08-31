@@ -6,9 +6,9 @@ import { buildQueryString } from '../../utils/Functions';
 import PerfilDeUsuarioView from './PerfilDeUsuarioView';
 import TermoDeUsoView from './TermoDeUsoView';
 import TextArea from '../../components/TextArea';
+import FormularioView from './FormularioView';
 
- 
-export default function ParametroDoSistemaController(view) {
+export default function ParametroDoSistemaController() {
    const getTitulosDaTabela = () => {
       return [
          { titulo: 'Código', className: 'codigo' },
@@ -25,14 +25,19 @@ export default function ParametroDoSistemaController(view) {
    const componenteTextArea = (defaultValue, setValor) => {
       return (
          <FormGroup>
-            <Label>Selecione</Label>
+            {/* <Label>Selecione</Label> */}
             <TextArea defaultValue={defaultValue} onChange={(value) => setValor(value)} />
          </FormGroup>
       );
    };
 
    const getDescricaoDoValor = (item) => {
-      var camposObjeto = ['PerfilDeUsuarioParaEmpresa', 'TermoDeUsoAtivo'];
+      var camposObjeto = [
+         'PerfilDeUsuarioParaEmpresa',
+         'TermoDeUsoAtivo',
+         'FichaDeAvaliacaoClinicaParaGeneroMasculino',
+         'FichaDeAvaliacaoClinicaParaGeneroFeminino',
+      ];
       var descricao = null;
       const getDescricaoParaObjeto = () => {
          var result = null;
@@ -63,14 +68,14 @@ export default function ParametroDoSistemaController(view) {
       return descricao;
    };
 
-   const getObjetoDeDados = () => {
-      return new Promise((resolve, reject) => {
-         let item = view.state.itemSelecionado;
+   const getObjetoDeDados = async (formState, setFormState) => {
+      console.log('getObjetoDeDados');
+      try {
+         let item = formState.itemSelecionado;
 
          if (!item.nome) {
-            showError('Selecione o parâmetro');
-            reject();
-            return;
+            showError('Selecione o parâmetro.');
+            return Promise.reject();
          }
 
          var input = {
@@ -81,42 +86,59 @@ export default function ParametroDoSistemaController(view) {
             valor: item.valor,
             protegido: item.protegido,
          };
-         if (view.state.alterando) {
+
+         if (formState.alterando) {
             input.id = parseInt(item.id);
          }
-         resolve(input);
-      });
+
+         console.log(input);
+
+         return input;
+      } catch (e) {
+         showError(e.toString());
+         console.error(e);
+         return Promise.reject(e);
+      }
    };
+
+   const grupos = new Map([
+      [1, 'Envio de E-mail'],
+      [2, 'Termo de uso'],
+      [3, 'Gerais'],
+      [4, 'Infobip'],
+      [5, 'Uno'],
+      [6, 'Fichas de avaliação clínica'],
+   ]);
 
    const comboParametros = () => {
       let result = [
          // ====== Envio de E-mail ======
-         { nome: 'ServidorSmtp', descricao: "Servidor SMTP", grupo: 1, ordem: 1 },
-         { nome: 'PortaSmtp', descricao: "Porta SMTP", grupo: 1, ordem: 2 },
+         { nome: 'ServidorSmtp', descricao: grupos.get(1) + ' -> Servidor SMTP', grupo: 1, ordem: 1 },
+         { nome: 'PortaSmtp', descricao: grupos.get(1) + ' -> Porta SMTP', grupo: 1, ordem: 2 },
          {
             nome: 'UsuarioDoServidorSmtp',
-            descricao: "Usuário de acesso ao servidor SMTP",
+            descricao: grupos.get(1) + ' -> Usuário de acesso ao servidor SMTP',
             grupo: 1,
             ordem: 3,
-            ajuda: "Na maioria dos casos é o mesmo e-mail remetente."
+            ajuda: 'Na maioria dos casos é o mesmo e-mail remetente.',
          },
-         { nome: 'EmailRemetente', descricao: "E-mail remetente", grupo: 1, ordem: 4 },
+         { nome: 'EmailRemetente', descricao: grupos.get(1) + ' -> E-mail remetente', grupo: 1, ordem: 4 },
          {
             nome: 'SenhaDoServidorSmtp',
-            descricao: "Senha remetente",
+            descricao: grupos.get(1) + ' -> Senha remetente',
             grupo: 1,
             ordem: 5,
-            protegido: true
+            protegido: true,
          },
-         { nome: 'NomeDoRemetente', descricao: "Nome do remetente", grupo: 1, ordem: 6 },
+         { nome: 'NomeDoRemetente', descricao: grupos.get(1) + ' -> Nome do remetente', grupo: 1, ordem: 6 },
          {
             nome: 'UsarSslNoServidorSmtp',
-            descricao: "Usar SSL",
+            descricao: grupos.get(1) + ' -> Usar SSL',
             grupo: 1,
             ordem: 7,
             componente: (defaultValue, setValor) => (
                <FormGroup>
-                  <Label>Selecione</Label>
+                  {/* <Label>Selecione</Label> */}
                   <Select
                      name={'UsarSslNoServidorSmtp'}
                      defaultValue={defaultValue}
@@ -124,128 +146,108 @@ export default function ParametroDoSistemaController(view) {
                      getDescription={(i) => i.nome}
                      options={[
                         { id: 'Não', nome: 'Não' },
-                        { id: 'Sim', nome: 'Sim' }
+                        { id: 'Sim', nome: 'Sim' },
                      ]}
                      onSelect={(i) => setValor(i ? i.id : 'Não')}
                      allowEmpty={false}
                   />
                </FormGroup>
-            )
+            ),
          },
-   
+
          // ====== Objetos ======
-         {
-            nome: 'PerfilDeUsuarioParaEmpresa',
-            descricao: "Perfil de usuário para empresas",
-            grupo: 2,
-            ordem: 1,
-            componente: (defaultValue, setValor) => {
-               defaultValue = defaultValue ? JSON.parse(defaultValue) : null;
-               return (
-                  <FormGroup>
-                     <Label>Selecione</Label>
-                     <Select
-                        name={'perfil'}
-                        defaultValue={defaultValue}
-                        getKeyValue={(i) => i.id}
-                        getDescription={(i) => i.nome}
-                        onSelect={(i) => setValor(i ? JSON.stringify({ id: i.id, nome: i.nome }) : null)}
-                        formularioPadrao={(select) => (
-                           <PerfilDeUsuarioView 
-                              select={select}
-                              filtroExtra={() => ({ tipoDePerfil: 2 })}
-                           />
-                        )}
-                        noDropDown={true}
-                        readOnlyColor='#ffff'
-                        getFilterUrl={(text) =>
-                           '/perfildeusuario/fast' +
-                           buildQueryString(2, null, 'id', { Searchable: text, tipoDePerfil: 3 })
-                        }
-                     />
-                  </FormGroup>
-               );
-            }
-         },
+
          {
             nome: 'TermoDeUsoAtivo',
-            descricao: "Termo de uso ativo",
+            descricao: grupos.get(2) + ' -> Termo de uso ativo',
             grupo: 2,
             ordem: 2,
             componente: (defaultValue, setValor) => {
                defaultValue = defaultValue ? JSON.parse(defaultValue) : null;
                return (
                   <FormGroup>
-                     <Label>Selecione</Label>
+                     {/* <Label>Selecione</Label> */}
                      <Select
                         name={'termoDeUso'}
                         defaultValue={defaultValue}
                         getKeyValue={(i) => i.id}
                         getDescription={(i) => i.nome}
                         onSelect={(i) => setValor(i ? JSON.stringify({ id: i.id, nome: i.nome }) : null)}
-                        formularioPadrao={(select) => (
-                           <TermoDeUsoView select={select} />
-                        )}
+                        formularioPadrao={(select) => <TermoDeUsoView select={select} />}
+                        noDropDown={true}
+                        readOnlyColor='#ffff'
+                        getFilterUrl={(text) => '/termodeuso' + buildQueryString(2, null, 'id', { Searchable: text })}
+                     />
+                  </FormGroup>
+               );
+            },
+         },
+
+         // ====== Uno ======
+         { nome: 'UrlDaApiDoUno', descricao: grupos.get(5) + ' -> URL base da Api do Uno', grupo: 5, ordem: 1 },
+         {
+            nome: 'CodigoDoColaboradorParaIntegracaoComOUno',
+            descricao: grupos.get(5) + ' -> Código do colaborador para integração com o Uno',
+            grupo: 5,
+            ordem: 2,
+         },
+
+         // ====== Fichas de avaliação clínica ======
+         {
+            nome: 'FichaDeAvaliacaoClinicaParaGeneroMasculino',
+            descricao: grupos.get(6) + ' -> Ficha de avaliação clínica para gênero masculino',
+            grupo: 6,
+            ordem: 1,
+            componente: (defaultValue, setValor) => {
+               defaultValue = defaultValue ? JSON.parse(defaultValue) : null;
+               return (
+                  <FormGroup>
+                     <Select
+                        name={'FichaDeAvaliacaoClinicaParaGeneroMasculino'}
+                        defaultValue={defaultValue}
+                        getKeyValue={(i) => i.id}
+                        getDescription={(i) => i.nome}
+                        onSelect={(i) => setValor(i ? JSON.stringify({ id: i.id, nome: i.nome }) : null)}
+                        formularioPadrao={(select) => <FormularioView select={select} />}
                         noDropDown={true}
                         readOnlyColor='#ffff'
                         getFilterUrl={(text) =>
-                           '/termodeuso' +
-                           buildQueryString(2, null, 'id', { Searchable: text })
+                           '/formulario/fast' + buildQueryString(2, null, 'id', { Searchable: text })
                         }
                      />
                   </FormGroup>
                );
-            }
+            },
          },
-   
-         // ====== Gerais ======
-         { nome: 'UrlPublica', descricao: "Url pública do site", grupo: 3, ordem: 1 },
-   
-         // ====== Infobip ======
-         { nome: 'InfobipApiUrl', descricao: "URL da API Infobip", grupo: 4, ordem: 1 },
-         { nome: 'InfobipApiKey', descricao: "Chave da API Infobip", grupo: 4, ordem: 2, protegido: true },
-         { nome: 'InfobipApiRemetenteWhatsApp', descricao: "Remetente WhatsApp da API Infobip", grupo: 4, ordem: 3 },
-   
-         // ====== Notificações ======
+
          {
-            nome: 'TextoParaNotificacaoDeMudancaDeTemperaturaViaEmail',
-            descricao: "Texto para notificação de mudança de temperatura via E-mail",
-            grupo: 5,
-            ordem: 1,
-            componente: componenteTextArea,
-            ajuda:
-               "Variáveis que você pode usar na mensagem:\n\n%Data%\n%DataPorExtenso%\n%DataEHora%\n%DataEHoraPorExtenso%\n%NomeDoEquipamento%\n%NomeDoPredio%\n%NomeDoLocal%\n%MacDaTag%\n%NumeroDeSerieDoMonitorado%\n%NumeroDePatrimonioDoMonitorado%\n%Andar%\n%Temperatura%"
-         },
-         {
-            nome: 'TextoParaNotificacaoDeUmidadeViaEmail',
-            descricao: "Texto para notificação de mudança de umidade via E-mail",
-            grupo: 5,
+            nome: 'FichaDeAvaliacaoClinicaParaGeneroFeminino',
+            descricao: grupos.get(6) + ' -> Ficha de avaliação clínica para gênero feminino',
+            grupo: 6,
             ordem: 2,
-            componente: componenteTextArea,
-            ajuda:
-               "Variáveis que você pode usar na mensagem:\n\n%Data%\n%DataPorExtenso%\n%DataEHora%\n%DataEHoraPorExtenso%\n%NomeDoEquipamento%\n%NomeDoPredio%\n%NomeDoLocal%\n%MacDaTag%\n%NumeroDeSerieDoMonitorado%\n%NumeroDePatrimonioDoMonitorado%\n%Andar%\n%Umidade%"
+            componente: (defaultValue, setValor) => {
+               defaultValue = defaultValue ? JSON.parse(defaultValue) : null;
+               return (
+                  <FormGroup>
+                     <Select
+                        name={'FichaDeAvaliacaoClinicaParaGeneroFeminino'}
+                        defaultValue={defaultValue}
+                        getKeyValue={(i) => i.id}
+                        getDescription={(i) => i.nome}
+                        onSelect={(i) => setValor(i ? JSON.stringify({ id: i.id, nome: i.nome }) : null)}
+                        formularioPadrao={(select) => <FormularioView select={select} />}
+                        noDropDown={true}
+                        readOnlyColor='#ffff'
+                        getFilterUrl={(text) =>
+                           '/formulario/fast' + buildQueryString(2, null, 'id', { Searchable: text })
+                        }
+                     />
+                  </FormGroup>
+               );
+            },
          },
-         {
-            nome: 'TextoParaNotificacaoDeBateriaFracaViaEmail',
-            descricao: "Texto para notificação de bateria fraca via E-mail",
-            grupo: 5,
-            ordem: 3,
-            componente: componenteTextArea,
-            ajuda:
-               "Variáveis que você pode usar na mensagem:\n\n%Data%\n%DataPorExtenso%\n%DataEHora%\n%DataEHoraPorExtenso%\n%NomeDoEquipamento%\n%NomeDoPredio%\n%NomeDoLocal%\n%MacDaTag%\n%NumeroDeSerieDoMonitorado%\n%NumeroDePatrimonioDoMonitorado%\n%Andar%\n%Bateria%"
-         },
-         {
-            nome: 'TextoParaNotificacaoDeGatewayOfflineViaEmail',
-            descricao: "Texto para notificação de gateway offline via E-mail",
-            grupo: 5,
-            ordem: 4,
-            componente: componenteTextArea,
-            ajuda:
-               "Variáveis que você pode usar na mensagem:\n\n%MacDoGateway%\n%NumeroDePatrimonioDoGateway%\n%NomeDoPredio%\n%NomeDoLocal%\n%Andar%"
-         }
-         // ... segue o mesmo padrão pros outros campos de SMS, WhatsApp e Voz
       ];
-   
+
       return result;
    };
 
@@ -255,5 +257,4 @@ export default function ParametroDoSistemaController(view) {
       getObjetoDeDados,
       comboParametros,
    };
-   
 }

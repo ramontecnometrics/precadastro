@@ -8,9 +8,11 @@ using framework.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using model;
 using model.Repositories;
+using Newtonsoft.Json.Converters;
 using Remotion.Linq.Clauses.ResultOperators;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -41,6 +43,11 @@ namespace api.Controllers
         private readonly Repository<TelefoneDePessoa> TelefoneDePessoaRepository;
         private readonly Repository<EnderecoDePessoa> EnderecoDePessoaRepository;
         private readonly Repository<Cidade> CidadeRepository;
+        private readonly Repository<Unidade> UnidadeRepository;
+        private readonly Repository<Formulario> FormularioRepository;
+        private readonly ParametroDoSistemaRepository ParametroDoSistemaRepository;
+        private readonly Repository<ResultadoDeAvaliacaoClinica> ResultadoDeAvaliacaoClinicaRepository;
+        private readonly Repository<CampoDeGrupoDeFormulario> CampoDeGrupoDeFormularioRepository;
 
         public LeadController(
             LeadRepository repository,
@@ -50,7 +57,12 @@ namespace api.Controllers
             Repository<TelefoneDePessoa> telefoneDePessoaRepository,
             Repository<EnderecoDePessoa> enderecoDePessoaRepository,
             IAppContext appContext,
-            Repository<Cidade> cidadeRepository) :
+            Repository<Cidade> cidadeRepository,
+            Repository<Unidade> unidadeRepository,
+            Repository<Formulario> formularioRepository,
+            ParametroDoSistemaRepository parametroDoSistemaRepository,
+            Repository<ResultadoDeAvaliacaoClinica> resultadoDeAvaliacaoClinicaRepository,
+            Repository<CampoDeGrupoDeFormulario> campoDeGrupoDeFormularioRepository) :
             base(repository, fastRepository, appContext)
         {
             LeadRepository = repository;
@@ -59,6 +71,11 @@ namespace api.Controllers
             TelefoneDePessoaRepository = telefoneDePessoaRepository;
             EnderecoDePessoaRepository = enderecoDePessoaRepository;
             CidadeRepository = cidadeRepository;
+            UnidadeRepository = unidadeRepository;
+            FormularioRepository = formularioRepository;
+            ParametroDoSistemaRepository = parametroDoSistemaRepository;
+            ResultadoDeAvaliacaoClinicaRepository = resultadoDeAvaliacaoClinicaRepository;
+            CampoDeGrupoDeFormularioRepository = campoDeGrupoDeFormularioRepository;
         }
 
         protected override IQueryable<Lead> Get(LeadGetParams getParams)
@@ -295,37 +312,114 @@ namespace api.Controllers
             return id > 0 ? id : null;
         }
 
-            [Microsoft.AspNetCore.Mvc.HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro")]
-        public  string PreCadastro([Microsoft.AspNetCore.Mvc.FromBody] PreCadastroDto insertRequest)
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro/parametros")]
+        public ParametrosDePrecadastroDto GetParametros(string id)
         {
-            var result = "";
+            var result = new ParametrosDePrecadastroDto();
+
+            var unidade = UnidadeRepository.GetAll()
+                .Where(i => i.Uuid == id)
+                .OrderBy(i => i.Id)
+                .Select(i => new { i.Id, i.Nome })
+                .FirstOrDefault();
+
+            if (unidade != null)
+            {
+                result.Unidade = new UnidadeDto()
+                {
+                    Id = unidade.Id,
+                    Nome = unidade.Nome,
+                };
+            }
+
+            result.Unidades =
+                UnidadeRepository.GetAll()
+                .Select(i =>
+                    new UnidadeDto()
+                    {
+                        Id = i.Id,
+                        Nome = i.Nome,
+                    }).ToArray();
+
+            var fichaDeAvaliacaoClinicaParaGeneroMasculinoJson =
+                ParametroDoSistemaRepository.GetString("FichaDeAvaliacaoClinicaParaGeneroMasculino");
+            var fichaDeAvaliacaoClinicaParaGeneroFemininoJson =
+                ParametroDoSistemaRepository.GetString("FichaDeAvaliacaoClinicaParaGeneroFeminino");
+
+            if (string.IsNullOrEmpty(fichaDeAvaliacaoClinicaParaGeneroMasculinoJson))
+            {
+                throw new Exception("A ficha de avaliação clínica ainda não foi definida nos parâmetros do sistema.");
+            }
+
+            if (string.IsNullOrEmpty(fichaDeAvaliacaoClinicaParaGeneroFemininoJson))
+            {
+                throw new Exception("A ficha de avaliação clínica ainda não foi definida nos parâmetros do sistema.");
+            }
+
+
+            var converter = new ExpandoObjectConverter();
+            dynamic parametro = null;
+
+            parametro = Newtonsoft.Json.JsonConvert
+                .DeserializeObject<ExpandoObject>(fichaDeAvaliacaoClinicaParaGeneroMasculinoJson, converter);
+            long idDaFichaDeAvaliacaoClinicaParaGeneroMasculino = parametro.id;
+
+            parametro = Newtonsoft.Json.JsonConvert
+                .DeserializeObject<ExpandoObject>(fichaDeAvaliacaoClinicaParaGeneroFemininoJson, converter);
+            long idDaFichaDeAvaliacaoClinicaParaGeneroFeminino = parametro.id;
+
+
+
+            var fichaDeAvaliacaoClinicaParaGeneroMasculino =
+                FormularioRepository.Get(idDaFichaDeAvaliacaoClinicaParaGeneroMasculino, true);
+            var fichaDeAvaliacaoClinicaParaGeneroFeminino =
+                FormularioRepository.Get(idDaFichaDeAvaliacaoClinicaParaGeneroFeminino, true);
+
+            result.FichaDeAvaliacaoClinicaParaGeneroMasculino = FormularioDto.Build(fichaDeAvaliacaoClinicaParaGeneroMasculino);
+            result.FichaDeAvaliacaoClinicaParaGeneroFeminino = FormularioDto.Build(fichaDeAvaliacaoClinicaParaGeneroFeminino);
+
+            return result;
+        }
+
+
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro")]
+        public RespostaDeInclusaoDePreCadastroDto PreCadastro([Microsoft.AspNetCore.Mvc.FromBody] PreCadastroDto request)
+        {
+            var result = new RespostaDeInclusaoDePreCadastroDto();
+
+            var urlDaApiDoUno = ParametroDoSistemaRepository.GetString("UrlDaApiDoUno");
+            var codigoDoColaboradorParaIntegracaoComOUno = ParametroDoSistemaRepository.GetString("CodigoDoColaboradorParaIntegracaoComOUno");
+
+            var unidade = UnidadeRepository.Get(request.IdDaUnidade, true);
 
             var lead = new Lead()
             {
-                NomeCompleto = EncryptedText.Build(insertRequest.Nome),
-                Cpf = EncryptedText.Build(insertRequest.Cpf),
-                Email = EncryptedText.Build(insertRequest.Email),
-                Cnh = EncryptedText.Build(insertRequest.Cnh),
-                Observacao = insertRequest.Observacoes,
-                EstadoCivil = !string.IsNullOrEmpty(insertRequest.EstadoCivil) ? (EstadoCivil)int.Parse(insertRequest.EstadoCivil) : null,
+                NomeCompleto = EncryptedText.Build(request.Nome),
+                Cpf = EncryptedText.Build(request.Cpf),
+                Email = EncryptedText.Build(request.Email),
+                Cnh = EncryptedText.Build(request.Cnh),
+                Observacao = request.Observacoes,
+                EstadoCivil = !string.IsNullOrEmpty(request.EstadoCivil) ? (EstadoCivil)int.Parse(request.EstadoCivil) : null,
                 Situacao = SituacaoDeLead.Ativo,
                 DataDeCadastro = DateTime.Now,
-                Sexo = (Sexo)int.Parse(insertRequest.Genero),
+                Sexo = (Sexo)int.Parse(request.Genero),
                 Telefones = new List<TelefoneDePessoa>(),
                 Enderecos = new List<EnderecoDePessoa>(),
-                DataDeNascimento = DateTime.ParseExact(insertRequest.DataNascimento, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                DocumentoDeIdentidade = EncryptedText.Build(insertRequest.Rg),
+                DataDeNascimento = DateTime.ParseExact(request.DataNascimento, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                DocumentoDeIdentidade = EncryptedText.Build(request.Rg),
+                TokenParaAvaliacaoClinica = Guid.NewGuid().ToString()
             };
 
-            if (insertRequest.Profissao != null)
+            if (request.Profissao != null)
             {
-                lead.Profissao = insertRequest.Profissao != null ? ProfissaoRepository.Get(long.Parse(insertRequest.Profissao), true) : null;
+                lead.Profissao = request.Profissao != null ? ProfissaoRepository.Get(long.Parse(request.Profissao), true) : null;
             }
 
-            if (!string.IsNullOrEmpty(insertRequest.Telefone))
+            if (!string.IsNullOrEmpty(request.Telefone))
             {
-                var telefoneParts = insertRequest.Telefone.Split(")");
+                var telefoneParts = request.Telefone.Split(")");
                 var ddd = telefoneParts[0].Replace("(", "").Trim();
                 var numero = telefoneParts[1].Replace("-", "").Trim();
 
@@ -339,9 +433,9 @@ namespace api.Controllers
                 lead.Telefones.Add(telefone);
             }
 
-            if (!string.IsNullOrEmpty(insertRequest.Celular))
+            if (!string.IsNullOrEmpty(request.Celular))
             {
-                var telefoneParts = insertRequest.Celular.Split(")");
+                var telefoneParts = request.Celular.Split(")");
                 var ddd = telefoneParts[0].Replace("(", "").Trim();
                 var numero = telefoneParts[1].Replace("-", "").Trim();
 
@@ -355,11 +449,11 @@ namespace api.Controllers
                 lead.Telefones.Add(celular);
             }
 
-            if (!string.IsNullOrEmpty(insertRequest.Cidade) && !string.IsNullOrEmpty(insertRequest.Estado))
+            if (!string.IsNullOrEmpty(request.Cidade) && !string.IsNullOrEmpty(request.Estado))
             {
                 var cidade = CidadeRepository.GetAll()
-                    .Where(i => i.Nome == insertRequest.Cidade)
-                    .Where(i => i.Estado.UF == insertRequest.Estado.ToUpper())
+                    .Where(i => i.Nome == request.Cidade)
+                    .Where(i => i.Estado.UF == request.Estado.ToUpper())
                     .FirstOrDefault();
 
                 var endereco = new EnderecoDePessoa()
@@ -367,11 +461,11 @@ namespace api.Controllers
                     Pessoa = lead,
                     Endereco = new Endereco()
                     {
-                        Logradouro = insertRequest.Logradouro,
-                        Numero = insertRequest.Numero,
-                        Complemento = insertRequest.Complemento,
-                        Bairro = insertRequest.Bairro,
-                        CEP = insertRequest.Cep,
+                        Logradouro = request.Logradouro,
+                        Numero = request.Numero,
+                        Complemento = request.Complemento,
+                        Bairro = request.Bairro,
+                        CEP = request.Cep,
                         Cidade = cidade
                     },
                     Tipo = TipoDeEndereco.Residencial,
@@ -380,61 +474,127 @@ namespace api.Controllers
                 lead.Enderecos.Add(endereco);
             }
 
-            base.Repository.Insert(lead);
+            Repository.Insert(lead);
 
-            var content = Newtonsoft.Json.JsonConvert.SerializeObject(new
+            result.IdDoLead = lead.Id;
+            result.TokenParaAvaliacaoClinica = lead.TokenParaAvaliacaoClinica;
+
+            if (!string.IsNullOrEmpty(urlDaApiDoUno) &&
+                !string.IsNullOrEmpty(codigoDoColaboradorParaIntegracaoComOUno) &&
+                !string.IsNullOrEmpty(unidade.UnoAccessToken.GetPlainText()) &&
+                !string.IsNullOrEmpty(unidade.UnoSecretKey.GetPlainText()))
             {
-                name = lead.NomeCompleto.GetPlainText(),
-                // email = lead.Email.GetPlainText(),
-                cellPhone = $"{lead.Celular.Pais.Replace("+", "")}{lead.Celular.DDD}{lead.Celular.Numero.GetPlainText()}",
-                employeeId = 34,
-                tagId = 0,
-                originId = 16,
-                campaignId = 1,
-                campaignSlug = "",
-                observation = "",
-                adCampaignName = "Pré cadastro",
-                adSetName = "",
-                adName = ""
+                var content = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                {
+                    name = lead.NomeCompleto.GetPlainText(),
+                    // email = lead.Email.GetPlainText(),
+                    cellPhone = $"{lead.Celular.Pais.Replace("+", "")}{lead.Celular.DDD}{lead.Celular.Numero.GetPlainText()}",
+                    employeeId = 34,
+                    tagId = 0,
+                    originId = 16,
+                    campaignId = 1,
+                    campaignSlug = "",
+                    observation = "",
+                    adCampaignName = "Pré cadastro",
+                    adSetName = "",
+                    adName = ""
+                });
+
+                try
+                {
+                    WebRequestHelper.Execute(
+                        new CommunicationParameters()
+                        {
+                            IgnoreCertificateErrors = true,
+                            ReceiveTimeout = 30000,
+                            SendTimeout = 30000,
+                            TlsSslVersion = System.Net.SecurityProtocolType.Tls12,
+                            UseDefaultProxy = true
+                        },
+                        new WebRequestParams()
+                        {
+                            Accept = "application/json",
+                            ContentType = "application/json",
+                            Method = "POST",
+                            Url = $"{urlDaApiDoUno}/v1/lead",
+                        },
+                        new WebRequestHeaders(
+                            new WebRequestHeader("x-uno-access-token", unidade.UnoSecretKey.GetPlainText()),
+                            new WebRequestHeader("x-uno-secret-key", unidade.UnoSecretKey.GetPlainText())
+                        ),
+                        content,
+                        (response) =>
+                        {
+                            var unoResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<UnoResponse>(response);
+
+                            if (unoResponse.deal == null)
+                            {
+                                result.Mensagem = $"Cadastro realizado com a seguinte observação na integração com o Uno:\n\n {unoResponse.message}";
+                            }
+                            else
+                            {
+                                lead.IdentificacaoNoUno = unoResponse.deal.id;
+                                Repository.Update(lead);
+                            }
+
+                            Console.WriteLine(response);
+
+                        }
+                    );
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+            return result;
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro/avaliacaoclinica")]
+        public RespostaDeInclusaoDeAvaliacaoClinicaDto AvaliacaoClinica([Microsoft.AspNetCore.Mvc.FromBody] AvaliacaoClinicaDto request,
+            [Microsoft.AspNetCore.Mvc.FromHeader] string tokenParaAvaliacaoClinica)
+        {
+            var lead = Repository.Get(request.IdDoLead, true);
+
+            if (lead.TokenParaAvaliacaoClinica != tokenParaAvaliacaoClinica)
+            {
+                throw new Exception("Acesso negado.");
+            }
+
+            if (request.FichaDeAvaliacao == null)
+            {
+                throw new Exception("Ficha não informada.");
+            }
+
+            if (request.FichaDeAvaliacao.Grupos == null)
+            {
+                throw new Exception("Grupos da ficha não informados.");
+            }
+
+            if (request.FichaDeAvaliacao.Grupos.Length == 0)
+            {
+                throw new Exception("Nenhum grupo informado.");
+            }
+
+            request.FichaDeAvaliacao.Grupos.ForEach(grupo =>
+            {
+                grupo.Campos.ForEach(campo =>
+                {
+                    ResultadoDeAvaliacaoClinicaRepository.Insert(new ResultadoDeAvaliacaoClinica()
+                    {
+                        Lead = lead,
+                        Campo = CampoDeGrupoDeFormularioRepository.Get(campo.Id, true),
+                        Valor = campo.Valor
+                    });
+                });
             });
 
+            // throw new NotImplementedException();
 
-            WebRequestHelper.Execute(
-                new CommunicationParameters()
-                {
-                    IgnoreCertificateErrors = true,
-                    ReceiveTimeout = 30000,
-                    SendTimeout = 30000,
-                    TlsSslVersion = System.Net.SecurityProtocolType.Tls12,
-                    UseDefaultProxy = true
-                },
-                new WebRequestParams()
-                {
-                    Accept = "application/json",
-                    ContentType = "application/json",
-                    Method = "POST",
-                    Url = "https://api.unobject.com.br/v1/lead",
-                },
-                new WebRequestHeaders(
-                    new WebRequestHeader("x-uno-access-token", "19DA1AF6DA5C013C4380"),
-                    new WebRequestHeader("x-uno-secret-key", "c20b0285aca2674fb79f37b776c454e5d4a37ad9b6ceeeeebc")
-                ),
-                content,
-                (response) =>
-                {
-                    var unoResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<UnoResponse>(response);
-
-                    if (unoResponse.deal == null)
-                    {
-                        result = $"Cadastro realizado com a seguinte observação na integração com o Uno:\n\n {unoResponse.message}";
-                    }
-
-                    Console.WriteLine(response);
-
-                }
-            );
-
-            return  result;
+            var result = new RespostaDeInclusaoDeAvaliacaoClinicaDto();
+            return result;
         }
     }
 
@@ -492,6 +652,7 @@ namespace api.Controllers
 
     public class PreCadastroDto
     {
+        public long IdDaUnidade { get; set; }
         public string Celular { get; set; }
         public string Nome { get; set; }
         public string Genero { get; set; }
@@ -514,8 +675,6 @@ namespace api.Controllers
         public string Cidade { get; set; }
         public string Observacoes { get; set; }
     }
-
-
 
     public class UnoResponse
     {
@@ -550,4 +709,48 @@ namespace api.Controllers
         public DateTime createdAt { get; set; }
     }
 
+    public class ParametrosDePrecadastroDto
+    {
+        public UnidadeDto Unidade { get; set; }
+        public FormularioDto FichaDeAvaliacaoClinicaParaGeneroMasculino { get; set; }
+        public FormularioDto FichaDeAvaliacaoClinicaParaGeneroFeminino { get; set; }
+        public UnidadeDto[] Unidades { get; set; }
+    }
+
+
+    public class RespostaDeInclusaoDePreCadastroDto
+    {
+        public long IdDoLead { get; set; }
+        public string Mensagem { get; set; }
+        public string TokenParaAvaliacaoClinica { get; set; }
+    }
+
+
+    public class AvaliacaoClinicaDto
+    {
+        public long IdDoLead { get; set; }
+        public ResultadoDeAvaliacaoClinicaDto FichaDeAvaliacao { get; set; }
+    }
+
+    public class RespostaDeInclusaoDeAvaliacaoClinicaDto
+    {
+
+    }
+
+    public class ResultadoDeAvaliacaoClinicaDto
+    {
+        public GrupoDeResultadoDeAvaliacaoClinicaDto[] Grupos { get; set; }
+    }
+
+    public class GrupoDeResultadoDeAvaliacaoClinicaDto
+    {
+        public long Id { get; set; }
+        public CampoDeResultadoDeAvaliacaoClinicaDto[] Campos { get; set; }
+    }
+
+    public class CampoDeResultadoDeAvaliacaoClinicaDto
+    {
+        public long Id { get; set; }
+        public string Valor { get; set; }
+    }
 }

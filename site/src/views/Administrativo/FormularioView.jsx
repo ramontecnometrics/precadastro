@@ -11,6 +11,7 @@ import FormDetails from '../../components/forms/FormDetails';
 import TextArea from '../../components/TextArea';
 import CheckBox from '../../components/CheckBox';
 import Select from '../../components/Select';
+import IntegerInput from '../../components/IntegerInput';
 
 const url = '/formulario';
 
@@ -59,8 +60,7 @@ export default function FormularioView(props) {
             <Filler height={10} />
 
             <FormDetails
-               titulo='Formulário'
-               exibirTitulos={false}
+               titulo='Sessões'
                itens={itemSelecionado.grupos || []}
                novo={() => setFormState((prev) => ({ ...prev, grupoSelecionado: {} }))}
                cancelar={() => setFormState((prev) => ({ ...prev, grupoSelecionado: null }))}
@@ -79,21 +79,45 @@ export default function FormularioView(props) {
                      grupos: (itemSelecionado.grupos || []).filter((_, i) => i !== index),
                   })
                }
-               colunas={() => [{ titulo: 'Descrição', width: '100%' }]}
-               linha={(item) => [item.titulo || '']}
+               aposSalvar={() => {
+                  setItemSelecionado({
+                     grupos: [...(itemSelecionado.grupos || [])].sort(
+                        (a, b) => Number(a.ordem) - Number(b.ordem)
+                     ),
+                  });
+               }}
+               colunas={() => [
+                  { titulo: 'Descrição', width: '80%' },
+                  { titulo: 'Ordem', width: '20%' },
+               ]}
+               linha={(item) => [item.titulo || '', item.ordem]}
                formulario={() =>
                   grupoSelecionado && (
                      <>
                         <Row>
                            <Col>
                               <FormGroup>
-                                 <BoldLabel>Grupo</BoldLabel>
+                                 <BoldLabel>Título da sessão</BoldLabel>
                                  <TextInput
                                     defaultValue={grupoSelecionado.titulo}
                                     onChange={(value) => {
                                        setFormState((prev) => ({
                                           ...prev,
                                           grupoSelecionado: { ...prev.grupoSelecionado, titulo: value },
+                                       }));
+                                    }}
+                                 />
+                              </FormGroup>
+                           </Col>
+                           <Col sm={2} md={2} lg={2} xl={2}>
+                              <FormGroup>
+                                 <BoldLabel>Ordem</BoldLabel>
+                                 <IntegerInput
+                                    defaultValue={grupoSelecionado.ordem}
+                                    onChange={(value) => {
+                                       setFormState((prev) => ({
+                                          ...prev,
+                                          grupoSelecionado: { ...prev.grupoSelecionado, ordem: value },
                                        }));
                                     }}
                                  />
@@ -131,7 +155,8 @@ export default function FormularioView(props) {
                               setItemSelecionado({
                                  grupos: (itemSelecionado.grupos || []).filter((_, i) => i !== index),
                               })
-                           }
+                           }       
+                                              
                            colunas={() => [{ titulo: 'Campo', width: '100%' }]}
                            linha={(item) => [item.titulo || '']}
                            formulario={() =>
@@ -147,6 +172,20 @@ export default function FormularioView(props) {
                                                    setFormState((prev) => ({
                                                       ...prev,
                                                       campoSelecionado: { ...prev.campoSelecionado, titulo: value },
+                                                   }));
+                                                }}
+                                             />
+                                          </FormGroup>
+                                       </Col>
+                                       <Col sm={2} md={2} lg={2} xl={2}>
+                                          <FormGroup>
+                                             <BoldLabel>Ordem</BoldLabel>
+                                             <IntegerInput
+                                                defaultValue={campoSelecionado.ordem}
+                                                onChange={(value) => {
+                                                   setFormState((prev) => ({
+                                                      ...prev,
+                                                      campoSelecionado: { ...prev.campoSelecionado, ordem: value },
                                                    }));
                                                 }}
                                              />

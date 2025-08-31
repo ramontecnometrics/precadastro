@@ -103,8 +103,7 @@ export default function LeadController() {
             telefone: item.telefone && item.telefone.numero
                ? {
                     ddd: item.telefone.ddd,
-                    numero: item.telefone.numero,
-                    tipo: item.telefone.tipo,
+                    numero: item.telefone.numero,                   
                     tipo: { id: 2, descricao: 'Residencial' },
                  }
                : null,

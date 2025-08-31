@@ -125,6 +125,7 @@ namespace api.Controllers
                 (entity, dto) =>
                 {
                     entity.Titulo = dto.Titulo;
+                    entity.Ordem = dto.Ordem;
                     MergeCampos(entity, entity.Campos, dto.Campos);
                 },
                 (dto) =>
@@ -133,7 +134,8 @@ namespace api.Controllers
                     {
                         Formulario = parentEntity,
                         Titulo = dto.Titulo,
-                        Campos = new List<CampoDeGrupoDeFormulario>()
+                        Campos = new List<CampoDeGrupoDeFormulario>(),
+                        Ordem = dto.Ordem
                     };
                     MergeCampos(entity, entity.Campos, dto.Campos);
                     grupos.Add(entity);
@@ -160,6 +162,7 @@ namespace api.Controllers
                     entity.Titulo = dto.Titulo;
                     entity.Obrigatorio = dto.Obrigatorio;
                     entity.Tipo = dto.Tipo;
+                    entity.Ordem = dto.Ordem;
                 },
                 (dto) =>
                 {
@@ -168,7 +171,8 @@ namespace api.Controllers
                         GrupoDeFormulario = parentEntity,
                         Obrigatorio = dto.Obrigatorio,
                         Tipo = dto.Tipo,
-                        Titulo = dto.Titulo
+                        Titulo = dto.Titulo,
+                        Ordem = dto.Ordem
                     };
                     campos.Add(entity);
                 });

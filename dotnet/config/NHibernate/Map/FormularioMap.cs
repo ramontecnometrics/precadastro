@@ -14,7 +14,8 @@ namespace config.NHibernate.Map
             Map(x => x.Descricao).Length(1000);
             HasMany(x => x.Grupos)
                 .Inverse()
-                .Cascade.All();
+                .Cascade.All()
+                .OrderBy("ordem");
         }
     }
 
@@ -25,11 +26,13 @@ namespace config.NHibernate.Map
             Id(x => x.Id).GeneratedBy.Identity();
             Map(x => x.Thumbprint).Length(36).Index("");
             Map(x => x.Titulo).Length(200);
-            References(x => x.Formulario)               
+            Map(x => x.Ordem);
+            References(x => x.Formulario)
                 .Not.Nullable();
             HasMany(x => x.Campos)
                 .Inverse()
-                .Cascade.All();
+                .Cascade.All()
+                .OrderBy("ordem");
         }
     }
 
@@ -42,6 +45,7 @@ namespace config.NHibernate.Map
             Map(x => x.Titulo).Length(200).Not.Nullable();
             Map(x => x.Tipo).Length(100).Not.Nullable();
             Map(x => x.Obrigatorio);
+            Map(x => x.Ordem);
             References(x => x.GrupoDeFormulario)
               .Not.Nullable();
         }

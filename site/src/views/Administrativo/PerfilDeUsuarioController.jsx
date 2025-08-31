@@ -3,7 +3,6 @@ import { buildQueryString } from '../../utils/Functions';
 import api from '../../utils/Api';
 
 export default function PerfilDeUsuarioController() {
-
    const itemVazio = {
       situacao: { id: 1 },
       acessos: [],
@@ -28,15 +27,14 @@ export default function PerfilDeUsuarioController() {
       ];
    };
 
-   const getObjetoDeDados = (formState) => {
-      return new Promise((resolve, reject) => {
+   const getObjetoDeDados = async (formState) => {
+      try {
          let state = formState;
          let item = state.itemSelecionado;
 
          if (!item.nome) {
             showError('Informe o nome do perfil de usuário');
-            reject();
-            return;
+            return Promise.reject();
          }
 
          var input = {
@@ -49,8 +47,13 @@ export default function PerfilDeUsuarioController() {
          if (state.alterando) {
             input.id = parseInt(item.id);
          }
-         resolve(input);
-      });
+         
+         return input;
+      } catch (e) {
+         showError(e.toString());
+         console.error(e);
+         return Promise.reject(e);
+      }
    };
 
    const aposInserir = (formState, setFormState) => {
@@ -71,9 +74,11 @@ export default function PerfilDeUsuarioController() {
             .then((result) => {
                state.itemSelecionado.acessos = [];
 
-               result.items.filter((rotina) => rotina.id < 90000).forEach((rotina) => {
-                  state.itemSelecionado.acessos.push({ rotina: rotina });
-               });
+               result.items
+                  .filter((rotina) => rotina.id < 90000)
+                  .forEach((rotina) => {
+                     state.itemSelecionado.acessos.push({ rotina: rotina });
+                  });
 
                setFormState((prev) => ({ ...prev, itemSelecionado: state.itemSelecionado }));
 

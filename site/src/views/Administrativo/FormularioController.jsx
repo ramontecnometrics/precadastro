@@ -42,6 +42,7 @@ export default function FormularioController() {
 
          return input;
       } catch (e) {
+         showError(e.toString());
          console.error(e);
          return Promise.reject(e);
       }
