@@ -1,6 +1,6 @@
 const getApiUrl = () => {
     // padrão
-    let url = "https://api.mtrack.com.br";
+    let url = "https://h-api-cadastrodrhair.gestia.net.br";
  
     // ambiente de dev
     if (process.env.NODE_ENV === "development") {

@@ -108,9 +108,10 @@ namespace api.Controllers
                 throw new Exception("Usuário ou senha inválida.");
             }
 
+
             if (Cfg.Https && validarRecaptcha)
             {
-                ValidarRecaptcha(encrytptedRequest.Recaptcha);
+                // ValidarRecaptcha(encrytptedRequest.Recaptcha);
             }
 
             var item = UsuarioRepository.GetUsuarioByLoginESenha(login, request.Senha, request.TipoDeAcesso);

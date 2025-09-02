@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './../PreCadastro.css';
 import api from '../utils/Api';
 import { showError } from '../components/Messages';
@@ -7,12 +7,13 @@ import { FlexRow, FlexCol } from '../components/FlexItems';
 import IconButton from '../components/IconButton';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { LayoutParams } from '../config/LayoutParams';
+import Filler from '../components/Filler';
 
 function PreCadastro() {
    const [formData, setFormData] = useState({});
    const [inicializado, setInicializado] = useState(false);
    const [parametros, setParametros] = useState(false);
-  /* const [parametros, setParametros] = useState({
+   /* const [parametros, setParametros] = useState({
       unidade: { id: 2, nome: 'DR HAIR - ANCHIETA' },
       fichaDeAvaliacaoClinicaParaGeneroMasculino: {
          id: 1,
@@ -132,6 +133,7 @@ function PreCadastro() {
    const [buscandoCEP, setBuscandoCEP] = useState(false);
    const [avaliacao, setAvaliacao] = useState(null);
    const [tokenParaAvaliacaoClinica, setTokenParaAvaliacaoClinica] = useState(null);
+   const containerRef = useRef(null);
 
    const aplicarMascaraTelefone = (valor) => {
       const apenasDigitos = valor.replace(/\D/g, '');
@@ -267,7 +269,7 @@ function PreCadastro() {
 
    return (
       <div className='pre-cadastro'>
-         <div className='pre-cadastro-container'>
+         <div ref={containerRef} className='pre-cadastro-container'>
             {!inicializado && (
                <>
                   <header className='pre-cadastro-header'>
@@ -781,6 +783,10 @@ function PreCadastro() {
                         </button>
                      </form>
                   </main>
+
+                  <div className='show-on-small-screen'>
+                     <Filler height={100} />
+                  </div>
                </>
             )}
 
@@ -809,7 +815,12 @@ function PreCadastro() {
                      formulario={parametros.fichaDeAvaliacaoClinicaParaGeneroMasculino}
                      setFormulario={handleSubmitAvaliacaoClinica}
                      mostrarTitulo={false}
+                     containerRef={containerRef}
                   />
+
+                  <div className='show-on-small-screen'>
+                     <Filler height={100} />
+                  </div>
                </>
             )}
 

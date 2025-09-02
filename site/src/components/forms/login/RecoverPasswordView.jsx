@@ -10,6 +10,8 @@ import RecoverPasswordController from './RecoverPasswordController';
 import ReCAPTCHA from 'react-google-recaptcha';
 import LogoLogin from './LoginLogo';
 
+const siteKey = '6LfAororAAAAAEEvbC5RPkd21JiYlNxfm88Z6kfw';
+
 export default function RecoverPasswordView(props) {
    const [codigoDeSeguranca, setCodigoDeSeguranca] = useState('');
    const [novaSenha, setNovaSenha] = useState('');
@@ -105,7 +107,7 @@ export default function RecoverPasswordView(props) {
                               <div style={{ minHeight: 78 }}>
                                  {mostrarRecaptcha && (
                                     <ReCAPTCHA
-                                       sitekey='6LclosMgAAAAAMpNQ7pbzKmyl2v_2UGY1exIzHvH'
+                                       sitekey={siteKey}
                                        ref={recaptchaRef}
                                        onChange={(response) => setRecaptcha(response)}
                                        className='div-recaptcha'

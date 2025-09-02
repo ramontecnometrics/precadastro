@@ -15,10 +15,13 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import Text from '../../Text';
 import LoginLogo from './LoginLogo';
 
+const siteKey = '6LfAororAAAAAEEvbC5RPkd21JiYlNxfm88Z6kfw';
+
 export default function LoginView(props) {
    const [lembrarLogin, setLembrarLogin] = useState(localStorage.getItem('lembrarLogin') === 'true');
    const [nomeDeUsuario, setNomeDeUsuario] = useState(() => {
-      const nome = localStorage.getItem('nomeDeUsuario');
+      const nome = localStorage.getItem('nomeDeUsuarioAdministrador');
+      console.log(nome);
       return nome === 'null' ? null : nome;
    });
    const [senha, setSenha] = useState(null);
@@ -26,15 +29,7 @@ export default function LoginView(props) {
 
    const recaptchaRef = useRef(null);
 
-   const controller = useMemo(() => new LoginController(), []);
-
-   useEffect(() => {
-      window.onhashchange = () => {
-         if (window.location.hash !== '#/' && window.location.hash !== '#/adm/recoverpassword') {
-            window.location.reload();
-         }
-      };
-   }, []);
+   const controller = useMemo(() => new LoginController(), []);  
 
    const getDescricaoDoTipoDeAcesso = () => {
       if (props.tipoDeAcesso === 'ADM') {
@@ -45,7 +40,6 @@ export default function LoginView(props) {
 
    const formLoginTecnometrics = () => (
       <Fragment>
-
          <LoginLogo />
          <div
             style={{
@@ -130,15 +124,17 @@ export default function LoginView(props) {
 
             <Filler height={20} />
 
-            <div style={{ minHeight: 78, maxWidth: 304, marginLeft: 'auto', marginRight: 'auto' }}>
-               <ReCAPTCHA
-                  sitekey='6LclosMgAAAAAMpNQ7pbzKmyl2v_2UGY1exIzHvH'
-                  ref={recaptchaRef}
-                  onChange={(response) => setRecaptcha(response)}
-                  className='div-recaptcha'
-                  hl='pt-BR'
-               />
-            </div>
+            {false && (
+               <div style={{ minHeight: 78, maxWidth: 304, marginLeft: 'auto', marginRight: 'auto' }}>
+                  <ReCAPTCHA
+                     sitekey={siteKey}
+                     ref={recaptchaRef}
+                     onChange={(response) => setRecaptcha(response)}
+                     className='div-recaptcha'
+                     hl='pt-BR'
+                  />
+               </div>
+            )}
 
             <br />
 
@@ -149,7 +145,7 @@ export default function LoginView(props) {
                style={{
                   cursor: recaptcha ? 'pointer' : 'not-allowed !important',
                   width: '100%',
-               }}               
+               }}
             />
          </Form>
       </Fragment>

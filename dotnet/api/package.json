@@ -1,6 +1,15 @@
 {
   "scripts": {
+    "publish-api-homo": "run-script-os",
+    "publish-api-homo:darwin": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-homo.csx",
+    "publish-api-homo:linux": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-homo.csx",
+    "publish-api-homo:win32": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-homo.csx",
+    "publish-setup-homo": "run-script-os",
+    "publish-setup-homo:darwin": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx",
+    "publish-setup-homo:linux": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx",
+    "publish-setup-homo:win32": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx"
   },
   "dependencies": {
+    "run-script-os": "^1.1.6"
   }
 }

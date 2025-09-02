@@ -479,7 +479,11 @@ export default function LeadView(props) {
                      <FlexCol width={'66%'}>
                         <Text>Endereço</Text>
                         <br />
-                        <BoldLabel>{getEnderecoCompleto(itemSelecionado.endereco.endereco)}</BoldLabel>
+                        <BoldLabel>
+                           {itemSelecionado.endereco != null && itemSelecionado.endereco.endereco != null
+                              ? getEnderecoCompleto(itemSelecionado.endereco.endereco)
+                              : ''}
+                        </BoldLabel>
                      </FlexCol>
                   </FlexRow>
                </div>

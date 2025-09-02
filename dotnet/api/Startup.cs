@@ -30,6 +30,7 @@ namespace api
             Cfg.LogPackages = Configuration.GetValue<string>("LogPackages") == "True";
             Cfg.PublicApiUrl = Configuration.GetValue<string>("PublicApiUrl");
             Cfg.PdfBuilderUrl = Configuration.GetValue<string>("PdfBuilderUrl");
+            Cfg.RecaptchaKey = "6LfAororAAAAACF2b6cgtXBEvDfb3JSmO4aG1-ND";
             allowedOrigins = Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
             Cfg.Validate();

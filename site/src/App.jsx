@@ -30,7 +30,7 @@ function App() {
                   mostrarDadosDaConta={false}
                >
                   <Routes>
-                     <Route path='/' exact element={<TermosDeUsoView />} />
+                     <Route path='/adm' exact element={<TermosDeUsoView rows={20} />} />
                      <Route path='/adm/login' element={<LoginView tipoDeAcesso='ADM' />} />
                      <Route path='/adm/logoff' element={<LogoffView />} />
                      <Route path='/adm/recoverpassword' element={<RecoverPasswordView />} />

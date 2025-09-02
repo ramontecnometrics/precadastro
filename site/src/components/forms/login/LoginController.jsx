@@ -20,10 +20,10 @@ export default function LoginController() {
                return reject();
             }
 
-            if (!recaptcha) {
-               showError('Informe o captcha');
-               return reject();
-            }
+            // if (!recaptcha) {
+            //    showError('Informe o captcha');
+            //    return reject();
+            // }
 
             const inputBase = {
                nomeDeUsuario,
@@ -73,7 +73,7 @@ export default function LoginController() {
 
             // 5) Faz login com o token cifrado
 
-            const result = await api.post('/login/token', tokenInput);
+            const result = await api.post('/login/token', tokenInput, true, false);
 
             // 6) Descriptografa o token (compatível com seu backend)
             const decryptedToken = cryptoJs.AES.decrypt(result.token, cryptoJs.enc.Base64.parse(key), {
@@ -87,8 +87,8 @@ export default function LoginController() {
 
          } catch (e) {
             const msg = e?.toString?.() || String(e);
-            showError(msg);
-            reject(e);
+            // showError(msg);
+            reject(msg);
          }
       });
    };

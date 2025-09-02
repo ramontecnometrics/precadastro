@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './../PreCadastro.css';
 
-function Formulario({ formulario, setFormulario, mostrarTitulo }) {
+function Formulario({ formulario, setFormulario, mostrarTitulo, containerRef }) {
    const [formData, setFormData] = useState(formulario ?? null);
+
+   useEffect(() => {
+      containerRef.current.scrollTo(0, 0);
+   }, []);
 
    if (!formData) return null;
 
@@ -16,7 +20,6 @@ function Formulario({ formulario, setFormulario, mostrarTitulo }) {
 
    const handleSubmit = (e) => {
       e.preventDefault();
-      console.log('Formulário: ', formData);
       setFormulario(formData);
    };
 
@@ -50,18 +53,33 @@ function Formulario({ formulario, setFormulario, mostrarTitulo }) {
                         result = (
                            <div key={campo.id} className='pre-cadastro-form-group'>
                               <label htmlFor={nomeDoCampo}>{campo.titulo}</label>
-                              <select
-                                 type='select'
-                                 id={nomeDoCampo}
-                                 name={nomeDoCampo}
-                                 value={formData.grupos[grupoIndex].campos[campoIndex].valor || ''}
-                                 onChange={(e) => handleChange(grupoIndex, campoIndex, e.target.value)}
-                                 required={campo.obrigatorio}
-                              >
-                                 <option value=''></option>
-                                 <option value='Sim'>Sim</option>
-                                 <option value='Não'>Não</option>                                 
-                              </select>
+                              <div>
+                                 <label>
+                                    <input
+                                       type='radio'
+                                       id={`${nomeDoCampo}-sim`}
+                                       name={nomeDoCampo}
+                                       value='Sim'
+                                       checked={formData.grupos[grupoIndex].campos[campoIndex].valor === 'Sim'}
+                                       onChange={(e) => handleChange(grupoIndex, campoIndex, e.target.value)}
+                                       required={campo.obrigatorio}
+                                    />
+                                    &nbsp;Sim
+                                 </label>
+
+                                 <label style={{ marginLeft: '10px' }}>
+                                    <input
+                                       type='radio'
+                                       id={`${nomeDoCampo}-nao`}
+                                       name={nomeDoCampo}
+                                       value='Não'
+                                       checked={formData.grupos[grupoIndex].campos[campoIndex].valor === 'Não'}
+                                       onChange={(e) => handleChange(grupoIndex, campoIndex, e.target.value)}
+                                       required={campo.obrigatorio}
+                                    />
+                                    &nbsp;Não
+                                 </label>
+                              </div>
                            </div>
                         );
                      }

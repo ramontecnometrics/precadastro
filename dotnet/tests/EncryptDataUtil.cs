@@ -65,7 +65,7 @@ namespace tests
         public void TestEncryptText()
         {
             // Senha a ser criptografada
-            var plainText = "123456";
+            var plainText = "";
 
             var KeyProvider = new WebApiKeyProvider();
             var key = Encoding.UTF8.GetBytes(KeyProvider.GetKey().ToPlainText());

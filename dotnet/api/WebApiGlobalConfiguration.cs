@@ -20,7 +20,7 @@ namespace api
         public static bool LogPackages { get; set; }
         public static string PublicApiUrl { get; set; }
         public static string PdfBuilderUrl { get; set; }        
-        public string RecaptchaKey { get;  set; }
+        public static string RecaptchaKey { get;  set; }
 
         public Cfg(AccessControl accessControl, IOperationResolver operationResolver)
         {

@@ -61,7 +61,7 @@ export default function TermosDeUsoView() {
                                     login.aceitouTermosDeUso = true;
                                     sessionManager.setLogin(login);
                                     resolve();
-                                    window.location = './';
+                                    window.location = './adm';
                                  })
                                  .catch(reject);
                            },

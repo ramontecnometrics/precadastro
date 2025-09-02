@@ -40,8 +40,8 @@ namespace config
         public static void RegisterDatabaseObjects()
         {
             _scripts.Clear();
-            RegisterScript(model.DatabaseObjects.Extensions.GetSql(), false);           
-            RegisterScript(model.DatabaseObjects.Grant.GetSql(), true);
+            // RegisterScript(model.DatabaseObjects.Extensions.GetSql(), false);           
+            // RegisterScript(model.DatabaseObjects.Grant.GetSql(), true);
         }
     }
 }

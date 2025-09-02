@@ -1,0 +1,161 @@
+#Para um servidor Ubuntu server 22.04 recém instalado na ASW
+
+# Primeiro, atualize os pacotes do sistema
+sudo apt update && sudo apt upgrade -y
+sudo apt install gnupg2 wget ca-certificates -y
+reboot
+
+# Conectar via SSH
+# ssh -i "nome_da_chave.pem" nome_do_usuario@nome_do_servidor
+# ssh -i "chave-padrao.pem" ubuntu@54.233.198.13
+
+# SSH - Habilitar o acesso com usuário e senha
+vi /etc/ssh/sshd_config.d/gestia-sftp.conf
+Match User gestia
+PasswordAuthentication yes
+AuthenticationMethods password keyboard-interactive
+:wq
+systemctl restart ssh
+
+
+# Alterar data e hora da máquina
+# listar: timedatectl list-timezones | grep Paulo
+timedatectl set-timezone America/Sao_Paulo
+
+# Desabilitar atualizações automáticas
+vi /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "0";
+APT::Periodic::Unattended-Upgrade "0";
+:wq
+
+# Instalar o Dotnet 8
+apt-get install -y dotnet-sdk-8.0
+
+# PostgreSQL 17
+
+apt install -y postgresql-common
+/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+apt install postgresql-17
+apt install postgresql-client-17
+
+# Criar o usuário de acesso ao banco de dar acesso às bases de dados
+sudo -u postgres psql
+create user usergestia with encrypted password '25gestia25';
+
+# Criar as bases de dados
+sudo -u postgres psql
+create database precadastro_drhair with owner usergestia;
+create database precadastro_drhair_log with owner usergestia;
+
+# Alterar a data e hora do PostgreSQL
+sudo -u postgres psql
+# SELECT * FROM pg_timezone_names;
+ALTER DATABASE precadastro_drhair SET timezone TO 'Brazil/East';
+ALTER DATABASE precadastro_drhair_log SET timezone TO 'Brazil/East';
+SELECT pg_reload_conf();
+
+ALTER DATABASE db_name OWNER TO new_owner_name;
+
+# Instalar on nginx
+apt-get install nginx
+systemctl start nginx
+systemctl status nginx
+
+# adicionar um usuario no linux para realizar as atualizações
+adduser gestia
+# se precisar apagar: deluser --remove-home gestia
+
+# Criar a pasta das aplicações
+mkdir /opt/app
+mkdir /opt/app/precadastro_drhair
+mkdir /opt/app/precadastro_drhair/setup
+mkdir /opt/app/precadastro_drhair/api
+mkdir /opt/app/precadastro_drhair/api-bkp
+mkdir /opt/app/precadastro_drhair/api-temp 
+mkdir /opt/app/precadastro_drhair/site
+mkdir /opt/app/precadastro_drhair/arquivos
+chown -R gestia /opt/app/precadastro_drhair
+chmod +rwX -R /opt/app/precadastro_drhair
+
+# Criar o serviço para iniciar a api com dotnet
+vi /opt/app/precadastro_drhair/api/api.sh
+#!/bin/bash
+dotnet /opt/app/precadastro_drhair/api/api.dll
+:wq
+
+vi /etc/systemd/system/precadastro_drhair.service
+[Unit]
+Description=Serviços da API do Pre-cadstro Dr Hair
+After=network.target 
+
+[Service]
+WorkingDirectory=/opt/app/precadastro_drhair/api
+ExecStart=/bin/bash /opt/app/precadastro_drhair/api/api.sh
+SyslogIdentifier=PrecadastroDrHairApi
+Restart=on-failure
+RestartSec=20s
+
+[Install]
+WantedBy=multi-user.target
+:wq
+
+# Habilitar o serviço para iniciar com o sistema
+systemctl enable precadastro_drhair
+systemctl daemon-reload
+
+# configurar o nginx para publicar o site
+Obs.: Extrema atenção com as barras no final dos direcionamentos
+vi /etc/nginx/sites-enabled/default
+log_format access_log_80 '$remote_addr - $status "$request"';
+
+server {
+    listen 80;
+    server_name h-cadastrodrhair.gestia.net.br;
+
+    error_page 404 /404.html;
+    error_page 502 /502.html;
+
+    #access_log /opt/app/gestia/h-cadastrodrhair.gestia.net.br.txt h-cadastrodrhair.gestia.net.br;
+
+    location / {
+        root /opt/app/precadastro_drhair/site;
+        index index.html;
+        try_files $uri $uri/ =404;
+    }
+
+    location /404.html {
+        return 404 "<H1>404 Not Found</H1>";
+    }
+
+    location /502.html {
+        return 502 "<H1>Servico indisponivel</H1>";
+    }
+}
+:wq
+
+# Testar as configurações
+nginx -t
+
+systemctl restart nginx
+systemctl status nginx
+
+# habilitar a porta 80 e SSH no firewall
+ufw allow ssh
+ufw allow 80
+ufw enable
+ufw reload
+ufw status numbered
+
+# habilitar a porta da api no firewall
+ufw allow 5001
+ufw reload
+ufw status
+
+# Permitir que usuário selecionado execute os comandos de controle de serviço sem solicitar a senha 
+vi /etc/sudoers.d/gestia
+gestia ALL=NOPASSWD: /bin/systemctl start precadastro_drhair.service, /bin/systemctl stop precadastro_drhair.service, /bin/systemctl status precadastro_drhair.service, /bin/systemctl restart precadastro_drhair.service
+
+
+
+
+psql -U gestia -d precadastro_drhair
