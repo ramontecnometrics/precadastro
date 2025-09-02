@@ -288,3 +288,4 @@ yarn-error.log*
 .vscode
 /arquivos
 /extensao
+/site/dist
