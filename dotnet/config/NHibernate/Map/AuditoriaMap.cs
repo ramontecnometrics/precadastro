@@ -30,9 +30,7 @@ namespace config.NHibernate.Map
                 Map(p => p.Acao).CustomType<IntToTipoType<UserAction>>();
                 ReadOnly();
                 SchemaAction.None();
-                Views.RegisterViewScript(@"drop view auditoriafast", true);
-                Views.RegisterViewScript(@"        
-create or replace view auditoriafast as 
+                Subselect(@"        
 select auditoria.id,
        auditoria.thumbprint,
        auditoria.data,

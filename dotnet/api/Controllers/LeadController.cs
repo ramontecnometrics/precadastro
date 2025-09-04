@@ -1,14 +1,18 @@
 using api.Dtos;
 using data;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using DocumentFormat.OpenXml.Presentation;
 using DocumentFormat.OpenXml.Wordprocessing;
 using FluentNHibernate.Conventions;
 using framework;
 using framework.Extensions;
+using framework.Validators;
 using Microsoft.AspNetCore.Mvc;
 using model;
 using model.Repositories;
 using Newtonsoft.Json.Converters;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Remotion.Linq.Clauses.ResultOperators;
 using System;
 using System.Collections.Generic;
@@ -39,7 +43,6 @@ namespace api.Controllers
 
         private readonly LeadRepository LeadRepository;
         private readonly Repository<Arquivo> ArquivoRepository;
-        private readonly Repository<Profissao> ProfissaoRepository;
         private readonly Repository<TelefoneDePessoa> TelefoneDePessoaRepository;
         private readonly Repository<EnderecoDePessoa> EnderecoDePessoaRepository;
         private readonly Repository<Cidade> CidadeRepository;
@@ -48,12 +51,13 @@ namespace api.Controllers
         private readonly ParametroDoSistemaRepository ParametroDoSistemaRepository;
         private readonly Repository<ResultadoDeAvaliacaoClinica> ResultadoDeAvaliacaoClinicaRepository;
         private readonly Repository<CampoDeGrupoDeFormulario> CampoDeGrupoDeFormularioRepository;
+        private readonly Repository<ResultadoDeFormulario> ResultadoDeFormularioRepository;
+
 
         public LeadController(
             LeadRepository repository,
             Repository<LeadFast> fastRepository,
             Repository<Arquivo> arquivoRepository,
-            Repository<Profissao> profissaoRepository,
             Repository<TelefoneDePessoa> telefoneDePessoaRepository,
             Repository<EnderecoDePessoa> enderecoDePessoaRepository,
             IAppContext appContext,
@@ -62,12 +66,12 @@ namespace api.Controllers
             Repository<Formulario> formularioRepository,
             ParametroDoSistemaRepository parametroDoSistemaRepository,
             Repository<ResultadoDeAvaliacaoClinica> resultadoDeAvaliacaoClinicaRepository,
-            Repository<CampoDeGrupoDeFormulario> campoDeGrupoDeFormularioRepository) :
+            Repository<CampoDeGrupoDeFormulario> campoDeGrupoDeFormularioRepository,
+            Repository<ResultadoDeFormulario> resultadoDeFormularioRepository) :
             base(repository, fastRepository, appContext)
         {
             LeadRepository = repository;
             ArquivoRepository = arquivoRepository;
-            ProfissaoRepository = profissaoRepository;
             TelefoneDePessoaRepository = telefoneDePessoaRepository;
             EnderecoDePessoaRepository = enderecoDePessoaRepository;
             CidadeRepository = cidadeRepository;
@@ -76,6 +80,7 @@ namespace api.Controllers
             ParametroDoSistemaRepository = parametroDoSistemaRepository;
             ResultadoDeAvaliacaoClinicaRepository = resultadoDeAvaliacaoClinicaRepository;
             CampoDeGrupoDeFormularioRepository = campoDeGrupoDeFormularioRepository;
+            ResultadoDeFormularioRepository = resultadoDeFormularioRepository;
         }
 
         protected override IQueryable<Lead> Get(LeadGetParams getParams)
@@ -131,8 +136,7 @@ namespace api.Controllers
 
         protected override LeadDto Convert(Lead entity)
         {
-            var result = LeadDto.Build(entity, 
-                ResultadoDeAvaliacaoClinicaRepository.GetAll().Where(i => i.Lead.Id == entity.Id));
+            var result = LeadDto.Build(entity);
             return result;
         }
 
@@ -144,6 +148,11 @@ namespace api.Controllers
 
         protected override Lead Convert(LeadPostParams insertRequest)
         {
+            if (!CPFValidator.IsValid(insertRequest.Cpf))
+            {
+                throw new Exception("CPF inválido! Verifique se digitou corretamente.");
+            }
+
             var lead = new Lead()
             {
                 NomeCompleto = EncryptedText.Build(insertRequest.NomeCompleto),
@@ -160,13 +169,9 @@ namespace api.Controllers
                 Telefones = new List<TelefoneDePessoa>(),
                 Enderecos = new List<EnderecoDePessoa>(),
                 DataDeNascimento = insertRequest.DataDeNascimento,
+                Profissao = insertRequest.Profissao,
                 DocumentoDeIdentidade = EncryptedText.Build(insertRequest.DocumentoDeIdentidade),
             };
-
-            if (insertRequest.Profissao != null)
-            {
-                lead.Profissao = insertRequest.Profissao != null ? ProfissaoRepository.Get(insertRequest.Profissao, true) : null;
-            }
 
             if (insertRequest.Telefone != null)
             {
@@ -182,10 +187,17 @@ namespace api.Controllers
 
             if (insertRequest.Celular != null)
             {
+                var numero = insertRequest.Celular.Numero.Replace("-", "").Trim();
+
+                if (numero.Length != 9)
+                {
+                    throw new Exception("Celular inválido! Verifique se digitou corretamente.");
+                }
+
                 var celular = new TelefoneDePessoa()
                 {
                     Pessoa = lead,
-                    Numero = EncryptedText.Build(insertRequest.Celular.Numero),
+                    Numero = EncryptedText.Build(numero),
                     DDD = insertRequest.Celular.DDD,
                     Tipo = TipoDeTelefone.Celular,
                 };
@@ -222,6 +234,12 @@ namespace api.Controllers
 
         protected override Lead Convert(LeadPutParams updateRequest, Lead oldLead)
         {
+
+            if (!CPFValidator.IsValid(updateRequest.Cpf))
+            {
+                throw new Exception("CPF inválido! Verifique se digitou corretamente.");
+            }
+
             oldLead.NomeCompleto = EncryptedText.Build(updateRequest.NomeCompleto);
             oldLead.Cpf = EncryptedText.Build(updateRequest.Cpf);
             oldLead.Cnpj = EncryptedText.Build(updateRequest.Cnpj);
@@ -234,18 +252,10 @@ namespace api.Controllers
             oldLead.Situacao = updateRequest.Situacao;
             oldLead.DataDeNascimento = updateRequest.DataDeNascimento;
             oldLead.Sexo = updateRequest.Sexo;
+            oldLead.Profissao = updateRequest.Profissao;
             oldLead.Foto = updateRequest.Foto != null
                 ? ArquivoRepository.Get(updateRequest.Foto.Id, true)
                 : null;
-
-            if (updateRequest.Profissao != null)
-            {
-                oldLead.Profissao = ProfissaoRepository.Get(updateRequest.Profissao.Id, true);
-            }
-            else
-            {
-                oldLead.Profissao = null;
-            }
 
             // Atualizar telefone
             if (updateRequest.Telefone != null)
@@ -271,7 +281,15 @@ namespace api.Controllers
                         Tipo = TipoDeTelefone.Celular
                     });
                 }
-                oldLead.Celular.Numero = EncryptedText.Build(updateRequest.Celular.Numero);
+
+                var numero = updateRequest.Celular.Numero.Replace("-", "").Trim();
+
+                if (numero.Length != 9)
+                {
+                    throw new Exception("Celular inválido! Verifique se digitou corretamente.");
+                }
+
+                oldLead.Celular.Numero = EncryptedText.Build(numero);
                 oldLead.Celular.DDD = updateRequest.Celular.DDD;
                 oldLead.Celular.Tipo = updateRequest.Celular.Tipo;
             }
@@ -383,7 +401,6 @@ namespace api.Controllers
             return result;
         }
 
-
         [Microsoft.AspNetCore.Mvc.HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro")]
         public RespostaDeInclusaoDePreCadastroDto PreCadastro([Microsoft.AspNetCore.Mvc.FromBody] PreCadastroDto request)
@@ -395,28 +412,54 @@ namespace api.Controllers
 
             var unidade = UnidadeRepository.Get(request.IdDaUnidade, true);
 
-            var lead = new Lead()
-            {
-                NomeCompleto = EncryptedText.Build(request.Nome),
-                Cpf = EncryptedText.Build(request.Cpf),
-                Email = EncryptedText.Build(request.Email),
-                Cnh = EncryptedText.Build(request.Cnh),
-                Observacao = request.Observacoes,
-                EstadoCivil = !string.IsNullOrEmpty(request.EstadoCivil) ? (EstadoCivil)int.Parse(request.EstadoCivil) : null,
-                Situacao = SituacaoDeLead.Ativo,
-                DataDeCadastro = DateTime.Now,
-                Sexo = (Sexo)int.Parse(request.Genero),
-                Telefones = new List<TelefoneDePessoa>(),
-                Enderecos = new List<EnderecoDePessoa>(),
-                DataDeNascimento = DateTime.ParseExact(request.DataNascimento, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-                DocumentoDeIdentidade = EncryptedText.Build(request.Rg),
-                TokenParaAvaliacaoClinica = Guid.NewGuid().ToString()
-            };
+            var leadExistente = Repository.GetAll()
+                .Where(i => i.Cpf == EncryptedText.Build(request.Cpf))
+                .Where(i => i.Situacao == SituacaoDeLead.Ativo)
+                .FirstOrDefault();
 
-            if (request.Profissao != null)
+            var lead = default(Lead);
+
+            if (leadExistente != null)
             {
-                lead.Profissao = request.Profissao != null ? ProfissaoRepository.Get(long.Parse(request.Profissao), true) : null;
+                lead = leadExistente;
+                lead.Telefones.ToArray().ForEach(i =>
+                {
+                    lead.Telefones.Remove(i);
+                    TelefoneDePessoaRepository.Delete(i);
+                });
+
+                lead.Enderecos.ToArray()ForEach(i =>
+                {
+                    lead.Enderecos.Remove(i);
+                    EnderecoDePessoaRepository.Delete(i);
+                });
             }
+            else
+            {
+                lead = new Lead();
+            }
+
+            if (!CPFValidator.IsValid(request.Cpf))
+            {
+                throw new Exception("CPF inválido! Verifique se digitou corretamente.");
+            }
+
+            lead.NomeCompleto = EncryptedText.Build(request.Nome);
+            lead.Cpf = EncryptedText.Build(request.Cpf);
+            lead.Email = EncryptedText.Build(request.Email);
+            lead.Cnh = EncryptedText.Build(request.Cnh);
+            lead.Observacao = request.Observacoes;
+            lead.Profissao = request.Profissao;
+            lead.EstadoCivil = !string.IsNullOrEmpty(request.EstadoCivil) ? (EstadoCivil)int.Parse(request.EstadoCivil) : null;
+            lead.Situacao = SituacaoDeLead.Ativo;
+            lead.DataDeCadastro = DateTime.Now;
+            lead.Sexo = (Sexo)int.Parse(request.Genero);
+            lead.Telefones = new List<TelefoneDePessoa>();
+            lead.Enderecos = new List<EnderecoDePessoa>();
+            lead.DataDeNascimento = DateTime.ParseExact(request.DataNascimento, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            lead.DocumentoDeIdentidade = EncryptedText.Build(request.Rg);
+            lead.TokenParaAvaliacaoClinica = Guid.NewGuid().ToString();
+            lead.Unidade = unidade;
 
             if (!string.IsNullOrEmpty(request.Telefone))
             {
@@ -439,6 +482,11 @@ namespace api.Controllers
                 var telefoneParts = request.Celular.Split(")");
                 var ddd = telefoneParts[0].Replace("(", "").Trim();
                 var numero = telefoneParts[1].Replace("-", "").Trim();
+
+                if (numero.Length != 9)
+                {
+                    throw new Exception("Celular inválido! Verifique se digitou corretamente.");
+                }
 
                 var celular = new TelefoneDePessoa()
                 {
@@ -475,12 +523,20 @@ namespace api.Controllers
                 lead.Enderecos.Add(endereco);
             }
 
-            Repository.Insert(lead);
+            if (leadExistente == null)
+            {
+                Repository.Insert(lead);
+            }
+            else
+            {
+                Repository.Update(lead);
+            }
 
             result.IdDoLead = lead.Id;
             result.TokenParaAvaliacaoClinica = lead.TokenParaAvaliacaoClinica;
 
-            if (!string.IsNullOrEmpty(urlDaApiDoUno) &&
+            if (leadExistente == null &&
+                !string.IsNullOrEmpty(urlDaApiDoUno) &&
                 !string.IsNullOrEmpty(codigoDoColaboradorParaIntegracaoComOUno) &&
                 !string.IsNullOrEmpty(unidade.UnoAccessToken.GetPlainText()) &&
                 !string.IsNullOrEmpty(unidade.UnoSecretKey.GetPlainText()))
@@ -579,20 +635,35 @@ namespace api.Controllers
                 throw new Exception("Nenhum grupo informado.");
             }
 
+            var avaliacaoClinica = new ResultadoDeAvaliacaoClinica()
+            {
+                Lead = lead,
+                Data = DateTimeSync.Now,
+                Itens = new List<ResultadoDeFormularioDeAvaliacaoClinica>()
+            };
+
             request.FichaDeAvaliacao.Grupos.ForEach(grupo =>
             {
                 grupo.Campos.ForEach(campo =>
                 {
-                    ResultadoDeAvaliacaoClinicaRepository.Insert(new ResultadoDeAvaliacaoClinica()
+                    var resultado = new ResultadoDeFormulario()
                     {
-                        Lead = lead,
                         Campo = CampoDeGrupoDeFormularioRepository.Get(campo.Id, true),
                         Valor = campo.Valor
+                    };
+                    ResultadoDeFormularioRepository.Insert(resultado);
+
+                    avaliacaoClinica.Itens.Add(new ResultadoDeFormularioDeAvaliacaoClinica()
+                    {
+                        ResultadoDeFormulario = resultado,
+                        ResultadoDeAvaliacaoClinica = avaliacaoClinica
                     });
                 });
             });
 
-            // throw new NotImplementedException();
+            ResultadoDeAvaliacaoClinicaRepository.Insert(avaliacaoClinica);
+            lead.ResultadoDeAvaliacaoClinica = avaliacaoClinica;
+            Repository.Update(lead);
 
             var result = new RespostaDeInclusaoDeAvaliacaoClinicaDto();
             return result;
@@ -622,7 +693,7 @@ namespace api.Controllers
         public TelefoneDePessoaDto Telefone { get; set; }
         public TelefoneDePessoaDto Celular { get; set; }
         public EnderecoDePessoaDto Endereco { get; set; }
-        public EntityReference Profissao { get; set; }
+        public string Profissao { get; set; }
         public EntityReference Foto { get; set; }
         public Tipo<Sexo> Sexo { get; set; }
         public DateTime? DataDeNascimento { get; set; }
@@ -644,7 +715,7 @@ namespace api.Controllers
         public TelefoneDePessoaDto Telefone { get; set; }
         public TelefoneDePessoaDto Celular { get; set; }
         public EnderecoDePessoaDto Endereco { get; set; }
-        public EntityReference Profissao { get; set; }
+        public string Profissao { get; set; }
         public EntityReference Foto { get; set; }
         public Tipo<Sexo> Sexo { get; set; }
         public DateTime? DataDeNascimento { get; set; }
@@ -730,17 +801,12 @@ namespace api.Controllers
     public class AvaliacaoClinicaDto
     {
         public long IdDoLead { get; set; }
-        public ResultadoDeAvaliacaoClinicaDto FichaDeAvaliacao { get; set; }
+        public ResultadoDeFormularioDto FichaDeAvaliacao { get; set; }
     }
 
     public class RespostaDeInclusaoDeAvaliacaoClinicaDto
     {
 
-    }
-
-    public class ResultadoDeAvaliacaoClinicaDto
-    {
-        public GrupoDeResultadoDeAvaliacaoClinicaDto[] Grupos { get; set; }
     }
 
     public class GrupoDeResultadoDeAvaliacaoClinicaDto
@@ -754,5 +820,5 @@ namespace api.Controllers
         public long Id { get; set; }
         public string Valor { get; set; }
     }
-    
+
 }

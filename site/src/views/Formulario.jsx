@@ -37,7 +37,7 @@ function Formulario({ formulario, setFormulario, mostrarTitulo, containerRef }) 
 
                      if (campo.tipo === 'texto') {
                         result = (
-                           <div key={campo.id} className='pre-cadastro-form-group'>
+                           <div key={campo.id} className='pre-cadastro-form-group' style={{marginBottom: '25px'}}>
                               <label htmlFor={nomeDoCampo}>{campo.titulo}</label>
                               <input
                                  type='text'
@@ -46,12 +46,12 @@ function Formulario({ formulario, setFormulario, mostrarTitulo, containerRef }) 
                                  value={formData.grupos[grupoIndex].campos[campoIndex].valor || ''}
                                  onChange={(e) => handleChange(grupoIndex, campoIndex, e.target.value)}
                                  required={campo.obrigatorio}
-                              />
+                              />                               
                            </div>
                         );
                      } else if (campo.tipo === 'simnao') {
                         result = (
-                           <div key={campo.id} className='pre-cadastro-form-group'>
+                           <div key={campo.id} className='pre-cadastro-form-group' style={{marginBottom: '25px'}}>
                               <label htmlFor={nomeDoCampo}>{campo.titulo}</label>
                               <div>
                                  <label>

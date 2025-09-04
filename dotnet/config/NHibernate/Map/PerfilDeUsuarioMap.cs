@@ -33,10 +33,7 @@ namespace config.NHibernate.Map
             Map(p => p.TipoDePerfil).CustomType<IntToTipoType<TipoDePerfilDeUsuario>>();
             ReadOnly();
             SchemaAction.None();
-            // Se for usar uma view tem que passar o script aqui para poder criar a view automaticamente no setup.
-            Views.RegisterViewScript(@"drop view perfildeusuariofast", true);
-            Views.RegisterViewScript(@"
-create or replace view perfildeusuariofast as 
+            Subselect(@"
 select id, 
        thumbprint, 
        nome, 

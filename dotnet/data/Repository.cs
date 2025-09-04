@@ -1,5 +1,6 @@
 ﻿using framework.Validators;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +8,8 @@ namespace data
 {
     public class Repository<T> where T : IEntity
     {
-        private static Dictionary<string, Dictionary<long, IEntity>> _cache = new Dictionary<string, Dictionary<long, IEntity>>();
+        private static ConcurrentDictionary<string, ConcurrentDictionary<long, IEntity>> _cache
+            = new ConcurrentDictionary<string, ConcurrentDictionary<long, IEntity>>();
         private object _lock = new Object();
         private string _entityFullName = null;
 
@@ -76,17 +78,10 @@ namespace data
 
         private void SaveToCache(T result)
         {
-            if (result != null && result.Thumbprint != null)
-            {
-                lock (_lock)
-                {
-                    if (!_cache.ContainsKey(_entityFullName))
-                    {
-                        _cache.Add(_entityFullName, new Dictionary<long, IEntity>());
-                    }
-                    _cache[_entityFullName][result.Id] = result;
-                }
-            }
+            if (result?.Thumbprint == null) return;
+
+            var inner = _cache.GetOrAdd(_entityFullName, _ => new ConcurrentDictionary<long, IEntity>());
+            inner[result.Id] = result; // thread-safe
         }
 
         protected virtual T TryToGetFromCache(long id)

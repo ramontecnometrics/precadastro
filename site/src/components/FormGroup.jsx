@@ -4,7 +4,7 @@ import Filler from './Filler';
 
 export default function FormGroup(props) {
    return (
-      <BootstrapFormGroup {...props} style={{ marginBottom: 8 }}>
+      <BootstrapFormGroup {...props} style={{ marginBottom: 10 }}>
          {props.children}
          
       </BootstrapFormGroup>

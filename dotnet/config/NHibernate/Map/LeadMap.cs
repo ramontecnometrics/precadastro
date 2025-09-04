@@ -16,7 +16,9 @@ namespace config.NHibernate.Map
                 .Not.Nullable()
                 .Check(EnumExtensions.GetDatabaseCheckConstraint<Lead, SituacaoDeLead>(p => p.Situacao));
 
-            References(x => x.Profissao);
+            Map(x => x.Profissao);
+            References(x => x.Unidade);
+            References(x => x.ResultadoDeAvaliacaoClinica);                
 
             Map(x => x.Cnh);
             Map(x => x.IdentificacaoNoUno).Index("");
@@ -35,12 +37,14 @@ namespace config.NHibernate.Map
     {
         public LeadFastMap()
         {
-            Id(p => p.Id).GeneratedBy.Identity();
-            Map(p => p.Thumbprint).Length(36).Index("");
-            Map(p => p.Searchable).Length(500).Index("");
-            Map(p => p.Cpf).Length(20);
-            Map(p => p.NomeCompleto).Length(200);
-            Map(p => p.Email).Length(200);
+            Id(p => p.Id);
+            Map(p => p.Thumbprint);
+            Map(p => p.Searchable);
+            Map(p => p.Cpf);
+            Map(p => p.NomeCompleto);
+            Map(p => p.Email);
+            Map(p => p.IdDaUnidade);
+            Map(p => p.NomeDaUnidade);
             Map(p => p.DataDeCadastro);
             Map(x => x.Situacao).CustomType<IntToTipoType<SituacaoDeLead>>();
             References(p => p.Telefone);
@@ -58,25 +62,16 @@ select lead.id,
     pessoa.nomecompleto,
     pessoa.cpf,
     pessoa.email,
-    lead.situacao
+    lead.situacao,
+    unidade.id as iddaunidade,
+    unidade.nome as nomedaunidade
   from lead
     join pessoa on lead.id = pessoa.id
     left join telefonedepessoa telefone on telefone.pessoa_id = pessoa.id and telefone.tipo = 2
     left join telefonedepessoa celular on celular.pessoa_id = pessoa.id and celular.tipo = 1
+    left join unidade on unidade.id = lead.unidade_id
   where lead.situacao <> 3"
                 );
-        }
-    }
-
-    public class ResultadoDeAvaliacaoClinicaMap : ClassMap<ResultadoDeAvaliacaoClinica>
-    {
-        public ResultadoDeAvaliacaoClinicaMap()
-        {
-            Id(p => p.Id).GeneratedBy.Identity();
-            Map(p => p.Thumbprint).Length(36).Index("");
-            References(p => p.Lead);
-            References(p => p.Campo);
-            Map(p => p.Valor).Length(500);
         }
     }
 }

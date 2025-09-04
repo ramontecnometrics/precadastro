@@ -39,16 +39,7 @@ export default function LeadView(props) {
       return (
          <>
             <Row>
-               <Col>
-                  <FormGroup>
-                     <BoldLabel>CPF</BoldLabel>
-                     <CpfInput
-                        defaultValue={itemSelecionado.cpf}
-                        onChange={(value) => setItemSelecionado({ cpf: value })}
-                     />
-                  </FormGroup>
-               </Col>
-               <Col>
+               {/* <Col>
                   <FormGroup>
                      <BoldLabel>RG</BoldLabel>
                      <TextInput
@@ -67,11 +58,20 @@ export default function LeadView(props) {
                         upperCase
                      />
                   </FormGroup>
-               </Col>
+               </Col> */}
             </Row>
 
             <Row>
-               <Col>
+               <Col sm={12} md={6} lg={3} xl={3}>
+                  <FormGroup>
+                     <BoldLabel>CPF</BoldLabel>
+                     <CpfInput
+                        defaultValue={itemSelecionado.cpf}
+                        onChange={(value) => setItemSelecionado({ cpf: value })}
+                     />
+                  </FormGroup>
+               </Col>
+               <Col sm={12} md={6} lg={3} xl={3}>
                   <FormGroup>
                      <BoldLabel>Estado Civil</BoldLabel>
                      <Select
@@ -93,24 +93,20 @@ export default function LeadView(props) {
                      />
                   </FormGroup>
                </Col>
-               <Col>
+               <Col sm={12} md={6} lg={3} xl={3}>
                   <FormGroup>
                      <BoldLabel>Profissão</BoldLabel>
-                     <Select
-                        name='profissao'
+                     <TextInput
                         defaultValue={itemSelecionado.profissao}
-                        getKeyValue={(i) => i.id}
-                        getDescription={(i) => i.nome}
-                        onSelect={(i) => setItemSelecionado({ profissao: i })}
-                        formularioPadrao={(select) => (
-                           <ProfissaoView select={select} filtroExtra={() => ({ situacao: 1 })} />
-                        )}
-                        noDropDown
-                        readOnlyColor='#ffff'
+                        onChange={(value) =>
+                           setItemSelecionado({
+                              profissao: value,
+                           })
+                        }
                      />
                   </FormGroup>
                </Col>
-               <Col sm={2} md={2} lg={2} xl={2}>
+               <Col sm={12} md={6} lg={3} xl={3}>
                   <FormGroup>
                      <BoldLabel>Sexo</BoldLabel>
                      <Select
@@ -131,7 +127,7 @@ export default function LeadView(props) {
             <Filler height={10} />
 
             <Row>
-               <Col>
+               {/* <Col>
                   <FormGroup>
                      <BoldLabel>Telefone</BoldLabel>
                      <FlexRow gap={4}>
@@ -159,9 +155,9 @@ export default function LeadView(props) {
                         </FlexCol>
                      </FlexRow>
                   </FormGroup>
-               </Col>
+               </Col> */}
 
-               <Col>
+               <Col sm={12} md={6} lg={6} xl={6}>
                   <FormGroup>
                      <BoldLabel>Celular</BoldLabel>
                      <FlexRow gap={4}>
@@ -190,7 +186,7 @@ export default function LeadView(props) {
                      </FlexRow>
                   </FormGroup>
                </Col>
-               <Col lg={5}>
+               <Col sm={12} md={6} lg={6} xl={6}>
                   <FormGroup>
                      <BoldLabel>Email</BoldLabel>
                      <EmailInput
@@ -413,7 +409,7 @@ export default function LeadView(props) {
       return (
          <>
             <div ref={contentRef} style={{ color: '#403e3e', padding: 10 }}>
-               <div className='show-on-print-onlyxx'>
+               <div className=''>
                   <FlexRow>
                      <FlexCol width={'fit-content'}>
                         <img
@@ -474,7 +470,7 @@ export default function LeadView(props) {
                      <FlexCol width={'34%'}>
                         <Text>Ocupação profissional</Text>
                         <br />
-                        <BoldLabel>{itemSelecionado.profissao?.nome}</BoldLabel>
+                        <BoldLabel>{itemSelecionado.profissao}</BoldLabel>
                      </FlexCol>
                      <FlexCol width={'66%'}>
                         <Text>Endereço</Text>
@@ -490,8 +486,9 @@ export default function LeadView(props) {
 
                {itemSelecionado &&
                   itemSelecionado.avaliacaoClinica &&
-                  itemSelecionado.avaliacaoClinica.grupos &&
-                  itemSelecionado.avaliacaoClinica.grupos.map((grupo, grupoIndex) => {
+                  itemSelecionado.avaliacaoClinica.resultado &&
+                  itemSelecionado.avaliacaoClinica.resultado.grupos &&
+                  itemSelecionado.avaliacaoClinica.resultado.grupos.map((grupo, grupoIndex) => {
                      return grupo.campos.map((campo, campoIndex) => {
                         const color = campoIndex % 2 === 0 ? '#d4af3729' : '#ffffff';
                         return (

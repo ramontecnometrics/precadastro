@@ -1,6 +1,7 @@
 ﻿using data;
 using framework;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -62,13 +63,15 @@ namespace model
                 return Enderecos != null ? Enderecos.FirstOrDefault() : null;
             }
         }
-        public virtual Profissao Profissao { get; set; }
+        public virtual string Profissao { get; set; }
+        public virtual Unidade Unidade { get; set; }
         public EncryptedText Cnh { get; set; }
         public Tipo<EstadoCivil> EstadoCivil { get; set; }
         public string Observacao { get; set; }
         public string AlertaDeSaude { get; set; }
         public int? IdentificacaoNoUno { get; set; }
         public string TokenParaAvaliacaoClinica { get; set; }
+        public ResultadoDeAvaliacaoClinica ResultadoDeAvaliacaoClinica { get; set; }
 
         public static string SearchableScope = "Lead";
         public override string GetSearchableText()
@@ -96,26 +99,9 @@ namespace model
         public TelefoneDePessoa Telefone { get; set; }
         public TelefoneDePessoa Celular { get; set; }
         public string Searchable { get; set; }
+        public string NomeDaUnidade { get; set; }
+        public long IdDaUnidade { get; set; }
         public DateTime DataDeCadastro { get; set; }
         public Tipo<SituacaoDeLead> Situacao { get; set; }
-    }
-
-    public interface IResultadoDeFormulario
-    {
-        public long Id { get; set; }
-        public CampoDeGrupoDeFormulario Campo { get; }
-        public string Valor { get; }
-    }
-
-    public class ResultadoDeAvaliacaoClinica: IEntity, IResultadoDeFormulario
-    {
-        public long Id { get; set; }
-        public string Thumbprint { get; set; }
-        public string NomeDaEntidade => "Resultado de avaliação";
-        public Genero GeneroDaEntidade => Genero.Masculino;
-
-        public Lead Lead { get; set; }
-        public CampoDeGrupoDeFormulario Campo { get; set; }
-        public string Valor { get; set; }
     }
 }

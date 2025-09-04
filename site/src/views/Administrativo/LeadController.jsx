@@ -1,6 +1,5 @@
 import { showError } from '../../components/Messages';
-import { rsaEncrypt, concatUint8Arrays, uint8ToBase64, base64ToUint8, dateToString } from '../../utils/Functions';
-import api from '../../utils/Api';
+import { dateToString } from '../../utils/Functions';
 
 export default function LeadController() {
    const itemVazio = {
@@ -11,7 +10,7 @@ export default function LeadController() {
       return [
          { titulo: 'Código', orderby: 'id', className: 'codigo' },
          { titulo: 'Nome', width: '30%', orderby: 'nomeCompleto' },
-         { titulo: 'CPF', width: '15%', orderby: 'cpf' },
+         { titulo: 'Unidade', width: '15%', orderby: 'unidade' },
          { titulo: 'Email', width: '20%', orderby: 'email' },
          { titulo: 'Celular', width: '15%', orderby: 'celular' },
          { titulo: 'Data de cadastro', width: '15%', orderby: 'dataDeCadastro' },
@@ -23,7 +22,7 @@ export default function LeadController() {
       return [
          item.id,
          item.nomeCompleto,
-         item.cpf,
+         item.nomeDaUnidade,
          item.email,
          item.celular,
          dateToString(item.dataDeCadastro),
@@ -127,7 +126,7 @@ export default function LeadController() {
                     },
                  }
                : null,
-            profissao: item.profissao ? { id: item.profissao.id } : null,
+            profissao: item.profissao,
             foto: item.foto && item.foto.id ? { id: item.foto.id } : null,
          };
 

@@ -23,9 +23,7 @@ namespace config.NHibernate.Map
             Map(p => p.Email);
             ReadOnly();
             SchemaAction.None();
-            Views.RegisterViewScript(@"drop view usuarioadministradorfast", true);
-            Views.RegisterViewScript(@"        
-create or replace view usuarioadministradorfast as 
+            Subselect(@"        
 select usuario.id,
        usuario.thumbprint,      
        usuario.searchable,

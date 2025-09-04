@@ -23,14 +23,15 @@ namespace api.Dtos
         public TelefoneDePessoaDto Telefone { get; set; }
         public TelefoneDePessoaDto Celular { get; set; }
         public EnderecoDePessoaDto Endereco { get; set; }
-        public ProfissaoDto Profissao { get; set; }
+        public string Profissao { get; set; }
         public ArquivoDto Foto { get; set; }
         public Tipo<Sexo> Sexo { get; set; }
         public DateTime? DataDeNascimento { get; set; }
         public string DocumentoDeIdentidade { get; set; }
-        public ResultadoDeFormularioDto AvaliacaoClinica { get; set; }
+        public ResultadoDeAvaliacaoClinicaDto AvaliacaoClinica { get; set; }
+        public UnidadeDto Unidade { get; set; }
 
-        public static LeadDto Build(Lead item, IEnumerable<ResultadoDeAvaliacaoClinica> avaliacaoClinica)
+        public static LeadDto Build(Lead item)
         {
             var result = default(LeadDto);
             if (item != null)
@@ -38,6 +39,7 @@ namespace api.Dtos
                 result = new LeadDto()
                 {
                     Id = item.Id,
+                    Unidade = UnidadeDto.Build(item.Unidade),
                     NomeCompleto = item.NomeCompleto?.GetPlainText(),
                     Cpf = item.Cpf?.GetPlainText(),
                     Cnpj = item.Cnpj?.GetPlainText(),
@@ -53,10 +55,10 @@ namespace api.Dtos
                     Telefone = TelefoneDePessoaDto.Build(item.Telefone),
                     Celular = TelefoneDePessoaDto.Build(item.Celular),
                     Endereco = EnderecoDePessoaDto.Build(item.Endereco),
-                    Profissao = ProfissaoDto.Build(item.Profissao),
+                    Profissao = item.Profissao,
                     Foto = ArquivoDto.Build(item.Foto),
                     Sexo = item.Sexo,
-                    AvaliacaoClinica = ResultadoDeFormularioDto.Build(avaliacaoClinica)
+                    AvaliacaoClinica = ResultadoDeAvaliacaoClinicaDto.Build(item.ResultadoDeAvaliacaoClinica)
                 };
             }
             return result;
@@ -73,6 +75,8 @@ namespace api.Dtos
         public DateTime DataDeCadastro { get; set; }
         public string Celular { get; set; }
         public Tipo<SituacaoDeLead> Situacao { get; set; }
+        public long IdDaUnidade { get; set; }
+        public string NomeDaUnidade { get; set; }
 
         public static LeadFastDto Build(LeadFast item)
         {
@@ -89,26 +93,8 @@ namespace api.Dtos
                     Celular = item.Celular?.NumeroComDDD,
                     DataDeCadastro = item.DataDeCadastro,
                     Situacao = item.Situacao,
-                };
-            }
-            return result;
-        }
-    }
-
-    public class ProfissaoDto
-    {
-        public long Id { get; set; }
-        public string Nome { get; set; }
-
-        public static ProfissaoDto Build(Profissao item)
-        {
-            var result = default(ProfissaoDto);
-            if (item != null)
-            {
-                result = new ProfissaoDto()
-                {
-                    Id = item.Id,
-                    Nome = item.Nome
+                    IdDaUnidade = item.IdDaUnidade,
+                    NomeDaUnidade = item.NomeDaUnidade
                 };
             }
             return result;

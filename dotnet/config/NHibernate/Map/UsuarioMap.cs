@@ -51,9 +51,7 @@ namespace config.NHibernate.Map
             Map(p => p.Thumbprint).Length(36).Index("");
             ReadOnly();
             SchemaAction.None();
-            Views.RegisterViewScript(@"drop view usuariologado", true);
-            Views.RegisterViewScript(@"
-create or replace view usuariologado as 
+            Subselect(@"
 select id, 1 perfil, cast (null as varchar(36)) thumbprint from usuarioadministrador");
         }
     }

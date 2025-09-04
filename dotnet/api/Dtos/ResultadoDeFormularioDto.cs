@@ -10,7 +10,7 @@ namespace api.Dtos
     {
         public GrupoDeResultadoDeFormularioDto[] Grupos { get; set; }
 
-        public static ResultadoDeFormularioDto Build(IEnumerable<ResultadoDeAvaliacaoClinica> avaliacaoClinica)
+        public static ResultadoDeFormularioDto Build(IEnumerable<ResultadoDeFormulario> avaliacaoClinica)
         {
             if (avaliacaoClinica == null)
             {
@@ -20,7 +20,7 @@ namespace api.Dtos
 
             avaliacaoClinica.GroupBy(i => i.Campo.GrupoDeFormulario)
             .ForEach(i => {
-                var grupo = GrupoDeResultadoDeFormularioDto.Build(i.Key, i.Select(k => k).ToArray());
+                var grupo = GrupoDeResultadoDeFormularioDto.Build(i.Key, i.ToArray());
                 gruposDto.Add(grupo);                
             });
 
@@ -39,7 +39,7 @@ namespace api.Dtos
         public string Titulo { get; set; }
         public CampoDeResultadoDeFormularioDto[] Campos { get; set; }
 
-        public static GrupoDeResultadoDeFormularioDto Build(GrupoDeFormulario item, IResultadoDeFormulario[] resultados)
+        public static GrupoDeResultadoDeFormularioDto Build(GrupoDeFormulario item, ResultadoDeFormulario[] resultados)
         {
             if (item == null)
             {
@@ -64,7 +64,7 @@ namespace api.Dtos
         public string Tipo { get; set; }
         public string Valor { get; set; }
 
-        public static CampoDeResultadoDeFormularioDto Build(IResultadoDeFormulario item)
+        public static CampoDeResultadoDeFormularioDto Build(ResultadoDeFormulario item)
         {
             if (item == null)
             {
