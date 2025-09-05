@@ -4,10 +4,21 @@
     "publish-api-homo:darwin": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-homo.csx",
     "publish-api-homo:linux": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-homo.csx",
     "publish-api-homo:win32": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-homo.csx",
+
     "publish-setup-homo": "run-script-os",
     "publish-setup-homo:darwin": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx",
     "publish-setup-homo:linux": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx",
-    "publish-setup-homo:win32": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx"
+    "publish-setup-homo:win32": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-homo.csx",
+
+    "publish-api-prod": "run-script-os",
+    "publish-api-prod:darwin": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-prod.csx",
+    "publish-api-prod:linux": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-prod.csx",
+    "publish-api-prod:win32": "dotnet publish api.csproj && dotnet-script ./publish/publish-api-prod.csx",
+
+    "publish-setup-prod": "run-script-os",
+    "publish-setup-prod:darwin": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-prod.csx",
+    "publish-setup-prod:linux": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-prod.csx",
+    "publish-setup-prod:win32": "dotnet publish ./../setup/setup.csproj && dotnet-script ./publish/publish-setup-prod.csx"
   },
   "dependencies": {
     "run-script-os": "^1.1.6"

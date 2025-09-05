@@ -15,7 +15,6 @@ import { useReactToPrint } from 'react-to-print';
 import logo from '../../contents/img/logo.svg';
 import Text from '../../components/Text';
 import Line from '../../components/Line';
-import { Enviroment } from '../../utils/Functions';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '../../components/IconButton';
 
@@ -63,7 +62,7 @@ export default function UnidadeView(props) {
                   </FormGroup>
                </Col>
             </Row>
-            <Filler height={10}/>
+            <Filler height={10} />
             <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
                <Row>
                   <Col>
@@ -115,47 +114,26 @@ export default function UnidadeView(props) {
 
             {item.uuid && (
                <>
-               <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
-                  <div ref={contentPreCadastroRef}>
-                     <BoldLabel>QR Code para acesso ao Pré-cadastro</BoldLabel>
-                     <FlexRow>
-                        <FlexCol style={{ width: 35 }}>
-                           <BoldLabel>Link:</BoldLabel>
-                        </FlexCol>
-                        <FlexCol style={{ paddingLeft: 3 }}>
-                           <a href={getPreCadastroLink()} style={{ color: 'blue' }} target='_blank'>
-                              {getPreCadastroLink()}
-                           </a>
-                           <IconButton title='Copiar link' style={{ marginLeft: 10 , fontSize: 18, color: 'gray'}} icon={faCopy} onClick={() => navigator.clipboard.writeText(getPreCadastroLink())} />
-                        </FlexCol>
-                     </FlexRow>
-                     <Filler height={10} />
-                     <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
-                        <QRCode
-                           size={256}
-                           style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                           value={getPreCadastroLink()}
-                           viewBox={`0 0 256 256`}
-                        />
-                     </div>
-                     <Filler height={10} />
-                  </div>
-
-                  <div ref={contentAnamneseRef}>
-                     <div className='show-on-print-only' style={{ textAlign: 'center' }}>
-                        <img
-                           src={logo}
-                           alt='Logo'
-                           style={{
-                              width: 300,
-                           }}
-                        />
-
-                        <Line />
-
-                        <Filler height={30} />
-                        <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Pré-cadastro</Text>
-                        <Filler height={40} />
+                  <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
+                     <div>
+                        <BoldLabel>QR Code para acesso ao Pré-cadastro</BoldLabel>
+                        <FlexRow>
+                           <FlexCol style={{ width: 35 }}>
+                              <BoldLabel>Link:</BoldLabel>
+                           </FlexCol>
+                           <FlexCol style={{ paddingLeft: 3 }}>
+                              <a href={getPreCadastroLink()} style={{ color: 'blue' }} target='_blank'>
+                                 {getPreCadastroLink()}
+                              </a>
+                              <IconButton
+                                 title='Copiar link'
+                                 style={{ marginLeft: 10, fontSize: 18, color: 'gray' }}
+                                 icon={faCopy}
+                                 onClick={() => navigator.clipboard.writeText(getPreCadastroLink())}
+                              />
+                           </FlexCol>
+                        </FlexRow>
+                        <Filler height={10} />
                         <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
                            <QRCode
                               size={256}
@@ -164,58 +142,66 @@ export default function UnidadeView(props) {
                               viewBox={`0 0 256 256`}
                            />
                         </div>
-                        <Filler height={40} />
-                        <BoldLabel>{getPreCadastroLink()}</BoldLabel>
-                        <Filler height={20} />
-                        <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                        <Filler height={10} />
                      </div>
-                  </div>
 
-                  <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrintPreCadastro} />
-                  <Filler height={10} />
-               </Panel>
-               <br />
-               <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
-                  <div ref={contentAnamneseRef}>
-                     <BoldLabel>QR Code para realizar a Anamnese</BoldLabel>
-                     <FlexRow>
-                        <FlexCol style={{ width: 35 }}>
-                           <BoldLabel>Link:</BoldLabel>
-                        </FlexCol>
-                        <FlexCol style={{ paddingLeft: 3 }}>
-                           <a href={getLinkAnamnese()} style={{ color: 'blue' }} target='_blank'>
-                              {getLinkAnamnese()}
-                           </a>
-                           <IconButton title='Copiar link' style={{ marginLeft: 10 , fontSize: 18, color: 'gray'}} icon={faCopy} onClick={() => navigator.clipboard.writeText(getLinkAnamnese())} />
-                        </FlexCol>
-                     </FlexRow>
-                     <Filler height={10} />
-                     <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
-                        <QRCode
-                           size={256}
-                           style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                           value={getLinkAnamnese()}
-                           viewBox={`0 0 256 256`}
-                        />
+                     <div ref={contentPreCadastroRef}>
+                        <div className='show-on-print-only' style={{ textAlign: 'center' }}>
+                           <div style={{ height: 250, overflowY: 'clip' }}>
+                              <img
+                                 src={logo}
+                                 alt='Logo'
+                                 style={{
+                                    width: 300,
+                                 }}
+                              />
+                           </div>
+
+                           <Line />
+
+                           <Filler height={30} />
+                           <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Pré-cadastro</Text>
+                           <Filler height={40} />
+                           <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
+                              <QRCode
+                                 size={256}
+                                 style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+                                 value={getPreCadastroLink()}
+                                 viewBox={`0 0 256 256`}
+                              />
+                           </div>
+                           <Filler height={40} />
+                           <BoldLabel>{getPreCadastroLink()}</BoldLabel>
+                           <Filler height={20} />
+                           <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                        </div>
                      </div>
+
+                     <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrintPreCadastro} />
                      <Filler height={10} />
-                  </div>
+                  </Panel>
+                  <br />
 
-                  <div ref={contentAnamneseRef}>
-                     <div className='show-on-print-only' style={{ textAlign: 'center' }}>
-                        <img
-                           src={logo}
-                           alt='Logo'
-                           style={{
-                              width: 300,
-                           }}
-                        />
-
-                        <Line />
-
-                        <Filler height={30} />
-                        <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Anamnese</Text>
-                        <Filler height={40} />
+                  <Panel style={{ backgroundColor: '#f8f9fa', padding: 10 }}>
+                     <div>
+                        <BoldLabel>QR Code para realizar a Anamnese</BoldLabel>
+                        <FlexRow>
+                           <FlexCol style={{ width: 35 }}>
+                              <BoldLabel>Link:</BoldLabel>
+                           </FlexCol>
+                           <FlexCol style={{ paddingLeft: 3 }}>
+                              <a href={getLinkAnamnese()} style={{ color: 'blue' }} target='_blank'>
+                                 {getLinkAnamnese()}
+                              </a>
+                              <IconButton
+                                 title='Copiar link'
+                                 style={{ marginLeft: 10, fontSize: 18, color: 'gray' }}
+                                 icon={faCopy}
+                                 onClick={() => navigator.clipboard.writeText(getLinkAnamnese())}
+                              />
+                           </FlexCol>
+                        </FlexRow>
+                        <Filler height={10} />
                         <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
                            <QRCode
                               size={256}
@@ -224,21 +210,48 @@ export default function UnidadeView(props) {
                               viewBox={`0 0 256 256`}
                            />
                         </div>
-                        <Filler height={40} />
-                        <BoldLabel>{getLinkAnamnese()}</BoldLabel>
-                        <Filler height={20} />
-                        <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                        <Filler height={10} />
                      </div>
-                  </div>
 
-                  <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrintAnamnese} />
-                  <Filler height={10} />
-               </Panel>
+                     <div ref={contentAnamneseRef}>
+                        <div className='show-on-print-only' style={{ textAlign: 'center' }}>
+                           <div style={{ height: 250, overflowY: 'clip' }}>
+                              <img
+                                 src={logo}
+                                 alt='Logo'
+                                 style={{
+                                    width: 300,
+                                 }}
+                              />
+                           </div>
 
-               <br />
-               <br />
+                           <Line />
+
+                           <Filler height={30} />
+                           <Text style={{ fontSize: 32, color: 'gray' }}>Formulário de Anamnese</Text>
+                           <Filler height={40} />
+                           <div style={{ height: 'auto', margin: '0 auto', maxWidth: 300, width: '100%' }}>
+                              <QRCode
+                                 size={256}
+                                 style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
+                                 value={getLinkAnamnese()}
+                                 viewBox={`0 0 256 256`}
+                              />
+                           </div>
+                           <Filler height={40} />
+                           <BoldLabel>{getLinkAnamnese()}</BoldLabel>
+                           <Filler height={20} />
+                           <Text style={{ fontSize: 32, color: 'gray' }}>{item.nome}</Text>
+                        </div>
+                     </div>
+
+                     <Button text={'Imprimir'} style={{ width: 120 }} onClick={handlePrintAnamnese} />
+                     <Filler height={10} />
+                  </Panel>
+
+                  <br />
+                  <br />
                </>
-
             )}
          </>
       );

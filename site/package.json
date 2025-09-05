@@ -26,7 +26,8 @@
     "react-simple-timefield": "^3.3.1",
     "run-script-os": "^1.1.6",
     "simplebar-react": "^3.3.2",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "react-to-print": "^3.1.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.0",
@@ -46,6 +47,6 @@
     "publish-prod": "run-script-os",
     "publish-prod:darwin": "vite build --mode production && dotnet-script ./publish/publish-prod.csx",
     "publish-prod:linux": "vite build --mode production && dotnet-script ./publish/publish-prod.csx",
-    "publish-prod:win32": "vite build --mode production && dotnet-script ./publish/publish-prod.csx"    
+    "publish-prod:win32": "vite build --mode production && dotnet-script ./publish/publish-prod.csx"
   }
 }
