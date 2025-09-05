@@ -3,6 +3,7 @@ using model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace api.Dtos
 {
@@ -19,16 +20,17 @@ namespace api.Dtos
             var gruposDto = new List<GrupoDeResultadoDeFormularioDto>();
 
             avaliacaoClinica.GroupBy(i => i.Campo.GrupoDeFormulario)
-            .ForEach(i => {
+            .ForEach(i =>
+            {
                 var grupo = GrupoDeResultadoDeFormularioDto.Build(i.Key, i.ToArray());
-                gruposDto.Add(grupo);                
+                gruposDto.Add(grupo);
             });
 
             var result = new ResultadoDeFormularioDto()
             {
                 Grupos = gruposDto.ToArray()
             };
-            
+
             return result;
         }
     }
@@ -63,6 +65,32 @@ namespace api.Dtos
         public string Titulo { get; set; }
         public string Tipo { get; set; }
         public string Valor { get; set; }
+        public string ValorFormatado { get; set; }
+        public string Opcoes { get; set; }
+
+        private static string FormatarValor(string tipo, string valor)
+        {
+            var result = valor;
+
+            if (tipo == "opcoesmultiplas" && !valor.IsEmpty())
+            {
+                var valores = valor.Split("|");
+                var valoresStrb = new StringBuilder();
+                foreach (var v in valores)
+                {
+                    if (!v.IsEmpty())
+                    {
+                        valoresStrb.Append($"{v}, ");
+                    }
+                    result = valoresStrb.ToString();
+                    if (!result.IsEmpty())
+                    {
+                        result = result.Remove(result.Length - 2);
+                    }
+                }
+            }
+            return result;
+        }
 
         public static CampoDeResultadoDeFormularioDto Build(ResultadoDeFormulario item)
         {
@@ -75,8 +103,10 @@ namespace api.Dtos
             {
                 Id = item.Id,
                 Tipo = item.Campo.Tipo,
+                Opcoes = item.Campo.Opcoes,
                 Titulo = item.Campo.Titulo,
-                Valor = item.Valor
+                Valor = item.Valor,
+                ValorFormatado = FormatarValor(item.Campo.Tipo, item.Valor)
             };
             return result;
         }

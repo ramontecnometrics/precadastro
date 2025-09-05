@@ -1,6 +1,6 @@
 import React from 'react';
 import  '../../../contents/css/login-logo.css';
-import logo from '../../../contents/img/logo.png';
+import logo from '../../../contents/img/logo.svg';
 
 export default function LoginLogo(props) {
     return (

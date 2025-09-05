@@ -2,8 +2,6 @@ using api.Controllers;
 using framework;
 using model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace api.Dtos
 {
@@ -30,6 +28,7 @@ namespace api.Dtos
         public string DocumentoDeIdentidade { get; set; }
         public ResultadoDeAvaliacaoClinicaDto AvaliacaoClinica { get; set; }
         public UnidadeDto Unidade { get; set; }
+        public ResultadoDeAnamneseDto Anamnese { get; set; }
 
         public static LeadDto Build(Lead item)
         {
@@ -58,7 +57,8 @@ namespace api.Dtos
                     Profissao = item.Profissao,
                     Foto = ArquivoDto.Build(item.Foto),
                     Sexo = item.Sexo,
-                    AvaliacaoClinica = ResultadoDeAvaliacaoClinicaDto.Build(item.ResultadoDeAvaliacaoClinica)
+                    AvaliacaoClinica = ResultadoDeAvaliacaoClinicaDto.Build(item.ResultadoDeAvaliacaoClinica),
+                    Anamnese = ResultadoDeAnamneseDto.Build(item.ResultadoDeAnamnese)
                 };
             }
             return result;

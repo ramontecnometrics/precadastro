@@ -46,6 +46,7 @@ namespace config.NHibernate.Map
             Map(x => x.Tipo).Length(100).Not.Nullable();
             Map(x => x.Obrigatorio);
             Map(x => x.Ordem);
+            Map(x => x.Opcoes).Length(1000);
             References(x => x.GrupoDeFormulario)
               .Not.Nullable();
         }

@@ -51,6 +51,7 @@ namespace model
         public string Tipo { get; set; }
         public bool Obrigatorio { get; set; }
         public int Ordem { get; set; }
+        public string Opcoes { get; set; }
     }
 
     public class FormularioFast : IEntity

@@ -44,17 +44,15 @@ create user usergestia with encrypted password '25gestia25';
 
 # Criar as bases de dados
 sudo -u postgres psql
-create database precadastro_drhair with owner usergestia;
-create database precadastro_drhair_log with owner usergestia;
+create database homo_precadastro_drhair with owner usergestia;
+create database homo_precadastro_drhair with owner usergestia;
 
 # Alterar a data e hora do PostgreSQL
 sudo -u postgres psql
 # SELECT * FROM pg_timezone_names;
-ALTER DATABASE precadastro_drhair SET timezone TO 'Brazil/East';
-ALTER DATABASE precadastro_drhair_log SET timezone TO 'Brazil/East';
+ALTER DATABASE homo_precadastro_drhair SET timezone TO 'Brazil/East';
+ALTER DATABASE homo_precadastro_drhair SET timezone TO 'Brazil/East';
 SELECT pg_reload_conf();
-
-ALTER DATABASE db_name OWNER TO new_owner_name;
 
 # Instalar on nginx
 apt-get install nginx
@@ -153,7 +151,7 @@ ufw status
 
 # Permitir que usuário selecionado execute os comandos de controle de serviço sem solicitar a senha 
 vi /etc/sudoers.d/gestia
-gestia ALL=NOPASSWD: /bin/systemctl start precadastro_drhair.service, /bin/systemctl stop precadastro_drhair.service, /bin/systemctl status precadastro_drhair.service, /bin/systemctl restart precadastro_drhair.service
+gestia ALL=NOPASSWD: /bin/systemctl start homo_precadastro_drhair.service, /bin/systemctl stop homo_precadastro_drhair.service, /bin/systemctl status homo_precadastro_drhair.service, /bin/systemctl restart homo_precadastro_drhair.service
 
 
 

@@ -12,6 +12,11 @@ namespace framework.Extensions
             return StringUtils.ContainsAny(sentence, searchSentence);
         }
 
+        public static bool IsEmpty(this string sentence)
+        {
+            return string.IsNullOrEmpty(sentence) || string.IsNullOrWhiteSpace(sentence);
+        }
+
         public static string RemoveAccents(this string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);

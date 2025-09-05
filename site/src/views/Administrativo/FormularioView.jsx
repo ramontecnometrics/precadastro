@@ -12,6 +12,12 @@ import TextArea from '../../components/TextArea';
 import CheckBox from '../../components/CheckBox';
 import Select from '../../components/Select';
 import IntegerInput from '../../components/IntegerInput';
+import Panel from '../../components/Panel';
+import IconButton from '../../components/IconButton';
+import { faPlusCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FlexRow } from '../../components/FlexItems';
+import { FlexCol } from '../../components/FlexItems';
+import Text from '../../components/Text';
 
 const url = '/formulario';
 
@@ -20,6 +26,36 @@ export default function FormularioView(props) {
    const autoFocusRef = useRef(null);
    const autoFocusGrupoRef = useRef(null);
    const autoFocusCampoRef = useRef(null);
+
+   const getOpcoes = (opcoes) => {
+      let result = [];
+
+      if (opcoes) {
+         let count = opcoes.split('|').length - 1;
+         result = opcoes.split('|', count);
+      }
+      return result;
+   };
+
+   const adicionarOpcao = (opcoes) => {
+      if (opcoes == null || opcoes == undefined) {
+         return 'Opção 1| ';
+      }
+
+      return opcoes + '' + opcoes.split('|').length + '|';
+   };
+
+   const removerOpcao = (opcoes, index) => {
+      var opcoesArray = opcoes.split('|');
+      opcoesArray.splice(index, 1);
+      return opcoesArray.join('|');
+   };
+
+   const atualizarOpcao = (opcoes, index, valor) => {
+      var opcoesArray = opcoes.split('|');
+      opcoesArray[index] = valor;
+      return opcoesArray.join('|');
+   };
 
    const renderizarFormulario = ({ formState, setFormState }) => {
       const { setItemSelecionado } = makeFormHelpers(setFormState);
@@ -179,9 +215,13 @@ export default function FormularioView(props) {
                               }))
                            }
                            excluir={(index) =>
-                              setItemSelecionado({
-                                 grupos: (itemSelecionado.grupos || []).filter((_, i) => i !== index),
-                              })
+                              setFormState((prev) => ({
+                                 ...prev,
+                                 grupoSelecionado: {
+                                    ...prev.grupoSelecionado,
+                                    campos: (prev.grupoSelecionado.campos || []).filter((_, i) => i !== index),
+                                 },
+                              }))
                            }
                            aposSalvar={() => {}}
                            colunas={() => [
@@ -233,6 +273,9 @@ export default function FormularioView(props) {
                                                 options={[
                                                    { id: 'texto', descricao: 'Texto livre' },
                                                    { id: 'simnao', descricao: 'Sim/Não' },
+                                                   { id: 'opcoes', descricao: 'Opções' },
+                                                   { id: 'opcoesmultiplas', descricao: 'Opções múltiplas' },
+                                                   { id: 'selecao', descricao: 'Lista' },
                                                 ]}
                                                 getKeyValue={(i) => i.id}
                                                 getDescription={(i) => i.descricao}
@@ -267,6 +310,98 @@ export default function FormularioView(props) {
                                           </FormGroup>
                                        </Col>
                                     </Row>
+
+                                    {(campoSelecionado.tipo === 'opcoes' ||
+                                       campoSelecionado.tipo === 'opcoesmultiplas' ||
+                                       campoSelecionado.tipo === 'selecao') && (
+                                       <Row>
+                                          <Col>
+                                             <Panel style={{ padding: 10 }}>
+                                                <BoldLabel>Opções:</BoldLabel>
+                                                <div
+                                                   style={{
+                                                      display: 'flex',
+                                                      flexDirection: 'row',
+                                                      gap: 5,
+                                                      flexWrap: 'wrap',
+                                                   }}
+                                                >
+                                                   {getOpcoes(campoSelecionado.opcoes).map((opcao, index) => {
+                                                      return (
+                                                         <>
+                                                            <FlexRow
+                                                               style={{
+                                                                  width: 120,
+                                                                  border: '1px solid gray',
+                                                                  padding: 3,
+                                                                  borderRadius: 6,
+                                                               }}
+                                                               gap={5}
+                                                            >
+                                                               <FlexCol style={{ width: '80%' }}>
+                                                                  <input
+                                                                     type='text'
+                                                                     style={{
+                                                                        border: 0,
+                                                                        maxWidth: '100%',
+                                                                        outline: 'none',
+                                                                     }}
+                                                                     value={opcao}
+                                                                     onChange={(e) => {
+                                                                        setFormState((prev) => ({
+                                                                           ...prev,
+                                                                           campoSelecionado: {
+                                                                              ...prev.campoSelecionado,
+                                                                              opcoes: atualizarOpcao(
+                                                                                 prev.campoSelecionado.opcoes,
+                                                                                 index,
+                                                                                 e.target.value
+                                                                              ),
+                                                                           },
+                                                                        }));
+                                                                     }}
+                                                                  />
+                                                               </FlexCol>
+                                                               <FlexCol style={{ width: '20%' }}>
+                                                                  <IconButton
+                                                                     icon={faTimes}
+                                                                     onClick={() => {
+                                                                        setFormState((prev) => ({
+                                                                           ...prev,
+                                                                           campoSelecionado: {
+                                                                              ...prev.campoSelecionado,
+                                                                              opcoes: removerOpcao(
+                                                                                 prev.campoSelecionado.opcoes,
+                                                                                 index
+                                                                              ),
+                                                                           },
+                                                                        }));
+                                                                     }}
+                                                                  />
+                                                               </FlexCol>
+                                                            </FlexRow>
+                                                         </>
+                                                      );
+                                                   })}
+                                                   <IconButton
+                                                      style={{ fontSize: 22, marginTop: 4 }}
+                                                      icon={faPlusCircle}
+                                                      title={'Adicionar opção'}
+                                                      onClick={() => {
+                                                         setFormState((prev) => ({
+                                                            ...prev,
+                                                            campoSelecionado: {
+                                                               ...prev.campoSelecionado,
+                                                               opcoes: adicionarOpcao(prev.campoSelecionado.opcoes),
+                                                            },
+                                                         }));
+                                                      }}
+                                                   />
+                                                </div>
+                                             </Panel>
+                                          </Col>
+                                       </Row>
+                                    )}
                                  </>
                               )
                            }

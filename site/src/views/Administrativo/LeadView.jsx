@@ -13,7 +13,6 @@ import TextArea from '../../components/TextArea';
 import CpfInput from '../../components/CpfInput';
 import CepInput from '../../components/CepInput';
 import CidadeView from '../CidadeView';
-import ProfissaoView from '../ProfissaoView';
 import { FlexRow, FlexCol } from '../../components/FlexItems';
 import DateInput from '../../components/DateInput';
 import { Tab, Tabs } from '../../components/Tabs';
@@ -34,6 +33,7 @@ export default function LeadView(props) {
    const [aba, setAba] = useState(1);
    const contentRef = useRef(null);
    const handlePrint = useReactToPrint({ contentRef });
+   const autoFocus = useRef(null);
 
    const campos = (itemSelecionado, setItemSelecionado) => {
       return (
@@ -402,24 +402,26 @@ export default function LeadView(props) {
          if (!isLast) pdf.addPage();
       }
 
-      pdf.save(`Avaliação Clínica - ${nomeCompleto}.pdf`);
+      pdf.save(`${nomeCompleto}.pdf`);
    };
 
    const fichaDeAvaliacao = (itemSelecionado, setItemSelecionado) => {
-      return (
+      return !itemSelecionado.avaliacaoClinica ? (
+         <Text>Avaliação Clínica ainda não realizada.</Text>
+      ) : (
          <>
             <div ref={contentRef} style={{ color: '#403e3e', padding: 10 }}>
                <div className=''>
                   <FlexRow>
-                     <FlexCol width={'fit-content'}>
+                     <div width={170} style={{ display: 'flex', alignItems: 'center', height: 80 }}>
                         <img
                            src={logo}
                            alt='Logo'
                            style={{
-                              width: 120,
+                              width: 170,
                            }}
                         />
-                     </FlexCol>
+                     </div>
                      <FlexCol style={{ paddingTop: 20, paddingLeft: 150 }}>
                         <Text style={{ fontSize: 30, color: 'gray' }}>Avaliação Clínica</Text>
                      </FlexCol>
@@ -457,7 +459,7 @@ export default function LeadView(props) {
                      <FlexCol width={'33%'}>
                         <Text>Celular</Text>
                         <br />
-                        <BoldLabel>{itemSelecionado.celular.numeroComDDD}</BoldLabel>
+                        <BoldLabel>{itemSelecionado.celular?.numeroComDDD}</BoldLabel>
                      </FlexCol>
                      <FlexCol width={'33%'}>
                         <Text>E-mail</Text>
@@ -490,7 +492,7 @@ export default function LeadView(props) {
                   itemSelecionado.avaliacaoClinica.resultado.grupos &&
                   itemSelecionado.avaliacaoClinica.resultado.grupos.map((grupo, grupoIndex) => {
                      return grupo.campos.map((campo, campoIndex) => {
-                        const color = campoIndex % 2 === 0 ? '#d4af3729' : '#ffffff';
+                        const color = campoIndex % 2 === 0 ? '#d4af3710' : '#ffffff';
                         return (
                            <React.Fragment key={`grupo-${grupoIndex}-campo-${campoIndex}`}>
                               <Line />
@@ -509,45 +511,13 @@ export default function LeadView(props) {
                                     <BoldLabel>{campo.titulo}</BoldLabel>
                                  </FlexCol>
                                  <FlexCol>
-                                    <Text>{campo.valor}</Text>
+                                    <Text>{campo.valorFormatado}</Text>
                                  </FlexCol>
                               </FlexRow>
                            </React.Fragment>
                         );
                      });
                   })}
-               {/* 
-               {itemSelecionado &&
-                  itemSelecionado.avaliacaoClinica &&
-                  itemSelecionado.avaliacaoClinica.grupos &&
-                  itemSelecionado.avaliacaoClinica.grupos.map((grupo, grupoIndex) => {
-                     return grupo.campos.map((campo, campoIndex) => {
-                        const color = campoIndex % 2 === 0 ? '#d4af3729' : '#ffffff';
-                        return (
-                           <React.Fragment key={`grupo-${grupoIndex}-campo-${campoIndex}`}>
-                              <Line />
-                              <FlexRow
-                                 className={'no-break-on-print page-break'}
-                                 style={{
-                                    backgroundColor: color,
-                                    paddingLeft: 5,
-                                    paddingRight: 5,
-                                    paddingTop: 5,
-                                    borderLeft: '1px solid #ced4da',
-                                    borderRight: '1px solid #ced4da',
-                                 }}
-                              >
-                                 <FlexCol>
-                                    <BoldLabel>{campo.titulo}</BoldLabel>
-                                 </FlexCol>
-                                 <FlexCol>
-                                    <Text>{campo.valor}</Text>
-                                 </FlexCol>
-                              </FlexRow>
-                           </React.Fragment>
-                        );
-                     });
-                  })} */}
                <Line />
             </div>
             <Filler height={10} />
@@ -556,11 +526,189 @@ export default function LeadView(props) {
                   <Button style={{ width: 100 }} text={'Imprimir'} onClick={handlePrint} />
                </FlexCol>
                <FlexCol width={'fit-content'}>
-                  <Button style={{ width: 100 }} text={'PDF'} onClick={() => gerarPDF(itemSelecionado.nomeCompleto)} />
+                  <Button
+                     style={{ width: 100 }}
+                     text={'PDF'}
+                     onClick={() => gerarPDF('Avaliação Clínica - ' + itemSelecionado.nomeCompleto)}
+                  />
                </FlexCol>
-               {/* <FlexCol style={{ paddingLeft: 8 }}>
-                  <Button style={{ width: 100 }} text={'Alterar'} />
-               </FlexCol> */}
+            </FlexRow>
+            <Filler height={10} />
+         </>
+      );
+   };
+
+   const fichaDeAnamnese = (itemSelecionado, setItemSelecionado) => {
+      let index = 0;
+      return !itemSelecionado.anamnese ? (
+         <Text>Anamnese não realizada.</Text>
+      ) : (
+         <>
+            <div ref={contentRef} style={{ color: '#403e3e', padding: 10 }}>
+               <div className=''>
+                  <FlexRow>
+                     <div width={170} style={{ display: 'flex', alignItems: 'center', height: 80 }}>
+                        <img
+                           src={logo}
+                           alt='Logo'
+                           style={{
+                              width: 170,
+                           }}
+                        />
+                     </div>
+                     <FlexCol style={{ paddingTop: 20, paddingLeft: 150 }}>
+                        <Text style={{ fontSize: 30, color: 'gray' }}>Anamnese</Text>
+                     </FlexCol>
+                     <FlexCol style={{ paddingTop: 60, paddingLeft: 150, textAlign: 'right' }}>
+                        <Text style={{}}>{dateToString(itemSelecionado.anamnese.data)}</Text>
+                     </FlexCol>
+                  </FlexRow>
+
+                  <Line />
+
+                  <FlexRow>
+                     <FlexCol width={'34%'}>
+                        <Text>Paciente</Text>
+                        <br />
+                        <BoldLabel>{itemSelecionado.nomeCompleto}</BoldLabel>
+                     </FlexCol>
+                     <FlexCol width={'33%'}>
+                        <Text>Data de nascimento</Text>
+                        <br />
+                        <BoldLabel>{`${dateToString(itemSelecionado.dataDeNascimento)} (${calcularIdade(
+                           formatDate(itemSelecionado.dataDeNascimento),
+                           true
+                        )})`}</BoldLabel>
+                     </FlexCol>
+                     <FlexCol width={'33%'}>
+                        <Text>Estado civil</Text>
+                        <br />
+                        <BoldLabel>{itemSelecionado.estadoCivil?.descricao}</BoldLabel>
+                     </FlexCol>
+                  </FlexRow>
+
+                  <FlexRow>
+                     <FlexCol width={'34%'}>
+                        <Text>CPF</Text>
+                        <br />
+                        <BoldLabel>{itemSelecionado.cpf}</BoldLabel>
+                     </FlexCol>
+                     <FlexCol width={'33%'}>
+                        <Text>Celular</Text>
+                        <br />
+                        <BoldLabel>{itemSelecionado.celular?.numeroComDDD}</BoldLabel>
+                     </FlexCol>
+                     <FlexCol width={'33%'}>
+                        <Text>E-mail</Text>
+                        <br />
+                        <BoldLabel>{itemSelecionado.email}</BoldLabel>
+                     </FlexCol>
+                  </FlexRow>
+
+                  <FlexRow>
+                     <FlexCol width={'34%'}>
+                        <Text>Ocupação profissional</Text>
+                        <br />
+                        <BoldLabel>{itemSelecionado.profissao}</BoldLabel>
+                     </FlexCol>
+                     <FlexCol width={'66%'}>
+                        <Text>Endereço</Text>
+                        <br />
+                        <BoldLabel>
+                           {itemSelecionado.endereco != null && itemSelecionado.endereco.endereco != null
+                              ? getEnderecoCompleto(itemSelecionado.endereco.endereco)
+                              : ''}
+                        </BoldLabel>
+                     </FlexCol>
+                  </FlexRow>
+               </div>
+
+               {itemSelecionado &&
+                  itemSelecionado.anamnese &&
+                  itemSelecionado.anamnese.resultado &&
+                  itemSelecionado.anamnese.resultado.grupos && (
+                     <>
+                        {itemSelecionado.anamnese.resultado.grupos.map((grupo, grupoIndex) => {
+                           index++;
+                           const color = index % 2 === 0 ? '#ffffff' : '#d4af3710';
+
+                           return (
+                              <>
+                                 <div>
+                                    <Line />
+                                    <FlexRow
+                                       className={'no-break-on-print page-break'}
+                                       style={{
+                                          backgroundColor: color,
+                                          paddingLeft: 5,
+                                          paddingRight: 5,
+                                          paddingTop: 5,
+                                          borderLeft: '1px solid #ced4da',
+                                          borderRight: '1px solid #ced4da',
+                                          fontSize: 16,
+                                       }}
+                                    >
+                                       <FlexCol>
+                                          <BoldLabel>{grupo.titulo + ':'}</BoldLabel>
+                                       </FlexCol>
+                                    </FlexRow>
+                                 </div>
+
+                                 {grupo.campos.map((campo, campoIndex) => {
+                                    index++;
+                                    const color = index % 2 === 0 ? '#ffffff' : '#d4af3710';
+                                    return (
+                                       <React.Fragment key={`grupo-${grupoIndex}-campo-${campoIndex}`}>
+                                          <Line />
+                                          <FlexRow
+                                             className={'no-break-on-print page-break'}
+                                             style={{
+                                                backgroundColor: color,
+                                                paddingLeft: 5,
+                                                paddingRight: 5,
+                                                paddingTop: 5,
+                                                borderLeft: '1px solid #ced4da',
+                                                borderRight: '1px solid #ced4da',
+                                             }}
+                                          >
+                                             <FlexCol>
+                                                <BoldLabel>{campo.titulo}</BoldLabel>
+                                             </FlexCol>
+                                             <FlexCol>
+                                                <Text>{campo.valorFormatado}</Text>
+                                             </FlexCol>
+                                          </FlexRow>
+                                       </React.Fragment>
+                                    );
+                                 })}
+                              </>
+                           );
+                        })}
+                        <Line />
+                        <Filler height={40} />
+                        <BoldLabel>{'Data: '}</BoldLabel> <Text>{dateToString(itemSelecionado.anamnese.data)}</Text>                        
+                        <div style={{ width: 300, textAlign: 'center' }}>
+                           <Filler height={70} />
+                           <Line />
+                           <Text>{itemSelecionado.nomeCompleto}</Text>
+                           <br />
+                           <Text>{itemSelecionado.cpf}</Text>
+                        </div>
+                     </>
+                  )}
+            </div>
+            <Filler height={10} />
+            <FlexRow>
+               <FlexCol width={'fit-content'}>
+                  <Button style={{ width: 100 }} text={'Imprimir'} onClick={handlePrint} />
+               </FlexCol>
+               <FlexCol width={'fit-content'}>
+                  <Button
+                     style={{ width: 100 }}
+                     text={'PDF'}
+                     onClick={() => gerarPDF('Anamnese - ' + itemSelecionado.nomeCompleto)}
+                  />
+               </FlexCol>
             </FlexRow>
             <Filler height={10} />
          </>
@@ -628,6 +776,7 @@ export default function LeadView(props) {
                         <FormGroup>
                            <BoldLabel>Nome</BoldLabel>
                            <TextInput
+                              ref={autoFocus}
                               defaultValue={itemSelecionado.nomeCompleto}
                               onChange={(value) => setItemSelecionado({ nomeCompleto: value })}
                            />
@@ -665,12 +814,14 @@ export default function LeadView(props) {
             >
                <Tab eventKey='1' title='Cadastro'></Tab>
                <Tab eventKey='2' title='Avaliação clínica'></Tab>
+               <Tab eventKey='3' title='Anamnese'></Tab>
             </Tabs>
 
             <ViewController
                selected={parseInt(aba)}
                v1={campos(itemSelecionado, setItemSelecionado)}
                v2={fichaDeAvaliacao(itemSelecionado, setItemSelecionado)}
+               v3={fichaDeAnamnese(itemSelecionado, setItemSelecionado)}
             />
          </>
       );
@@ -690,6 +841,7 @@ export default function LeadView(props) {
          getObjetoDeDados={controller.getObjetoDeDados}
          select={props.select}
          itemVazio={controller.itemVazio}
+         autoFocus={autoFocus}
       />
    );
 }

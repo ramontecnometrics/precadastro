@@ -19,10 +19,12 @@ namespace config.NHibernate.Map
             Map(x => x.Profissao);
             References(x => x.Unidade);
             References(x => x.ResultadoDeAvaliacaoClinica);                
+            References(x => x.ResultadoDeAnamnese);
 
             Map(x => x.Cnh);
             Map(x => x.IdentificacaoNoUno).Index("");
             Map(x => x.TokenParaAvaliacaoClinica).Length(36).Index("");
+            Map(x => x.TokenParaAnamnese).Length(36).Index("");            
 
             Map(x => x.EstadoCivil)
                 .CustomType<IntToTipoType<EstadoCivil>>()

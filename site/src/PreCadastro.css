@@ -373,3 +373,28 @@
 .pre-cadastro-container::-webkit-scrollbar-thumb:hover {
    background: linear-gradient(135deg, #060a1f, #b89a2e);
 }
+
+.pre-cadastro-form-group input[type='radio'] {
+   width: 24px;
+   height: 20px;
+   accent-color: #080e2a; /* muda a cor do radio (suporte em navegadores modernos) */
+   margin-right: 6px;
+   vertical-align: middle;
+}
+
+.pre-cadastro-form-group .radio-label {
+   display: flex;
+   align-items: center; /* garante alinhamento vertical */
+   cursor: pointer;
+   margin-right: 12px;
+   width: fit-content;
+}
+
+
+.pre-cadastro-form-group input[type='checkbox'] {
+   width: 24px;
+   height: 20px;
+   accent-color: #080e2a; /* muda a cor do checkbox (suporte em navegadores modernos) */
+   margin-right: 6px;
+   vertical-align: middle;
+}

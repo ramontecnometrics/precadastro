@@ -133,8 +133,9 @@ function PreCadastro() {
    const [idDoLead, setIdDoLead] = useState(null);
    const [buscandoCEP, setBuscandoCEP] = useState(false);
    const [avaliacao, setAvaliacao] = useState(null);
-   const [tokenParaAvaliacaoClinica, setTokenParaAvaliacaoClinica] = useState(null);
+   const [tokenParaAvaliacaoClinica, setTokenParaAvaliacaoClinica] = useState(null); 
    const containerRef = useRef(null);
+   const firstInputRef = useRef(null);
 
    const aplicarMascaraTelefone = (valor) => {
       const apenasDigitos = valor.replace(/\D/g, '');
@@ -230,6 +231,13 @@ function PreCadastro() {
    useEffect(() => {
       const params = new URL(location.href).searchParams;
       const id = params.get('id');
+      const cpf = params.get('cpf');
+      if (cpf){
+         setFormData((prevState) => ({
+            ...prevState,
+            cpf: cpf,
+         }));
+      }
       api.get(`/lead/precadastro/parametros?id=${id}`, false, null, false, false)
          .then((result) => {
             setFormData((prevState) => ({
@@ -276,6 +284,13 @@ function PreCadastro() {
          })
          .catch((error) => {});
    };
+
+   useEffect(() => {
+      console.log('inicializado', inicializado);
+      if (firstInputRef.current) {
+         firstInputRef.current.focus();
+      }
+   }, [firstInputRef, inicializado]);
 
    return (
       <div className='pre-cadastro'>
@@ -357,6 +372,7 @@ function PreCadastro() {
                                  <div className='pre-cadastro-form-group full'>
                                     <label htmlFor='nome'>Nome *</label>
                                     <input
+                                       ref={firstInputRef}
                                        type='text'
                                        id='nome'
                                        name='nome'
@@ -696,6 +712,7 @@ function PreCadastro() {
                         </FlexCol>
                      </FlexRow>
                      <Formulario
+                        nome='avaliacaoClinica'
                         // formulario={avaliacao}
                         formulario={parametros.fichaDeAvaliacaoClinicaParaGeneroMasculino}
                         setFormulario={handleSubmitAvaliacaoClinica}

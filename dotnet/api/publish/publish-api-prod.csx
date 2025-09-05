@@ -11,15 +11,15 @@ var servidores = new string[] {
 
 var usuario = "gestia";
 var caminhoLocal = "./bin/release/net8.0/publish";
-var caminhoNoServidor = "/opt/app/homo_precadastro_drhair/api";
-var caminhoTemporarioNoServidor = "/opt/app/homo_precadastro_drhair/api-temp";
-var nomeDoServicoNoServidor = "homo_precadastro_drhair.service";
+var caminhoNoServidor = "/opt/app/precadastro_drhair/api";
+var caminhoTemporarioNoServidor = "/opt/app/precadastro_drhair/api-temp";
+var nomeDoServicoNoServidor = "precadastro_drhair.service";
 /* ========================================================================== */
 
 Console.Clear();
 var linha = "==========================================================================";
 Console.WriteLine(linha);
-Console.WriteLine("Publicação da API para o ambiente de HOMOLOGAÇÃO");
+Console.WriteLine("Publicação da API para o ambiente de PRODUÇÃO");
 Console.WriteLine(linha);
 
 Console.WriteLine($"Usuário: {usuario}");

@@ -37,11 +37,13 @@ export default function ParametroDoSistemaController() {
          'TermoDeUsoAtivo',
          'FichaDeAvaliacaoClinicaParaGeneroMasculino',
          'FichaDeAvaliacaoClinicaParaGeneroFeminino',
+         'FichaDeAnamneseParaGeneroMasculino',
+         'FichaDeAnamneseParaGeneroFeminino',
       ];
       var descricao = null;
       const getDescricaoParaObjeto = () => {
          var result = null;
-         if (item.preenchido) {
+         if (item.preenchido) {  
             result = JSON.parse(item.valor);
             result = result.id + ' - ' + result.nome;
          }
@@ -108,6 +110,7 @@ export default function ParametroDoSistemaController() {
       [4, 'Infobip'],
       [5, 'Uno'],
       [6, 'Fichas de avaliação clínica'],
+      [7, 'Fichas de anamnese'],
    ]);
 
    const comboParametros = () => {
@@ -231,6 +234,61 @@ export default function ParametroDoSistemaController() {
                   <FormGroup>
                      <Select
                         name={'FichaDeAvaliacaoClinicaParaGeneroFeminino'}
+                        defaultValue={defaultValue}
+                        getKeyValue={(i) => i.id}
+                        getDescription={(i) => i.nome}
+                        onSelect={(i) => setValor(i ? JSON.stringify({ id: i.id, nome: i.nome }) : null)}
+                        formularioPadrao={(select) => <FormularioView select={select} />}
+                        noDropDown={true}
+                        readOnlyColor='#ffff'
+                        getFilterUrl={(text) =>
+                           '/formulario/fast' + buildQueryString(2, null, 'id', { Searchable: text })
+                        }
+                     />
+                  </FormGroup>
+               );
+            },
+         },
+
+          // ====== Fichas de Anamnese ======
+         {
+            nome: 'FichaDeAnamneseParaGeneroMasculino',
+            descricao: grupos.get(7) + ' -> Ficha de anamnese para gênero masculino',
+            grupo: 7,
+            ordem: 1,
+            componente: (defaultValue, setValor) => {
+               defaultValue = defaultValue ? JSON.parse(defaultValue) : null;
+               return (
+                  <FormGroup>
+                     <Select
+                        name={'FichaDeAnamneseParaGeneroMasculino'}
+                        defaultValue={defaultValue}
+                        getKeyValue={(i) => i.id}
+                        getDescription={(i) => i.nome}
+                        onSelect={(i) => setValor(i ? JSON.stringify({ id: i.id, nome: i.nome }) : null)}
+                        formularioPadrao={(select) => <FormularioView select={select} />}
+                        noDropDown={true}
+                        readOnlyColor='#ffff'
+                        getFilterUrl={(text) =>
+                           '/formulario/fast' + buildQueryString(2, null, 'id', { Searchable: text })
+                        }
+                     />
+                  </FormGroup>
+               );
+            },
+         },
+
+         {
+            nome: 'FichaDeAnamneseParaGeneroFeminino',
+            descricao: grupos.get(7) + ' -> Ficha de anamnese para gênero femninino',
+            grupo: 7,
+            ordem: 1,
+            componente: (defaultValue, setValor) => {
+               defaultValue = defaultValue ? JSON.parse(defaultValue) : null;
+               return (
+                  <FormGroup>
+                     <Select
+                        name={'FichaDeAnamneseParaGeneroFeminino'}
                         defaultValue={defaultValue}
                         getKeyValue={(i) => i.id}
                         getDescription={(i) => i.nome}

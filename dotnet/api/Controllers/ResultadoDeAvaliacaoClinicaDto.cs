@@ -28,4 +28,30 @@ namespace api.Controllers
         }
     }
 
+    public class ResultadoDeAnamneseDto
+    {
+        public long Id { get; set; }
+        public DateTime Data { get; set; }
+        public ResultadoDeFormularioDto Resultado { get; set; }
+
+        public static ResultadoDeAnamneseDto Build(ResultadoDeAnamnese item)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+
+            var result = new ResultadoDeAnamneseDto()
+            {
+                Id = item.Id,
+                Data = item.Data,
+                Resultado = ResultadoDeFormularioDto.Build(item.Itens.Select(i => i.ResultadoDeFormulario).ToArray())
+            };
+            return result;
+        }
+    }
+
+
+    
+
 }

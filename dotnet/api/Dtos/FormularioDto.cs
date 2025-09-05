@@ -87,6 +87,7 @@ namespace api.Dtos
         public int Ordem { get; set; }
         public string Titulo { get; set; }
         public string Tipo { get; set; }
+        public string Opcoes { get; set; }
         public bool Obrigatorio { get; set; }
 
         public static CampoDeGrupoDeFormularioDto Build(CampoDeGrupoDeFormulario entity)
@@ -98,6 +99,7 @@ namespace api.Dtos
                 Id = entity.Id,
                 Titulo = entity.Titulo,
                 Tipo = entity.Tipo,
+                Opcoes = entity.Opcoes,
                 Obrigatorio = entity.Obrigatorio,
                 Ordem = entity.Ordem
             };

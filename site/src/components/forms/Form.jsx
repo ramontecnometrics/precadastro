@@ -176,11 +176,11 @@ const Form = forwardRef(function Form(props, ref) {
    }, []);
 
    useEffect(() => {
-      console.log('focus');
-
-      if (props.autoFocus && props.autoFocus.current && (formState.inserindo || formState.alterando)) {
-         setTimeout(() => {
-            props.autoFocus.current.focus();
+      if (formState.incluindo || formState.alterando) {
+         setTimeout(() => {            
+            if (props.autoFocus && props.autoFocus.current) {               
+               props.autoFocus.current.focus();
+            }
          }, 100);
       } else if (formState.navegando && textoFiltroRef.current) {
          setTimeout(() => {
@@ -188,7 +188,7 @@ const Form = forwardRef(function Form(props, ref) {
             textoFiltroRef.current.focus();
          }, 100);
       }
-   }, [formState.inserindo, formState.alterando, formState.navegando]);
+   }, [formState.incluindo, formState.alterando, formState.navegando]);
 
    const isMobile = () => {
       return window.screen.width <= 600;

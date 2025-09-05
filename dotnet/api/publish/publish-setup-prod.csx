@@ -2,22 +2,24 @@
 
 using Renci.SshNet;
 
-Console.Clear();
-var linha = "==========================================================================";
-Console.WriteLine(linha);
-Console.WriteLine("Publicação WEB para o ambiente de HOMOLOGAÇÃO");
-Console.WriteLine(linha);
-
-Console.Write("Senha do servidor: ");
-var senha = Console.ReadLine();
-
+/* ====================  DEFINIR OS PARÂMETROS AQUI ========================= */
 var servidores = new string[] {
     "54.233.198.13"
 };
-
 var usuario = "gestia";
-var caminhoLocal = "./dist";
-var caminhoNoServidor = "/opt/app/homo_precadastro_drhair/site";
+var caminhoLocal = "./../setup/bin/release/net8.0/publish";
+var caminhoNoServidor = "/opt/app/precadastro_drhair/setup";
+/* ========================================================================== */
+
+Console.Clear();
+var linha = "==========================================================================";
+Console.WriteLine(linha);
+Console.WriteLine("Publicação do SETUP para o ambiente de HOMOLOGAÇÃO");
+Console.WriteLine(linha);
+
+Console.WriteLine($"Usuário: {usuario}");
+Console.Write("Senha: ");
+var senha = Console.ReadLine();
 
 foreach (var servidor in servidores)
 {
@@ -64,10 +66,11 @@ foreach (var servidor in servidores)
     using (var sshClient = new SshClient(ConnNfo))
     using (var sftp = new SftpClient(ConnNfo))
     {
+        sshClient.Connect();
+
+        Console.Clear();
         Console.WriteLine(linha);
         Console.WriteLine("Upload dos arquivos");
-
-        sshClient.Connect();
         sftp.Connect();
 
         Console.WriteLine();
@@ -105,24 +108,46 @@ foreach (var servidor in servidores)
 
         ProcessFile = (fullFileName) =>
         {
-            using (var uploadFileStream = System.IO.File.OpenRead(fullFileName))
+            var fileName = Path.GetFileName(fullFileName);
+            // monta o caminho completo no servidor
+            var remoteFilePath = $"{currentFolder}/{fileName}";
+
+            // pega a data de última modificação local em UTC
+            var localLastWriteUtc = File.GetLastWriteTimeUtc(fullFileName);
+
+            bool shouldUpload = true;
+
+            // verifica se já existe um arquivo remoto
+            if (sftp.Exists(remoteFilePath))
             {
-                var fileName = Path.GetFileName(fullFileName);
-                Console.Write(string.Format("Uploading {0}/{1}...", currentFolder, fileName));
-                sftp.UploadFile(uploadFileStream, fileName, true);
-                Console.WriteLine(" OK!");
+                // obtém atributos do arquivo remoto
+                var remoteAttrs = sftp.GetAttributes(remoteFilePath);
+                // data de modificação remota em UTC
+                var remoteLastWriteUtc = remoteAttrs.LastWriteTime.ToUniversalTime();
+
+                if (localLastWriteUtc <= remoteLastWriteUtc)
+                {
+                    Console.WriteLine($"Pulando {remoteFilePath}: remoto ({remoteLastWriteUtc:yyyy-MM-dd HH:mm:ss}) é mais novo ou igual ao local ({localLastWriteUtc:yyyy-MM-dd HH:mm:ss}).");
+                    shouldUpload = false;
+                }
+            }
+
+            if (shouldUpload)
+            {
+                using var uploadStream = File.OpenRead(fullFileName);
+                Console.Write($"Enviando {remoteFilePath}… ");
+                // envia para o caminho completo, sobrescrevendo se existir
+                sftp.UploadFile(uploadStream, remoteFilePath, true);
+                Console.WriteLine("OK!");
             }
         };
 
-        try
-        {
-            sftp.DeleteDirectory(caminhoNoServidor);
-        }
-        catch { }
-        ExecuteCommand(sshClient, string.Format("mkdir {0}", caminhoNoServidor), null);
         sftp.ChangeDirectory(caminhoNoServidor);
         currentFolder = caminhoNoServidor;
         ProcessDirectory(rootDirectory.FullName);
+
+        sftp.Disconnect();
+        sshClient.Disconnect();
     }
 }
 

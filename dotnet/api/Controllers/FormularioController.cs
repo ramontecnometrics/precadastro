@@ -162,6 +162,7 @@ namespace api.Controllers
                     entity.Titulo = dto.Titulo;
                     entity.Obrigatorio = dto.Obrigatorio;
                     entity.Tipo = dto.Tipo;
+                    entity.Opcoes = dto.Opcoes;
                     entity.Ordem = dto.Ordem;
                 },
                 (dto) =>
@@ -171,6 +172,7 @@ namespace api.Controllers
                         GrupoDeFormulario = parentEntity,
                         Obrigatorio = dto.Obrigatorio,
                         Tipo = dto.Tipo,
+                        Opcoes = dto.Opcoes,
                         Titulo = dto.Titulo,
                         Ordem = dto.Ordem
                     };

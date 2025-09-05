@@ -52,6 +52,7 @@ namespace api.Controllers
         private readonly Repository<ResultadoDeAvaliacaoClinica> ResultadoDeAvaliacaoClinicaRepository;
         private readonly Repository<CampoDeGrupoDeFormulario> CampoDeGrupoDeFormularioRepository;
         private readonly Repository<ResultadoDeFormulario> ResultadoDeFormularioRepository;
+        private readonly Repository<ResultadoDeAnamnese> ResultadoDeAnamneseRepository;
 
 
         public LeadController(
@@ -67,7 +68,8 @@ namespace api.Controllers
             ParametroDoSistemaRepository parametroDoSistemaRepository,
             Repository<ResultadoDeAvaliacaoClinica> resultadoDeAvaliacaoClinicaRepository,
             Repository<CampoDeGrupoDeFormulario> campoDeGrupoDeFormularioRepository,
-            Repository<ResultadoDeFormulario> resultadoDeFormularioRepository) :
+            Repository<ResultadoDeFormulario> resultadoDeFormularioRepository,
+            Repository<ResultadoDeAnamnese> resultadoDeAnamneseRepository) :
             base(repository, fastRepository, appContext)
         {
             LeadRepository = repository;
@@ -81,6 +83,7 @@ namespace api.Controllers
             ResultadoDeAvaliacaoClinicaRepository = resultadoDeAvaliacaoClinicaRepository;
             CampoDeGrupoDeFormularioRepository = campoDeGrupoDeFormularioRepository;
             ResultadoDeFormularioRepository = resultadoDeFormularioRepository;
+            ResultadoDeAnamneseRepository = resultadoDeAnamneseRepository;
         }
 
         protected override IQueryable<Lead> Get(LeadGetParams getParams)
@@ -320,20 +323,77 @@ namespace api.Controllers
         }
 
         [Microsoft.AspNetCore.Mvc.HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("[controller]/identificar")]
-        public long? Identificar(string cpf)
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/anamnese/parametros")]
+        public ParametrosDeAnamneseDto GetParametrosParaAnamnese(string cpf)
         {
-            var id = Repository.GetAll()
+            var result = new ParametrosDeAnamneseDto();
+
+            var leadId = Repository.GetAll()
                 .Where(i => i.Cpf == EncryptedText.Build(cpf))
                 .OrderBy(i => i.Id)
-                .Select(i => i.Id)
+                .Select(i => new { i.Id })
                 .FirstOrDefault();
-            return id > 0 ? id : null;
+
+            if (leadId != null)
+            {
+                var lead = Repository.Get(leadId.Id, true);
+                result.IdDoLead = lead.Id;
+                if (lead.TokenParaAnamnese.IsEmpty())
+                {
+                    lead.TokenParaAnamnese = Guid.NewGuid().ToString();
+                }
+
+                Repository.Update(lead);
+
+                result.TokenParaAnamnese = lead.TokenParaAnamnese;
+
+                if (lead.Sexo.Is(Sexo.Feminino))
+                {
+                    var fichaJson = ParametroDoSistemaRepository.GetString("FichaDeAnamneseParaGeneroFeminino");
+
+                    if (string.IsNullOrEmpty(fichaJson))
+                    {
+                        throw new Exception("A ficha de anamnese ainda não foi definida nos parâmetros do sistema.");
+                    }
+
+                    var converter = new ExpandoObjectConverter();
+                    dynamic parametro = null;
+
+                    parametro = Newtonsoft.Json.JsonConvert
+                        .DeserializeObject<ExpandoObject>(fichaJson, converter);
+                    long idDaFicha = parametro.id;
+
+                    var ficha = FormularioRepository.Get(idDaFicha, true);
+
+                    result.FichaDeAnamnese = FormularioDto.Build(ficha);
+                }
+                else
+                {
+                    var fichaJson = ParametroDoSistemaRepository.GetString("FichaDeAnamneseParaGeneroMasculino");
+
+                    if (string.IsNullOrEmpty(fichaJson))
+                    {
+                        throw new Exception("A ficha de anamnese ainda não foi definida nos parâmetros do sistema.");
+                    }
+
+                    var converter = new ExpandoObjectConverter();
+                    dynamic parametro = null;
+
+                    parametro = Newtonsoft.Json.JsonConvert
+                        .DeserializeObject<ExpandoObject>(fichaJson, converter);
+                    long idDaFicha = parametro.id;
+
+                    var ficha = FormularioRepository.Get(idDaFicha, true);
+
+                    result.FichaDeAnamnese = FormularioDto.Build(ficha); 
+                }
+            }
+            return result;
         }
 
         [Microsoft.AspNetCore.Mvc.HttpGet]
         [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro/parametros")]
-        public ParametrosDePrecadastroDto GetParametros(string id)
+        public ParametrosDePrecadastroDto GetParametrosParaPrecadastro(string id)
         {
             var result = new ParametrosDePrecadastroDto();
 
@@ -375,7 +435,6 @@ namespace api.Controllers
             {
                 throw new Exception("A ficha de avaliação clínica ainda não foi definida nos parâmetros do sistema.");
             }
-
 
             var converter = new ExpandoObjectConverter();
             dynamic parametro = null;
@@ -428,7 +487,7 @@ namespace api.Controllers
                     TelefoneDePessoaRepository.Delete(i);
                 });
 
-                lead.Enderecos.ToArray()ForEach(i =>
+                lead.Enderecos.ToArray().ForEach(i =>
                 {
                     lead.Enderecos.Remove(i);
                     EnderecoDePessoaRepository.Delete(i);
@@ -459,6 +518,7 @@ namespace api.Controllers
             lead.DataDeNascimento = DateTime.ParseExact(request.DataNascimento, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             lead.DocumentoDeIdentidade = EncryptedText.Build(request.Rg);
             lead.TokenParaAvaliacaoClinica = Guid.NewGuid().ToString();
+            lead.TokenParaAnamnese = Guid.NewGuid().ToString();
             lead.Unidade = unidade;
 
             if (!string.IsNullOrEmpty(request.Telefone))
@@ -668,6 +728,68 @@ namespace api.Controllers
             var result = new RespostaDeInclusaoDeAvaliacaoClinicaDto();
             return result;
         }
+
+
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [Microsoft.AspNetCore.Mvc.Route("[controller]/precadastro/anamnese")]
+        public RespostaDeInclusaoDeAnamneseDto Anamnese([Microsoft.AspNetCore.Mvc.FromBody] AnamneseDto request,
+           [Microsoft.AspNetCore.Mvc.FromHeader] string tokenParaAnamnese)
+        {
+            var lead = Repository.Get(request.IdDoLead, true);
+
+            if (lead.TokenParaAnamnese != tokenParaAnamnese)
+            {
+                throw new Exception("Acesso negado.");
+            }
+
+            if (request.FichaDeAnamnese == null)
+            {
+                throw new Exception("Ficha não informada.");
+            }
+
+            if (request.FichaDeAnamnese.Grupos == null)
+            {
+                throw new Exception("Grupos da ficha não informados.");
+            }
+
+            if (request.FichaDeAnamnese.Grupos.Length == 0)
+            {
+                throw new Exception("Nenhum grupo informado.");
+            }
+
+            var anamnese = new ResultadoDeAnamnese()
+            {
+                Lead = lead,
+                Data = DateTimeSync.Now,
+                Itens = new List<ResultadoDeFormularioDeAnamnese>()
+            };
+
+            request.FichaDeAnamnese.Grupos.ForEach(grupo =>
+            {
+                grupo.Campos.ForEach(campo =>
+                {
+                    var resultado = new ResultadoDeFormulario()
+                    {
+                        Campo = CampoDeGrupoDeFormularioRepository.Get(campo.Id, true),
+                        Valor = campo.Valor
+                    };
+                    ResultadoDeFormularioRepository.Insert(resultado);
+
+                    anamnese.Itens.Add(new ResultadoDeFormularioDeAnamnese()
+                    {
+                        ResultadoDeFormulario = resultado,
+                        ResultadoDeAnamnese = anamnese
+                    });
+                });
+            });
+
+            ResultadoDeAnamneseRepository.Insert(anamnese);
+            lead.ResultadoDeAnamnese = anamnese;
+            Repository.Update(lead);
+
+            var result = new RespostaDeInclusaoDeAnamneseDto();
+            return result;
+        }
     }
 
     public class LeadGetParams : IId
@@ -789,6 +911,12 @@ namespace api.Controllers
         public UnidadeDto[] Unidades { get; set; }
     }
 
+    public class ParametrosDeAnamneseDto
+    {
+        public long? IdDoLead { get; set; }
+        public string TokenParaAnamnese { get; set; }
+        public FormularioDto FichaDeAnamnese { get; set; }
+    }
 
     public class RespostaDeInclusaoDePreCadastroDto
     {
@@ -796,7 +924,6 @@ namespace api.Controllers
         public string Mensagem { get; set; }
         public string TokenParaAvaliacaoClinica { get; set; }
     }
-
 
     public class AvaliacaoClinicaDto
     {
@@ -820,5 +947,21 @@ namespace api.Controllers
         public long Id { get; set; }
         public string Valor { get; set; }
     }
+
+
+    public class AnamneseDto
+    {
+        public long IdDoLead { get; set; }
+        public ResultadoDeFormularioDto FichaDeAnamnese { get; set; }
+    }
+
+
+    public class RespostaDeInclusaoDeAnamneseDto
+    {
+
+    }
+
+
+
 
 }

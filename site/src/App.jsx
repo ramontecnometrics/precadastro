@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate, BrowserRouter as HashRouter } from 'react-router-dom';
 import PreCadastroView from './views/PreCadastroView';
 import AvaliacaoClinicaView from './views/AvaliacaoClinicaView';
+import AnamneseView from './views/AnamneseView';
 import sessionManager from './SessionManager';
 import MainLayout from './components/MainLayout';
 import TermosDeUsoView from './views/TermosDeUsoView';
@@ -42,7 +43,7 @@ function App() {
             </HashRouter>
          );
       } else if (sessionManager.isUsuarioAdministrador()) {      
-         if (window.location.pathname === '/') {
+         if (window.location.pathname === '/' || window.location.pathname === '/cadastro') {
             result = (
                <PreCadastroView />
             );
@@ -50,6 +51,10 @@ function App() {
          if (window.location.pathname === '/avaliacaoclinica') {
             result = (
                <AvaliacaoClinicaView />
+            );
+         } else if (window.location.pathname === '/anamnese') {
+            result = (
+               <AnamneseView />
             );
          } else {               
             result = (
@@ -67,6 +72,8 @@ function App() {
             <HashRouter>
                <Routes>
                   <Route path="/" exact element={<PreCadastroView />} />
+                  <Route path='/cadastro' exact element={<PreCadastroView />} />
+                  <Route path='/anamnese' exact element={<AnamneseView />} />
                   <Route path='/adm' exact element={<LoginView tipoDeAcesso='ADM' />} />
                   <Route path='/adm/login' element={<LoginView tipoDeAcesso='ADM' />} />
                   <Route path='/adm/error' element={<ErrorView />} />

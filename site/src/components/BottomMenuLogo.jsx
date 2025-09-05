@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../contents/img/logo.png';
+import logo from '../contents/img/logo.svg';
 import '../contents/css/logo-menu-inferior.css';
 
 export default function BottomMenuLogo(props) {

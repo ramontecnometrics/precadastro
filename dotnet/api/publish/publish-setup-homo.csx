@@ -1,4 +1,3 @@
-#! netcoreapp3.1
 #r "nuget: SSH.NET, 2020.0.1"
 
 using Renci.SshNet;
@@ -9,7 +8,7 @@ var servidores = new string[] {
 };
 var usuario = "gestia";
 var caminhoLocal = "./../setup/bin/release/net8.0/publish";
-var caminhoNoServidor = "/opt/app/precadastro_drhair/setup";
+var caminhoNoServidor = "/opt/app/homo_precadastro_drhair/setup";
 /* ========================================================================== */
 
 Console.Clear();

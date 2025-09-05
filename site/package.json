@@ -40,8 +40,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "publish-homo": "run-script-os",
-    "publish-homo:darwin": "vite build && dotnet-script ./publish/publish-homo.csx",
-    "publish-homo:linux": "vite build && dotnet-script ./publish/publish-homo.csx",
-    "publish-homo:win32": "vite build && dotnet-script ./publish/publish-homo.csx"
+    "publish-homo:darwin": "vite build --mode homolog && dotnet-script ./publish/publish-homo.csx",
+    "publish-homo:linux": "vite build --mode homolog && dotnet-script ./publish/publish-homo.csx",
+    "publish-homo:win32": "vite build --mode homolog && dotnet-script ./publish/publish-homo.csx",
+    "publish-prod": "run-script-os",
+    "publish-prod:darwin": "vite build --mode production && dotnet-script ./publish/publish-prod.csx",
+    "publish-prod:linux": "vite build --mode production && dotnet-script ./publish/publish-prod.csx",
+    "publish-prod:win32": "vite build --mode production && dotnet-script ./publish/publish-prod.csx"    
   }
 }

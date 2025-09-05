@@ -71,7 +71,10 @@ namespace model
         public string AlertaDeSaude { get; set; }
         public int? IdentificacaoNoUno { get; set; }
         public string TokenParaAvaliacaoClinica { get; set; }
+        public string TokenParaAnamnese { get; set; }
+        
         public ResultadoDeAvaliacaoClinica ResultadoDeAvaliacaoClinica { get; set; }
+        public ResultadoDeAnamnese ResultadoDeAnamnese { get; set; }
 
         public static string SearchableScope = "Lead";
         public override string GetSearchableText()

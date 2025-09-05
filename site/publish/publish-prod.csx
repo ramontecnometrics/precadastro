@@ -5,7 +5,7 @@ using Renci.SshNet;
 Console.Clear();
 var linha = "==========================================================================";
 Console.WriteLine(linha);
-Console.WriteLine("Publicação WEB para o ambiente de HOMOLOGAÇÃO");
+Console.WriteLine("Publicação WEB para o ambiente de PRODUÇÃO");
 Console.WriteLine(linha);
 
 Console.Write("Senha do servidor: ");
@@ -17,7 +17,7 @@ var servidores = new string[] {
 
 var usuario = "gestia";
 var caminhoLocal = "./dist";
-var caminhoNoServidor = "/opt/app/homo_precadastro_drhair/site";
+var caminhoNoServidor = "/opt/app/precadastro_drhair/site";
 
 foreach (var servidor in servidores)
 {
