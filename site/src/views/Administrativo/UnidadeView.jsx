@@ -147,12 +147,13 @@ export default function UnidadeView(props) {
 
                      <div ref={contentPreCadastroRef}>
                         <div className='show-on-print-only' style={{ textAlign: 'center' }}>
-                           <div style={{ height: 250, overflowY: 'clip' }}>
+                           <Filler height={50} />
+                           <div style={{}}>
                               <img
                                  src={logo}
                                  alt='Logo'
                                  style={{
-                                    width: 300,
+                                    width: 400,
                                  }}
                               />
                            </div>
@@ -215,12 +216,13 @@ export default function UnidadeView(props) {
 
                      <div ref={contentAnamneseRef}>
                         <div className='show-on-print-only' style={{ textAlign: 'center' }}>
-                           <div style={{ height: 250, overflowY: 'clip' }}>
+                           <Filler height={50} />
+                           <div style={{}}>
                               <img
                                  src={logo}
                                  alt='Logo'
                                  style={{
-                                    width: 300,
+                                    width: 400,
                                  }}
                               />
                            </div>

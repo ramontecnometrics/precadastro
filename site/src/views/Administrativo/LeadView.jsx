@@ -21,7 +21,7 @@ import Text from '../../components/Text';
 import Line from '../../components/Line';
 import Button from '../../components/Button';
 import { useReactToPrint } from 'react-to-print';
-import logo from '../../contents/img/logo.png';
+import logo from '../../contents/img/logo.svg';
 import { calcularIdade, dateToString, formatDate, getEnderecoCompleto } from '../../utils/Functions';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
